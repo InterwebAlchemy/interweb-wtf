@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 export async function updateSession(request: NextRequest) {
+  console.log('MIDDLEWARE START:', request);
   let supabaseResponse = NextResponse.next({
     request,
   });
@@ -33,7 +34,11 @@ export async function updateSession(request: NextRequest) {
 
   const {
     data: { user },
+    error,
   } = await supabase.auth.getUser();
+
+  console.log('MIDDLEWARE ERROR:', error);
+  console.log('MIDDLEWARE DATA:', user);
 
   if (
     !user &&

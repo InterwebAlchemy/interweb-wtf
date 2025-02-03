@@ -1,0 +1,1 @@
+INSERT INTO public.invited_users (username, email) VALUES ('ericrallen', 'eric@ericrallen.dev')
