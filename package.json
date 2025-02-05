@@ -38,10 +38,18 @@
     "@supabase/ssr": "^0.5.2",
     "@supabase/supabase-js": "^2.48.1",
     "@tabler/icons-react": "^3.29.0",
+    "cloudflare": "^4.0.0",
+    "haikunator": "^2.1.2",
     "next": "15.1.5",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "usehooks-ts": "^3.1.0"
+  },
+  "overrides": {
+    "usehooks-ts": {
+      "react": "^19"
+    },
+    "whatwg-url": "^14.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.26.0",

@@ -2,27 +2,37 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import { IconWorldQuestion } from '@tabler/icons-react';
 import { Avatar, Drawer, Group, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import UrlInput from '@/app/_components/UrlInput';
 import useUserProfile from '@/app/_hooks/useUserProfile';
 import { signOut } from '@/app/_services/github/auth';
 
-const links = [
-  { link: '/dashboard', label: 'Dashboard' },
-  { link: '/research', label: 'Research' },
-  { link: '/notes', label: 'Notes' },
-  { link: '/about', label: 'About' },
-];
+const links = [{ link: '/dashboard', label: 'Dashboard' }];
 
 export default function Nav() {
   const router = useRouter();
+  const pathname = usePathname();
+
   const { loading, profile } = useUserProfile();
 
   const [opened, { open, close }] = useDisclosure(false);
 
   const [avatar, setAvatar] = useState<string>();
+
+  const onUrlInputSubmit = async (url: string): Promise<void> => {
+    console.log(`Shortening URL: ${url}`);
+
+    await fetch('/api/shorten', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url }),
+    });
+  };
 
   useEffect(() => {
     if (profile && !loading) {
@@ -57,11 +67,21 @@ export default function Nav() {
   return (
     <>
       <Drawer opened={opened} onClose={close} padding="md" position="right">
-        <Stack>{items}</Stack>
+        <Stack>
+          {pathname !== '/dashboard' ? (
+            <UrlInput onSubmit={onUrlInputSubmit} clearOnSubmit />
+          ) : (
+            <></>
+          )}
+          {items}
+        </Stack>
       </Drawer>
       <header>
         <Group justify="center" align="center">
-          <Link href="/" style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}>
+          <Link
+            href="/dashboard"
+            style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}
+          >
             <Group align="center" gap="5px">
               <ThemeIcon size="lg" color="violet">
                 <IconWorldQuestion />

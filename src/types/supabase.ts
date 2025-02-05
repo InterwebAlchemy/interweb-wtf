@@ -88,6 +88,200 @@ export type Database = {
         }
         Relationships: []
       }
+      short_urls: {
+        Row: {
+          created_at: string
+          created_by: string
+          id: number
+          pending: boolean
+          slug: string
+          updated_at: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          created_by: string
+          id?: number
+          pending?: boolean
+          slug: string
+          updated_at?: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string
+          id?: number
+          pending?: boolean
+          slug?: string
+          updated_at?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "short_urls_created_by_fkey"
+            columns: ["created_by"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      tags: {
+        Row: {
+          created_at: string
+          id: number
+          tag: string
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          tag: string
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          tag?: string
+        }
+        Relationships: []
+      }
+      url_info: {
+        Row: {
+          description: string | null
+          id: number
+          last_updated: string
+          snapshot: string | null
+          title: string
+          url_id: number
+        }
+        Insert: {
+          description?: string | null
+          id?: number
+          last_updated?: string
+          snapshot?: string | null
+          title: string
+          url_id: number
+        }
+        Update: {
+          description?: string | null
+          id?: number
+          last_updated?: string
+          snapshot?: string | null
+          title?: string
+          url_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "url_info_url_id_fkey"
+            columns: ["url_id"]
+            isOneToOne: false
+            referencedRelation: "short_urls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      url_reports: {
+        Row: {
+          cloudflare_scan_results: string | null
+          id: number
+          last_scanned: string
+          ready: boolean
+          url_id: number
+        }
+        Insert: {
+          cloudflare_scan_results?: string | null
+          id?: number
+          last_scanned?: string
+          ready?: boolean
+          url_id: number
+        }
+        Update: {
+          cloudflare_scan_results?: string | null
+          id?: number
+          last_scanned?: string
+          ready?: boolean
+          url_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "url_reports_url_id_fkey"
+            columns: ["url_id"]
+            isOneToOne: false
+            referencedRelation: "short_urls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      url_stats: {
+        Row: {
+          flags: number
+          hits: number
+          id: number
+          inspects: number
+          last_updated: string
+          url_id: number
+        }
+        Insert: {
+          flags?: number
+          hits?: number
+          id?: number
+          inspects?: number
+          last_updated?: string
+          url_id: number
+        }
+        Update: {
+          flags?: number
+          hits?: number
+          id?: number
+          inspects?: number
+          last_updated?: string
+          url_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "url_stats_url_id_fkey"
+            columns: ["url_id"]
+            isOneToOne: true
+            referencedRelation: "short_urls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      url_tags: {
+        Row: {
+          id: number
+          tag_id: number
+          tagged_at: string
+          url_id: number
+        }
+        Insert: {
+          id?: number
+          tag_id: number
+          tagged_at?: string
+          url_id: number
+        }
+        Update: {
+          id?: number
+          tag_id?: number
+          tagged_at?: string
+          url_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "url_tags_tag_id_fkey"
+            columns: ["tag_id"]
+            isOneToOne: false
+            referencedRelation: "tags"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "url_tags_url_id_fkey"
+            columns: ["url_id"]
+            isOneToOne: false
+            referencedRelation: "short_urls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

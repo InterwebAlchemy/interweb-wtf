@@ -1,0 +1,18 @@
+export const KNOWN_DOMAINS = [
+  'reddit.com',
+  'wikipedia.org',
+  'cnn.com',
+  'bbc.co.uk',
+  'ycombinator.com',
+  'itch.io',
+  'github.com',
+  'tvtropes.org',
+  'github.io',
+  'npr.org',
+  'metacritic.com',
+  'steampowered.com',
+  'huggingface.co',
+  'linkedin.com',
+  'stackoverflow.com',
+  'stackexchange.com',
+];

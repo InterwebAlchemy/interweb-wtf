@@ -1,15 +1,25 @@
-import { Box, Flex, Stack, Title } from '@mantine/core';
-import Nav from '@/app/_components/Nav';
+import { createClient } from '@/app/_adapters/supabase/server';
+import Screen from '@/app/_components/Screen';
+import UrlDashboard from '@/app/_components/UrlDashboard';
+import { Tables } from '@/types/supabase';
 
 export default async function DashboardPage() {
+  const supabase = await createClient();
+  const urls: Array<Tables<'short_urls'>> = [];
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const { data } = await supabase.from('short_urls').select('*').eq('created_by', user?.id);
+
+  if (typeof data !== 'undefined' && data !== null) {
+    urls.push(...data);
+  }
+
   return (
-    <Box p="md">
-      <Stack>
-        <Nav />
-        <Flex align="center">
-          <Title order={2}>Dashboard</Title>
-        </Flex>
-      </Stack>
-    </Box>
+    <Screen title="Dashboard">
+      <UrlDashboard urls={urls} />
+    </Screen>
   );
 }
