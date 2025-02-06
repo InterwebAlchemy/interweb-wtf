@@ -1,37 +1,17 @@
-# Mantine Next.js template
+# interweb.wtf
 
-This is a template for [Next.js](https://nextjs.org/) app router + [Mantine](https://mantine.dev/).
-If you want to use pages router instead, see [next-pages-template](https://github.com/mantinedev/next-pages-template).
+> Shortlinks for the modern interweb.
 
-## Features
+![interweb.wtf](https://github.com/InterwebAlchemy/interweb.wtf/raw/main/assets/interweb-wtf.png)
 
-This template comes with the following features:
+**COMING SOON**
 
-- [PostCSS](https://postcss.org/) with [mantine-postcss-preset](https://mantine.dev/styles/postcss-preset)
-- [TypeScript](https://www.typescriptlang.org/)
-- [Storybook](https://storybook.js.org/)
-- [Jest](https://jestjs.io/) setup with [React Testing Library](https://testing-library.com/docs/react-testing-library/intro)
-- ESLint setup with [eslint-config-mantine](https://github.com/mantinedev/eslint-config-mantine)
+WTFLinks work just like the shortlinks you're used to except that they don't track you, once they've been created the URL they point to cannot be updated, and you can add `/info` to any WTFLink to see where it's taking you.
 
-## npm scripts
+## Expanded Links
 
-### Build and dev scripts
+Interweb.wtf also supports expanding shortened links from other providers and removing tracking parameters.
 
-- `dev` – start dev server
-- `build` – bundle application for production
-- `analyze` – analyzes application bundle with [@next/bundle-analyzer](https://www.npmjs.com/package/@next/bundle-analyzer)
+![Expanded Links](https://github.com/InterwebAlchemy/interweb.wtf/raw/main/assets/short-link-expander.png)
 
-### Testing scripts
-
-- `typecheck` – checks TypeScript types
-- `lint` – runs ESLint
-- `prettier:check` – checks files with Prettier
-- `jest` – runs jest tests
-- `jest:watch` – starts jest watch
-- `test` – runs `jest`, `prettier:check`, `lint` and `typecheck` scripts
-
-### Other scripts
-
-- `storybook` – starts storybook dev server
-- `storybook:build` – build production storybook bundle to `storybook-static`
-- `prettier:write` – formats all files with Prettier
+**Note**: This example is expanding [https://bit.ly/prompt-injection-guide](https://bit.ly/prompt-injection-guide) which is a shortlink that I included in a slide for a [talk I gave about Prompt Injection](https://youtu.be/BXiJO-h51CY?si=uzQwxoFBt4TVmfuz&t=25192).

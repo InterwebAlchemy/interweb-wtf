@@ -1,5 +1,10 @@
 import PrivateBeta from '@/app/_components/PrivateBeta';
+import Screen from '@/app/_components/Screen';
 
 export default function RequestInvitePage() {
-  return <PrivateBeta />;
+  return (
+    <Screen>
+      <PrivateBeta />
+    </Screen>
+  );
 }
