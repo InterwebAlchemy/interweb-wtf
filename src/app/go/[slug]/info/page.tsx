@@ -19,7 +19,7 @@ export default async function LinkInfo({ params }: Params) {
     console.error(error);
   }
 
-  if (!slug || !data) {
+  if (!slug || !data || data.length === 0) {
     return notFound();
   }
 

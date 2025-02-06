@@ -17,12 +17,7 @@ export default function useUserProfile() {
 
         const {
           data: { user },
-          error,
         } = await supabase.auth.getUser();
-
-        if (error) {
-          console.error('GETUSER ERROR:', error);
-        }
 
         if (typeof user !== 'undefined' && user !== null) {
           setUser(user);

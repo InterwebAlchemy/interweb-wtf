@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { PropsWithoutRef, useEffect, useState } from 'react';
 import { useInterval } from 'usehooks-ts';
 
 const printableCharacters = `!"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_abcdefghijklmnopqrstuvwxyz{|}~`;
@@ -17,7 +17,7 @@ export default function CipherText({
   action = 'decode',
   speed = 120,
   maxIterations = 36,
-}: CipherTextProps): React.ReactElement {
+}: PropsWithoutRef<CipherTextProps>): React.ReactElement {
   const [iterations, setIterations] = useState(0);
   const [isClient, setIsClient] = useState(false);
   const [hasRevealed, setHasRevealed] = useState(false);

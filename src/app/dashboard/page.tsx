@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UrlDashboard from '@/app/_components/UrlDashboard';
@@ -10,6 +11,10 @@ export default async function DashboardPage() {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (typeof user === 'undefined' || user === null) {
+    redirect('/login');
+  }
 
   const { data } = await supabase.from('short_urls').select('*').eq('created_by', user?.id);
 

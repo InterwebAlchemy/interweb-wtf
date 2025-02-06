@@ -9,11 +9,11 @@ export default async function Screen({ children, ...props }: React.PropsWithChil
   const { title } = props;
 
   return (
-    <Container fluid>
-      <Box p="md">
-        <Stack>
+    <Container fluid h="100%" p={0}>
+      <Box p="md" h="100%">
+        <Stack h="100%">
           <Nav />
-          <Stack>
+          <Stack h="100%">
             {title ? <Title order={2}>{title}</Title> : <></>}
             {children}
           </Stack>

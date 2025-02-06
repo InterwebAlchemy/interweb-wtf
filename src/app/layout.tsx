@@ -2,19 +2,18 @@ import '@mantine/core/styles.css';
 import '@/app/_styles/global.css';
 
 import React from 'react';
-import { ColorSchemeScript, mantineHtmlProps, MantineProvider } from '@mantine/core';
+import { mantineHtmlProps, MantineProvider } from '@mantine/core';
 import { theme } from '../theme';
 
 export const metadata = {
   title: 'interweb.wtf',
-  description: 'A URL shortener for the modern interweb.',
+  description: 'A link shortener for the modern interweb.',
 };
 
 export default function RootLayout({ children }: { children: any }) {
   return (
     <html lang="en" {...mantineHtmlProps}>
       <head>
-        <ColorSchemeScript />
         <link rel="shortcut icon" href="/favicon.svg" />
         <meta
           name="viewport"

@@ -1,18 +1,17 @@
-import { Box, Flex } from '@mantine/core';
-import Login from '@/app/_components/Login';
+import { Center, Stack } from '@mantine/core';
+import Screen from '@/app/_components/Screen';
 import { Welcome } from '@/app/_components/Welcome/Welcome';
+import Intro from './_components/Intro';
 
 export default function HomePage() {
   return (
-    <Box p="md" h="100%">
-      <Flex align="center" justify="center" style={{ height: '80%', marginTop: '10%' }}>
-        <Flex direction="column" align="center" style={{ height: '100%' }}>
+    <Screen>
+      <Center h="100%">
+        <Stack align="center">
           <Welcome />
-          <div style={{ marginTop: 'auto' }}>
-            <Login />
-          </div>
-        </Flex>
-      </Flex>
-    </Box>
+          <Intro />
+        </Stack>
+      </Center>
+    </Screen>
   );
 }

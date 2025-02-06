@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { Stack } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
@@ -18,6 +19,10 @@ export default async function ManageLinkPage({ params }: Params) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+
+  if (!user) {
+    redirect('/login');
+  }
 
   const { data, error } = await supabase
     .from('short_urls')

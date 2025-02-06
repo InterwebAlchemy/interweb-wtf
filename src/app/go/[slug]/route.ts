@@ -1,4 +1,4 @@
-import { permanentRedirect, RedirectType } from 'next/navigation';
+import { permanentRedirect, redirect, RedirectType } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
 
@@ -22,8 +22,8 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
       console.error(error);
     }
 
-    if (!data) {
-      return new NextResponse(JSON.stringify({ message: 'Not found' }), { status: 404 });
+    if (!data || data.length === 0) {
+      redirect('/404');
     }
 
     const redirectUrl = data[0].url;

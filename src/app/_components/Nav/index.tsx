@@ -79,7 +79,7 @@ export default function Nav() {
       <header>
         <Group justify="center" align="center">
           <Link
-            href="/dashboard"
+            href={profile ? '/dashboard' : '/'}
             style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}
           >
             <Group align="center" gap="5px">
