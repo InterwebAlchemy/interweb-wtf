@@ -34,6 +34,42 @@ export type Database = {
   }
   public: {
     Tables: {
+      expanded_urls: {
+        Row: {
+          expanded_url: string | null
+          favicon: string | null
+          id: number
+          last_updated: string
+          metadata: Json | null
+          provider_id: number | null
+          screenshot: string | null
+          short_url: string | null
+          snapshot: string | null
+        }
+        Insert: {
+          expanded_url?: string | null
+          favicon?: string | null
+          id?: number
+          last_updated?: string
+          metadata?: Json | null
+          provider_id?: number | null
+          screenshot?: string | null
+          short_url?: string | null
+          snapshot?: string | null
+        }
+        Update: {
+          expanded_url?: string | null
+          favicon?: string | null
+          id?: number
+          last_updated?: string
+          metadata?: Json | null
+          provider_id?: number | null
+          screenshot?: string | null
+          short_url?: string | null
+          snapshot?: string | null
+        }
+        Relationships: []
+      }
       invited_users: {
         Row: {
           accepted: boolean
@@ -88,12 +124,28 @@ export type Database = {
         }
         Relationships: []
       }
+      short_url_providers: {
+        Row: {
+          id: number
+          provider: string
+        }
+        Insert: {
+          id?: number
+          provider: string
+        }
+        Update: {
+          id?: number
+          provider?: string
+        }
+        Relationships: []
+      }
       short_urls: {
         Row: {
           created_at: string
           created_by: string
           id: number
           pending: boolean
+          provider_id: number | null
           slug: string
           updated_at: string
           url: string
@@ -103,6 +155,7 @@ export type Database = {
           created_by: string
           id?: number
           pending?: boolean
+          provider_id?: number | null
           slug: string
           updated_at?: string
           url: string
@@ -112,6 +165,7 @@ export type Database = {
           created_by?: string
           id?: number
           pending?: boolean
+          provider_id?: number | null
           slug?: string
           updated_at?: string
           url?: string
@@ -122,6 +176,13 @@ export type Database = {
             columns: ["created_by"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "short_urls_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "short_url_providers"
             referencedColumns: ["id"]
           },
         ]
@@ -147,24 +208,33 @@ export type Database = {
       url_info: {
         Row: {
           description: string | null
+          favicon: string | null
           id: number
           last_updated: string
+          metadata: Json | null
+          screenshot: string | null
           snapshot: string | null
           title: string
           url_id: number
         }
         Insert: {
           description?: string | null
+          favicon?: string | null
           id?: number
           last_updated?: string
+          metadata?: Json | null
+          screenshot?: string | null
           snapshot?: string | null
           title: string
           url_id: number
         }
         Update: {
           description?: string | null
+          favicon?: string | null
           id?: number
           last_updated?: string
+          metadata?: Json | null
+          screenshot?: string | null
           snapshot?: string | null
           title?: string
           url_id?: number

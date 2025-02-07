@@ -1,5 +1,17 @@
 import { headers } from 'next/headers';
-import { Anchor, Avatar, Badge, Group, Image, Indicator, Pill, Text, Title } from '@mantine/core';
+import {
+  Anchor,
+  Avatar,
+  Badge,
+  Blockquote,
+  Center,
+  Group,
+  Image,
+  Indicator,
+  Pill,
+  Text,
+  Title,
+} from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UnknownShortener from '@/app/_components/UnknownShortener';
@@ -50,13 +62,13 @@ export default async function InspectorPage({ params }: Params) {
     return response;
   };
 
-  const getContent = async (url: URL): Promise<Record<string, any>> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/api/scrape`, {
+  const getContent = async (url: URL, shortUrl: URL): Promise<Record<string, any>> => {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/api/expand`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url: url.toString(), userAgent }),
+      body: JSON.stringify({ url: url.toString(), userAgent, shortUrl: shortUrl.toString() }),
     }).then(async (res) => {
       return await res.json();
     });
@@ -68,38 +80,43 @@ export default async function InspectorPage({ params }: Params) {
     console.log(metadata);
   };
 
-  const { status, url: fullUrl, redirected, headers: requestHeaders } = await getUrlInfo(url);
+  const renderTitle = (metadata: Array<Record<string, any>>): React.ReactNode => {
+    const titles = metadata.filter(
+      (meta) =>
+        meta?.name === 'title' ||
+        (typeof meta?.property !== 'undefined' && meta.property.endsWith(':title'))
+    );
 
-  const contentType = requestHeaders.get('content-type');
+    if (titles.length === 0) {
+      return null;
+    }
 
-  const { metadata, screenshotPath, favicons } = await getContent(url);
+    // prefer og:title -> title -> twitter:title
+    if (titles.find((meta) => meta?.property === 'og:title')) {
+      return (
+        <Title order={2}>{titles.find((meta) => meta?.property === 'og:title')?.content}</Title>
+      );
+    }
 
-  const charset =
-    metadata.find((meta: Record<string, any>) => {
-      return meta?.charset;
-    })?.charset ?? 'unknown';
+    if (titles.find((meta) => meta?.name === 'title')) {
+      return <Title order={2}>{titles.find((meta) => meta?.name === 'title')?.content}</Title>;
+    }
 
-  parseMetadata(metadata);
+    if (titles.find((meta) => meta?.property === 'twitter:title')) {
+      return (
+        <Title order={2}>
+          {titles.find((meta) => meta?.property === 'twitter:title')?.content}
+        </Title>
+      );
+    }
 
-  const displayUrl = new URL(fullUrl);
+    return null;
+  };
 
-  const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
-
-  let imageSrc;
-
-  try {
-    const { data } = await supabase.storage
-      .from('inspector-screenshots')
-      .getPublicUrl(screenshotPath);
-    imageSrc = data?.publicUrl;
-  } catch (error) {
-    console.error(error);
-  }
-
-  const pillColor = status >= 200 && status < 400 ? 'green' : 'red';
-  const shortLinkProvider = url.hostname;
-
-  const renderDescription = (metadata: Array<Record<string, any>>): React.ReactNode => {
+  const renderDescription = (
+    metadata: Array<Record<string, any>>,
+    favicon: string
+  ): React.ReactNode => {
     const descriptions = metadata.filter(
       (meta) =>
         meta?.name === 'description' ||
@@ -110,24 +127,31 @@ export default async function InspectorPage({ params }: Params) {
       return null;
     }
 
+    let description;
+
     // prefer og:description -> description -> twitter:description
     if (descriptions.find((meta) => meta?.property === 'og:description')) {
-      return (
-        <Text>{descriptions.find((meta) => meta?.property === 'og:description')?.content}</Text>
-      );
+      description = descriptions.find((meta) => meta?.property === 'og:description')?.content;
     }
 
     if (descriptions.find((meta) => meta?.name === 'description')) {
-      return <Text>{descriptions.find((meta) => meta?.name === 'description')?.content}</Text>;
+      description = descriptions.find((meta) => meta?.name === 'description')?.content;
     }
 
     if (descriptions.find((meta) => meta?.property === 'twitter:description')) {
-      return (
-        <Text>
-          {descriptions.find((meta) => meta?.property === 'twitter:description')?.content}
-        </Text>
-      );
+      description = descriptions.find((meta) => meta?.property === 'twitter:description')?.content;
     }
+
+    return (
+      <Center>
+        <Blockquote
+          cite={`- ${displayUrlNoQueryParams.toString()}`}
+          icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
+        >
+          {description}
+        </Blockquote>
+      </Center>
+    );
   };
 
   const renderSearchParams = (url: URL): React.ReactNode => {
@@ -160,25 +184,99 @@ export default async function InspectorPage({ params }: Params) {
     });
   };
 
-  return (
-    <Screen
-      title={
-        favicons?.[0] ? (
+  const { status, url: fullUrl, redirected, headers: requestHeaders } = await getUrlInfo(url);
+
+  const contentType = requestHeaders.get('content-type');
+
+  const pillColor = status >= 200 && status < 400 ? 'green' : 'red';
+
+  const shortLinkProvider = url.hostname;
+
+  const displayUrl = new URL(fullUrl);
+
+  const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
+
+  if (status > 100 && status < 400) {
+    const { metadata, screenshotPath, favicon } = await getContent(displayUrl, url);
+
+    const charset =
+      metadata.find((meta: Record<string, any>) => {
+        return meta?.charset;
+      })?.charset ?? 'unknown';
+
+    parseMetadata(metadata);
+
+    let imageSrc;
+
+    try {
+      const { data } = await supabase.storage
+        .from('inspector-screenshots')
+        .getPublicUrl(screenshotPath);
+      imageSrc = data?.publicUrl;
+    } catch (error) {
+      console.error(error);
+    }
+
+    return (
+      <Screen
+        title={
           <Group>
             <Text span inherit>
               Shortlink Inspector
             </Text>
-            <Indicator inline label={shortLinkProvider} size={16}>
-              <Avatar src={favicons?.[0]} radius={0} size="sm" />
-            </Indicator>
+            <Badge>{shortLinkProvider}</Badge>
           </Group>
-        ) : (
-          <Indicator inline label={shortLinkProvider} size={16}>
-            <Text span inherit>
-              Shortlink Inspector
+        }
+      >
+        {metadata && renderTitle(metadata)}
+        <Title order={3}>
+          <Group wrap="nowrap" align="center">
+            <Pill c="white" bg={pillColor} radius="xs">
+              {status}
+            </Pill>
+            <Text span inherit truncate="end">
+              <Anchor
+                rel="noreferrer"
+                href={displayUrlNoQueryParams.toString()}
+                underline="hover"
+                style={{ display: 'flex' }}
+              >
+                {displayUrlNoQueryParams.toString()}
+              </Anchor>
             </Text>
-          </Indicator>
-        )
+            <Pill radius="xs">{contentType}</Pill>
+            <Pill radius="xs">{charset}</Pill>
+          </Group>
+        </Title>
+        {redirected && (
+          <Text>
+            The destination of this shortened URL was redirected while retrieving the URL.
+          </Text>
+        )}
+        {imageSrc && (
+          <Anchor rel="noreferrer" href={displayUrlNoQueryParams.toString()} underline="never">
+            <Image
+              radius="sm"
+              src={imageSrc}
+              alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
+            />
+          </Anchor>
+        )}
+        {metadata && renderDescription(metadata, favicon)}
+        <Title order={3}>URL Parameters</Title>
+        <Group>{renderSearchParams(displayUrl)}</Group>
+      </Screen>
+    );
+  }
+
+  return (
+    <Screen
+      title={
+        <Indicator inline label={shortLinkProvider} size={16}>
+          <Text span inherit>
+            Shortlink Inspector
+          </Text>
+        </Indicator>
       }
     >
       <Title order={1}>
@@ -197,22 +295,11 @@ export default async function InspectorPage({ params }: Params) {
             </Anchor>
           </Text>
           <Pill radius="xs">{contentType}</Pill>
-          <Pill radius="xs">{charset}</Pill>
         </Group>
       </Title>
       {redirected && (
         <Text>The destination of this shortened URL was redirected while retrieving the URL.</Text>
       )}
-      {imageSrc && (
-        <Anchor rel="noreferrer" href={displayUrlNoQueryParams.toString()} underline="never">
-          <Image
-            radius="sm"
-            src={imageSrc}
-            alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
-          />
-        </Anchor>
-      )}
-      {metadata && renderDescription(metadata)}
       <Title order={3}>URL Parameters</Title>
       <Group>{renderSearchParams(displayUrl)}</Group>
     </Screen>

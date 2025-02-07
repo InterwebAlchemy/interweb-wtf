@@ -41,15 +41,6 @@
     "@tabler/icons-react": "^3.29.0",
     "cloudflare": "^4.0.0",
     "haikunator": "^2.1.2",
-    "metascraper": "^5.46.7",
-    "metascraper-author": "^5.46.5",
-    "metascraper-date": "^5.46.5",
-    "metascraper-description": "^5.46.5",
-    "metascraper-image": "^5.46.5",
-    "metascraper-logo": "^5.46.5",
-    "metascraper-logo-favicon": "^5.46.8",
-    "metascraper-title": "^5.46.5",
-    "metascraper-url": "^5.46.5",
     "next": "15.1.5",
     "playwright": "^1.50.1",
     "playwright-extra": "^4.3.6",
@@ -60,6 +51,7 @@
     "rehype-remark": "^10.0.0",
     "remark-stringify": "^11.0.0",
     "unified": "^11.0.5",
+    "unified-stream": "^3.0.0",
     "usehooks-ts": "^3.1.0"
   },
   "overrides": {
