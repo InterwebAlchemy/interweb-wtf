@@ -43,7 +43,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
   }
 }
 
-export async function getStaticPaths() {
+export async function generateStaticParams() {
   const supabase = await createClient();
 
   const { data, error } = await supabase.from('short_urls').select('slug');
