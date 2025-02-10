@@ -50,21 +50,21 @@ jobs:
       #   id: vercel-action-pr
       #   if: startsWith(github.head_ref, 'feature/') && github.base_ref == 'main'
       #   with:
-      #     vercel-project-name: work-with-me
+      #     vercel-project-name: interweb-wtf
       #     vercel-token: ${{ secrets.VERCEL_TOKEN }}
       #     github-token: ${{ secrets.GH_AUTH_TOKEN }}
       #     vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
       #     vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID}}
       #     scope: interweb-alchemy
       #     alias-domains: |
-      #       pr-{{PR_NUMBER}}-work-with-me.vercel.app
+      #       pr-{{PR_NUMBER}}-interweb-wtf.vercel.app
 
       - name: Deploy to Production
-        uses: amondnet/vercel-action@v20
+        uses: amondnet/vercel-action@v25
         id: vercel-action-production
         if: github.ref == 'refs/heads/main'
         with:
-          vercel-project-name: work-with-me
+          vercel-project-name: interweb-wtf
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           github-token: ${{ secrets.GH_AUTH_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID}}
