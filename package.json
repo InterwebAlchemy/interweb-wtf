@@ -67,6 +67,7 @@
     "jest": "jest",
     "jest:watch": "jest --watch",
     "lint": "npm run eslint && npm run stylelint",
+    "postinstall": "npx playwright install",
     "prepare": "is-ci || npm run prepare:local",
     "prepare:env": "path-exists ./.env.local || cp ./.env.example ./.env.local",
     "prepare:husky": "husky install",
