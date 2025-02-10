@@ -18,13 +18,9 @@ export async function POST(request: NextRequest) {
     const { data } = await supabase.from('url_summaries').select('*').eq('id', url_id).single();
 
     if (data !== null) {
-      return {
+      return new NextResponse(JSON.stringify(data), {
         status: 200,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      };
+      });
     }
   } catch (error) {
     console.error('GET URL SUMMARY ERROR:', error);
