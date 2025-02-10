@@ -76,6 +76,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           created_at: string
+          email: string
           first_visit: boolean
           id: string
           last_seen: string
@@ -84,6 +85,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           created_at?: string
+          email: string
           first_visit?: boolean
           id: string
           last_seen?: string
@@ -92,6 +94,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           created_at?: string
+          email?: string
           first_visit?: boolean
           id?: string
           last_seen?: string
@@ -286,6 +289,35 @@ export type Database = {
             foreignKeyName: "url_stats_url_id_fkey"
             columns: ["url_id"]
             isOneToOne: true
+            referencedRelation: "short_urls"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      url_summaries: {
+        Row: {
+          created_at: string
+          id: number
+          summary: string | null
+          url_id: number
+        }
+        Insert: {
+          created_at?: string
+          id?: number
+          summary?: string | null
+          url_id: number
+        }
+        Update: {
+          created_at?: string
+          id?: number
+          summary?: string | null
+          url_id?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "url_summaries_url_id_fkey"
+            columns: ["url_id"]
+            isOneToOne: false
             referencedRelation: "short_urls"
             referencedColumns: ["id"]
           },

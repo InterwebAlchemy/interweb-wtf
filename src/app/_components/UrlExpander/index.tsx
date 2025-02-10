@@ -22,6 +22,7 @@ export default function UrlExpander() {
         placeholder="https://bit.ly/short-url"
         submitButton={<IconEyePlus />}
         onSubmit={onSubmit}
+        submitTitle="Expand URL"
       />
     </Center>
   );

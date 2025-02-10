@@ -1,5 +1,7 @@
 import { headers } from 'next/headers';
+import { IconWorldWww } from '@tabler/icons-react';
 import {
+  ActionIcon,
   Anchor,
   Avatar,
   Badge,
@@ -16,7 +18,10 @@ import {
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UnknownShortener from '@/app/_components/UnknownShortener';
+import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
 import { KNOWN_SHORTENERS, KNOWN_TRACKING_PARAM_PREFIXES } from '@/constants';
+
+import '@/app/_styles/info.css';
 
 type Params = {
   params: Promise<{
@@ -82,80 +87,6 @@ export default async function InspectorPage({ params }: Params) {
   //   console.log(metadata);
   // };
 
-  const renderTitle = (metadata: Array<Record<string, any>>): React.ReactNode => {
-    const titles = metadata.filter(
-      (meta) =>
-        meta?.name === 'title' ||
-        (typeof meta?.property !== 'undefined' && meta.property.endsWith(':title'))
-    );
-
-    if (titles.length === 0) {
-      return null;
-    }
-
-    // prefer og:title -> title -> twitter:title
-    if (titles.find((meta) => meta?.property === 'og:title')) {
-      return (
-        <Title order={2}>{titles.find((meta) => meta?.property === 'og:title')?.content}</Title>
-      );
-    }
-
-    if (titles.find((meta) => meta?.name === 'title')) {
-      return <Title order={2}>{titles.find((meta) => meta?.name === 'title')?.content}</Title>;
-    }
-
-    if (titles.find((meta) => meta?.property === 'twitter:title')) {
-      return (
-        <Title order={2}>
-          {titles.find((meta) => meta?.property === 'twitter:title')?.content}
-        </Title>
-      );
-    }
-
-    return null;
-  };
-
-  const renderDescription = (
-    metadata: Array<Record<string, any>>,
-    favicon: string
-  ): React.ReactNode => {
-    const descriptions = metadata.filter(
-      (meta) =>
-        meta?.name === 'description' ||
-        (typeof meta?.property !== 'undefined' && meta.property.endsWith(':description'))
-    );
-
-    if (descriptions.length === 0) {
-      return null;
-    }
-
-    let description;
-
-    // prefer og:description -> description -> twitter:description
-    if (descriptions.find((meta) => meta?.property === 'og:description')) {
-      description = descriptions.find((meta) => meta?.property === 'og:description')?.content;
-    }
-
-    if (descriptions.find((meta) => meta?.name === 'description')) {
-      description = descriptions.find((meta) => meta?.name === 'description')?.content;
-    }
-
-    if (descriptions.find((meta) => meta?.property === 'twitter:description')) {
-      description = descriptions.find((meta) => meta?.property === 'twitter:description')?.content;
-    }
-
-    return (
-      <Center>
-        <Blockquote
-          cite={`- ${displayUrlNoQueryParams.toString()}`}
-          icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
-        >
-          {description}
-        </Blockquote>
-      </Center>
-    );
-  };
-
   const renderSearchParams = (url: URL): React.ReactNode => {
     const searchParams = url.searchParams;
 
@@ -198,7 +129,7 @@ export default async function InspectorPage({ params }: Params) {
 
   const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
 
-  if (status > 100 && status < 400) {
+  if (status >= 200 && status < 400) {
     const { metadata, screenshotPath, favicon } = await getContent(displayUrl, url);
 
     const charset =
@@ -220,18 +151,38 @@ export default async function InspectorPage({ params }: Params) {
       console.error(error);
     }
 
+    const description = getPageDescription(metadata);
+
+    const isImageDescription =
+      description.startsWith('http') &&
+      (description.endsWith('.jpg') ||
+        description.endsWith('.png') ||
+        description.endsWith('.jpeg') ||
+        description.endsWith('.gif') ||
+        description.endsWith('.webp') ||
+        description.endsWith('.svg'));
+
     return (
       <Screen
         title={
-          <Group>
+          <Group align="center">
             <Text span inherit>
               Shortlink Expander
             </Text>
             <Badge>{shortLinkProvider}</Badge>
+            {status >= 200 && status < 400 ? (
+              <Anchor href={fullUrl} title="Go to full URL" rel="noreferrer" ml="auto">
+                <ActionIcon bg="violet">
+                  <IconWorldWww />
+                </ActionIcon>
+              </Anchor>
+            ) : (
+              <></>
+            )}
           </Group>
         }
       >
-        {metadata && renderTitle(metadata)}
+        <Title order={2}>{getPageTitle(metadata)}</Title>
         <Title order={3}>
           <Group wrap="nowrap" align="center">
             <Pill c="white" bg={pillColor} radius="xs">
@@ -257,7 +208,12 @@ export default async function InspectorPage({ params }: Params) {
           </Text>
         )}
         {imageSrc && (
-          <Anchor rel="noreferrer" href={displayUrlNoQueryParams.toString()} underline="never">
+          <Anchor
+            id="page-screenshot"
+            rel="noreferrer"
+            href={displayUrlNoQueryParams.toString()}
+            underline="never"
+          >
             <Image
               radius="sm"
               src={imageSrc}
@@ -265,9 +221,27 @@ export default async function InspectorPage({ params }: Params) {
             />
           </Anchor>
         )}
-        {metadata && renderDescription(metadata, favicon)}
-        <Title order={3}>URL Parameters</Title>
-        <Group>{renderSearchParams(displayUrl)}</Group>
+        <Center my="md">
+          <Blockquote
+            cite={`- ${displayUrlNoQueryParams.toString()}`}
+            icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
+          >
+            {isImageDescription ? (
+              <Image
+                src={description}
+                alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
+              />
+            ) : (
+              description
+            )}
+          </Blockquote>
+        </Center>
+        {displayUrl.searchParams.size > 0 && (
+          <Stack>
+            <Title order={3}>URL Parameters</Title>
+            <Group>{renderSearchParams(displayUrl)}</Group>
+          </Stack>
+        )}
       </Screen>
     );
   }

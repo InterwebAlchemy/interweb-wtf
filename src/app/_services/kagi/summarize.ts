@@ -27,23 +27,29 @@ export const summarize = async (url: string | URL): Promise<SummarizerServiceRes
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `BOT ${process.env.KAGI_SUMMARIZER_TOKEN}`,
+        Authorization: `Bot ${process.env.KAGI_SUMMARIZER_TOKEN}`,
       },
       body: JSON.stringify({
         url: url.toString(),
         target_language: 'EN',
       }),
-    }).then(async (response) => {
-      if (response.ok) {
-        return await response.json();
-      }
-    });
+    })
+      .then(async (response) => {
+        console.log(response);
+        if (response.ok) {
+          return await response.json();
+        }
+      })
+      .then((response) => {
+        console.log(response);
+        return response;
+      });
 
     return {
       summary: data.output,
     };
   } catch (error) {
-    console.error(error);
+    console.error('ERROR:', error);
 
     return {
       error: true,

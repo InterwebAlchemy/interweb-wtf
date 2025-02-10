@@ -27,15 +27,42 @@ export default function Nav() {
   const [avatar, setAvatar] = useState<string>();
 
   const onUrlInputSubmit = async (url: string): Promise<void> => {
-    console.log(`Shortening URL: ${url}`);
-
     await fetch('/api/shorten', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url }),
-    });
+      body: JSON.stringify({ url, userAgent: navigator.userAgent }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          return await res.json();
+        }
+      })
+      .then(async (response) => {
+        const { slug, id } = response;
+
+        await fetch('/api/summarize', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url, url_id: id }),
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              return await res.json();
+            }
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+        router.push(`/go/${slug}/info`);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   useEffect(() => {
@@ -82,7 +109,10 @@ export default function Nav() {
       </Drawer>
       <header>
         <Group justify="center" align="center">
-          <Link href="/" style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}>
+          <Link
+            href={!user ? '/' : '/dashboard'}
+            style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}
+          >
             <Group align="center" gap="5px">
               <ThemeIcon size="lg" color="violet">
                 <IconWorldQuestion />

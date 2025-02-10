@@ -1,7 +1,7 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
+import { redirect } from 'next/navigation';
 import { Box, Center, Stack, Table, Text } from '@mantine/core';
 import UrlInput from '@/app/_components/UrlInput';
 import { Tables } from '@/types/supabase';
@@ -11,35 +11,60 @@ export interface UrlDashboardProps {
 }
 
 export default function UrlDashboard({ urls }: UrlDashboardProps) {
-  const [dashboardUrls, setDashboardUrls] = useState(urls);
-
   const onSubmit = async (url: string): Promise<void> => {
-    const newUrl = await fetch('/api/shorten', {
+    const slug = await fetch('/api/shorten', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ url }),
-    }).then(async (res) => {
-      if (res.ok) {
-        return await res.json();
-      }
-    });
+      body: JSON.stringify({ url, userAgent: navigator.userAgent }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          return await res.json();
+        }
+      })
+      .then(async (response) => {
+        const { slug, id } = response;
 
-    if (newUrl) {
-      console.log(newUrl);
-      setDashboardUrls((prev) => {
-        return [...prev, newUrl];
+        console.log(slug, id, response);
+
+        await fetch('/api/summarize', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url, url_id: id }),
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              return await res.json();
+            }
+          })
+          .then(async (response) => {
+            console.log(response);
+          })
+          .catch((error) => {
+            console.error(error);
+          });
+
+        return slug;
+      })
+      .catch((error) => {
+        console.error(error);
       });
+
+    if (slug) {
+      redirect(`/go/${slug}/info`);
     }
   };
 
   const renderRows = () => {
-    return dashboardUrls.map((url) => {
+    return urls.map((url) => {
       return (
         <Table.Tr key={url.id}>
           <Table.Td>
-            <Link href={`/manage/${url.slug}`}>{url.slug}</Link>
+            <Link href={`/go/${url.slug}/info`}>{url.slug}</Link>
           </Table.Td>
           <Table.Td>
             <Text>{url.url}</Text>
@@ -58,7 +83,7 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
         <UrlInput onSubmit={onSubmit} />
       </Box>
       <Stack h="100%">
-        {dashboardUrls.length === 0 ? (
+        {urls.length === 0 ? (
           <Center h="80%">
             <Text>You haven't created any WTF Links yet.</Text>
           </Center>

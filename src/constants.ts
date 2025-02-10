@@ -1,3 +1,6 @@
+// refresh after 2 weeks
+export const STORAGE_REFRESH_INTERVAL = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
+
 export const KNOWN_DOMAINS = [
   'reddit.com',
   'wikipedia.org',

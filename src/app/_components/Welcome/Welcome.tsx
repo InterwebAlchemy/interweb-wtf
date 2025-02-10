@@ -12,15 +12,7 @@ export function Welcome() {
 
   return (
     <>
-      <Title order={1} mb="100">
-        Simple.{' '}
-        <Anchor inherit c="violet" td="underline" href="/is" component={Link}>
-          Inspectable
-        </Anchor>
-        {'. '}
-        Shortlinks.
-      </Title>
-      <Title order={2} size="h3">
+      <Title order={2} mb="20" size="h1">
         {url.hostname}/go
         <Text span inherit c="violet">
           /<CipherText text={slug} speed={50} />
@@ -28,6 +20,14 @@ export function Welcome() {
         <Text span inherit c="gray">
           /<CipherText text="info" speed={100} />
         </Text>
+      </Title>
+      <Title order={1} mb="100" size="h3">
+        Simple.{' '}
+        <Anchor inherit c="violet" td="underline" href="/is" component={Link}>
+          Inspectable
+        </Anchor>
+        {'. '}
+        Shortlinks.
       </Title>
     </>
   );

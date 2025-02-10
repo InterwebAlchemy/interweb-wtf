@@ -9,6 +9,7 @@ export default withBundleAnalyzer({
   eslint: {
     ignoreDuringBuilds: true,
   },
+  serverExternalPackages: ['playwright-extra', 'puppeteer-extra-plugin-stealth'],
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },

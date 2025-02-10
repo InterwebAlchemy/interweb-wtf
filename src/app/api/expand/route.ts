@@ -3,15 +3,15 @@
 import { NextRequest, NextResponse } from 'next/server';
 // import { subtle } from 'node:crypto';
 import { chromium } from 'playwright';
+import { createClient } from '@/app/_adapters/supabase/server';
 // import rehypeParse from 'rehype-parse';
 // import rehypeRemark from 'rehype-remark';
 // import remarkStringify from 'remark-stringify';
 // import { unified } from 'unified';
 // TODO: url scanning
 // import cloudflare from '@/app/_services/cloudflare';
-// import { KNOWN_DOMAINS } from '@/app/constants';
-
-import { createClient } from '@/app/_adapters/supabase/server';
+// import { KNOWN_DOMAINS } from '@/constants';
+import { STORAGE_REFRESH_INTERVAL } from '@/constants';
 
 export interface RequestProps {
   url: string;
@@ -31,9 +31,6 @@ export async function POST(request: NextRequest) {
   const provider = shortUrlObj.hostname;
 
   const supabase = await createClient();
-
-  // refresh after 2 weeks
-  const storageRefreshInterval = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
   let providerId;
   let snapshot;
@@ -168,15 +165,30 @@ export async function POST(request: NextRequest) {
       let favicon;
 
       for (const f of await faviconElements.all()) {
-        // prefer apple-touch-icon -> icon -> shortcut icon
+        // prefer apple-touch-icon -> shortcut icon -> type=image/vnd.microsoft.icon -> icon
         if ((await f.getAttribute('rel')) === 'apple-touch-icon') {
           favicon = await f.getAttribute('href');
           break;
+        } else if ((await f.getAttribute('rel')) === 'shortcut icon') {
+          favicon = await f.getAttribute('href');
+          break;
         } else if ((await f.getAttribute('rel')) === 'icon') {
-          favicon = await f.getAttribute('href');
-        } else if ((await f.getAttribute('rel')) === 'shortcut icon' && !favicon) {
-          favicon = await f.getAttribute('href');
+          // check for [type="image/vnd.microsoft.icon"]
+          const type = await f.getAttribute('type');
+
+          if (type === 'image/vnd.microsoft.icon') {
+            favicon = await f.getAttribute('href');
+            break;
+          }
+
+          if (!favicon) {
+            favicon = await f.getAttribute('href');
+          }
         }
+      }
+
+      if (favicon) {
+        favicon = new URL(favicon, urlObj.origin).toString();
       }
 
       try {
@@ -202,7 +214,7 @@ export async function POST(request: NextRequest) {
                   return false;
                 }
 
-                return new Date(s.created_at) >= storageRefreshInterval;
+                return new Date(s.created_at) >= STORAGE_REFRESH_INTERVAL;
               })?.name
             }`;
 
@@ -226,8 +238,6 @@ export async function POST(request: NextRequest) {
               .filter((part) => part)
               .join('/');
 
-            screenshot = finalScreenshotPath;
-
             supabase.storage
               .from('inspector-screenshots')
               .upload(finalScreenshotPath, screenshotImg);
@@ -235,6 +245,8 @@ export async function POST(request: NextRequest) {
             console.error(error);
           }
         }
+
+        screenshot = finalScreenshotPath;
 
         // try {
         //   let finalSnapshotPath;
@@ -264,7 +276,7 @@ export async function POST(request: NextRequest) {
         //           return false;
         //         }
 
-        //         return new Date(s.created_at) >= storageRefreshInterval;
+        //         return new Date(s.created_at) >= STORAGE_REFRESH_INTERVAL;
         //       })?.name;
         //     }
         //   }
@@ -310,7 +322,7 @@ export async function POST(request: NextRequest) {
         // }
 
         try {
-          await supabase.from('expanded_urls').insert([
+          const { error } = await supabase.from('expanded_urls').insert([
             {
               expanded_url: urlObj.toString(),
               short_url: shortUrlObj.toString(),
@@ -321,6 +333,10 @@ export async function POST(request: NextRequest) {
               screenshot,
             },
           ]);
+
+          if (error) {
+            console.error(error);
+          }
         } catch (error) {
           console.error(error);
         }
