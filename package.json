@@ -109,6 +109,7 @@
     "usehooks-ts": "^3.1.0"
   },
   "overrides": {
+    "esbuild": ">=0.25.0",
     "usehooks-ts": {
       "react": "^19"
     },
