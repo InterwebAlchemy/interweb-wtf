@@ -42,25 +42,3 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
     return new NextResponse(JSON.stringify({ message: 'Not found' }), { status: 404 });
   }
 }
-
-export async function generateStaticParams() {
-  const supabase = await createClient();
-
-  const { data, error } = await supabase.from('short_urls').select('slug');
-
-  if (error) {
-    console.error(error);
-  }
-
-  if (typeof data !== 'undefined' && data !== null) {
-    return {
-      paths: data.map(({ slug }) => ({ params: { slug } })),
-      fallback: true,
-    };
-  }
-
-  return {
-    paths: [],
-    fallback: true,
-  };
-}
