@@ -22,8 +22,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.GH_AUTH_TOKEN }}
 
       - name: Configure git
         run: |
@@ -79,6 +77,7 @@ jobs:
       - name: Push Changes to Type Definitions
         if: steps.git-check.outputs.modified == 'true'
         run: |
+
           git add .
           git commit -m 'chore(types): update supabase type definitions'
           git push origin HEAD:main
