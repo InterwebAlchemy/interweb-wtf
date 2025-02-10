@@ -1,5 +1,6 @@
+import Link from 'next/link';
 import Haikunator from 'haikunator';
-import { Text, Title } from '@mantine/core';
+import { Anchor, Text, Title } from '@mantine/core';
 import CipherText from '../CipherText';
 
 const haikunator = new Haikunator();
@@ -13,9 +14,10 @@ export function Welcome() {
     <>
       <Title order={1} mb="100">
         Simple.{' '}
-        <Text span inherit c="violet" td="underline">
-          Inspectable.
-        </Text>{' '}
+        <Anchor inherit c="violet" td="underline" href="/is" component={Link}>
+          Inspectable
+        </Anchor>
+        {'. '}
         Shortlinks.
       </Title>
       <Title order={2} size="h3">

@@ -1,12 +1,63 @@
 {
-  "name": "mantine-next-template",
+  "name": "interweb.wtf",
   "version": "1.0.0",
   "private": true,
+  "release": {
+    "branches": [
+      "main"
+    ],
+    "analyzeCommits": {
+      "releaseRules": [
+        {
+          "type": "chore",
+          "release": "patch"
+        },
+        {
+          "type": "fix",
+          "release": "patch"
+        },
+        {
+          "type": "feat",
+          "release": "minor"
+        }
+      ]
+    },
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      [
+        "@semantic-release/release-notes-generator",
+        {
+          "preset": "conventionalcommits",
+          "presetConfig": {
+            "types": [
+              {
+                "type": "feat",
+                "section": "Features"
+              },
+              {
+                "type": "fix",
+                "section": "Bug Fixes"
+              },
+              {
+                "type": "chore",
+                "section": "Chores",
+                "hidden": false
+              }
+            ]
+          }
+        }
+      ],
+      "@semantic-release/git",
+      "@semantic-release/github"
+    ]
+  },
   "scripts": {
     "analyze": "ANALYZE=true next build",
-    "build": "next build",
+    "build": "npm run build:types && npm run build:app",
     "build:app": "next build",
-    "build:types": "npx supabase gen types typescript --local > ./src/types/supabase.ts",
+    "build:types": "is-ci && npm run build:types:supabase || dotenv -e .env.local -- npm run build:types:supabase",
+    "build:types:supabase": "npx supabase gen types typescript --project-id \"$NEXT_PUBLIC_SUPABASE_PROJECT_ID\" --schema public > ./src/types/supabase.ts",
+    "build:types:local": "npx supabase gen types typescript --project-id \"$NEXT_PUBLIC_SUPABASE_PROJECT_ID\" --schema public > ./src/types/supabase.ts",
     "dev": "npm run dev:supabase && npm run dev:app",
     "dev:app": "next dev",
     "dev:supabase": "npm run dev:supabase:start && npm run dev:supabase:types",
@@ -76,6 +127,7 @@
     "@types/node": "^22.10.7",
     "@types/react": "19.0.7",
     "babel-loader": "^9.2.1",
+    "dotenv-cli": "^8.0.0",
     "eslint": "^9.18.0",
     "eslint-config-mantine": "^4.0.3",
     "eslint-plugin-jsx-a11y": "^6.10.2",

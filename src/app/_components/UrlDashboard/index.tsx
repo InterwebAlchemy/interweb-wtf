@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { Box, Stack, Table, Text } from '@mantine/core';
+import { Box, Center, Stack, Table, Text } from '@mantine/core';
 import UrlInput from '@/app/_components/UrlInput';
 import { Tables } from '@/types/supabase';
 
@@ -53,12 +53,16 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
   };
 
   return (
-    <Stack>
-      <Box>
+    <Stack h="100%">
+      <Box w="70%" mx="auto">
         <UrlInput onSubmit={onSubmit} />
       </Box>
-      <Box>
-        <Stack>
+      <Stack h="100%">
+        {dashboardUrls.length === 0 ? (
+          <Center h="80%">
+            <Text>You haven't created any WTF Links yet.</Text>
+          </Center>
+        ) : (
           <Table>
             <Table.Thead>
               <Table.Tr>
@@ -75,8 +79,8 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
             </Table.Thead>
             <Table.Tbody>{renderRows()}</Table.Tbody>
           </Table>
-        </Stack>
-      </Box>
+        )}
+      </Stack>
     </Stack>
   );
 }

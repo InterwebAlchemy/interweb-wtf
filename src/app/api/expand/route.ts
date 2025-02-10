@@ -50,8 +50,6 @@ export async function POST(request: NextRequest) {
       console.error(error);
     }
 
-    console.log(data, provider);
-
     if (!data || data.length === 0) {
       const { data, error } = await supabase
         .from('short_url_providers')

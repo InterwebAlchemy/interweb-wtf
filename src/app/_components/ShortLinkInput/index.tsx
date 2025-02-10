@@ -26,7 +26,7 @@ export default function ShortLinkInput({ slug, linkId }: ShortLinkInputProps) {
   return (
     <Group>
       <Text fw="bold">interweb.wtf/go/</Text>
-      <UrlInput defaultValue={slug} onSubmit={onEdit} slug />
+      <UrlInput defaultValue={slug} onSubmit={onEdit} slug readOnly />
     </Group>
   );
 }

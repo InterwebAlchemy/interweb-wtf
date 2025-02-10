@@ -1,7 +1,7 @@
 import { Center, Stack } from '@mantine/core';
+import Intro from '@/app/_components/Intro';
 import Screen from '@/app/_components/Screen';
 import { Welcome } from '@/app/_components/Welcome/Welcome';
-import Intro from './_components/Intro';
 
 export default function HomePage() {
   return (

@@ -11,6 +11,8 @@ export default function useUserProfile() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
+
     (async function () {
       try {
         const supabase = await createClient();

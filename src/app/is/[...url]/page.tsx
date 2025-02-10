@@ -9,6 +9,7 @@ import {
   Image,
   Indicator,
   Pill,
+  Stack,
   Text,
   Title,
 } from '@mantine/core';
@@ -76,9 +77,10 @@ export default async function InspectorPage({ params }: Params) {
     return response;
   };
 
-  const parseMetadata = (metadata: Record<string, any>): void => {
-    console.log(metadata);
-  };
+  // TODO: grab extra details from metadata
+  // const parseMetadata = (metadata: Record<string, any>): void => {
+  //   console.log(metadata);
+  // };
 
   const renderTitle = (metadata: Array<Record<string, any>>): React.ReactNode => {
     const titles = metadata.filter(
@@ -204,7 +206,8 @@ export default async function InspectorPage({ params }: Params) {
         return meta?.charset;
       })?.charset ?? 'unknown';
 
-    parseMetadata(metadata);
+    // TODO: grab extra details from metadata
+    // parseMetadata(metadata);
 
     let imageSrc;
 
@@ -222,7 +225,7 @@ export default async function InspectorPage({ params }: Params) {
         title={
           <Group>
             <Text span inherit>
-              Shortlink Inspector
+              Shortlink Expander
             </Text>
             <Badge>{shortLinkProvider}</Badge>
           </Group>
@@ -274,7 +277,7 @@ export default async function InspectorPage({ params }: Params) {
       title={
         <Indicator inline label={shortLinkProvider} size={16}>
           <Text span inherit>
-            Shortlink Inspector
+            Shortlink Expander
           </Text>
         </Indicator>
       }
@@ -300,8 +303,12 @@ export default async function InspectorPage({ params }: Params) {
       {redirected && (
         <Text>The destination of this shortened URL was redirected while retrieving the URL.</Text>
       )}
-      <Title order={3}>URL Parameters</Title>
-      <Group>{renderSearchParams(displayUrl)}</Group>
+      {displayUrl.searchParams.size > 0 && (
+        <Stack>
+          <Title order={3}>URL Parameters</Title>
+          <Group>{renderSearchParams(displayUrl)}</Group>
+        </Stack>
+      )}
     </Screen>
   );
 }

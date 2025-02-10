@@ -1,3 +1,4 @@
+import { cookies } from 'next/headers';
 import { permanentRedirect, redirect, RedirectType } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
@@ -7,7 +8,9 @@ export interface RequestProps {
 }
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<RequestProps> }) {
+  const cookieStore = await cookies();
   const slug = (await params)?.slug;
+  const skipInfoInterstitial = cookieStore.get('skip_info_interstitial');
 
   if (typeof slug !== 'undefined') {
     const supabase = await createClient();
@@ -29,7 +32,11 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
     const redirectUrl = data[0].url;
 
     if (redirectUrl) {
-      permanentRedirect(redirectUrl, RedirectType.replace);
+      if (typeof skipInfoInterstitial !== 'undefined' && skipInfoInterstitial.value === 'true') {
+        permanentRedirect(redirectUrl, RedirectType.replace);
+      } else {
+        redirect(`/go/${slug}/info`);
+      }
     }
   } else {
     return new NextResponse(JSON.stringify({ message: 'Not found' }), { status: 404 });

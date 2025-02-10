@@ -6,17 +6,21 @@ import { usePathname, useRouter } from 'next/navigation';
 import { IconWorldQuestion } from '@tabler/icons-react';
 import { Avatar, Drawer, Group, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
+import Login from '@/app/_components/Login';
 import UrlInput from '@/app/_components/UrlInput';
 import useUserProfile from '@/app/_hooks/useUserProfile';
 import { signOut } from '@/app/_services/github/auth';
 
-const links = [{ link: '/dashboard', label: 'Dashboard' }];
+const links = [
+  { link: '/dashboard', label: 'Dashboard' },
+  { link: '/is', label: 'Expander' },
+];
 
 export default function Nav() {
   const router = useRouter();
   const pathname = usePathname();
 
-  const { loading, profile } = useUserProfile();
+  const { user, loading, profile } = useUserProfile();
 
   const [opened, { open, close }] = useDisclosure(false);
 
@@ -78,10 +82,7 @@ export default function Nav() {
       </Drawer>
       <header>
         <Group justify="center" align="center">
-          <Link
-            href={profile ? '/dashboard' : '/'}
-            style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}
-          >
+          <Link href="/" style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}>
             <Group align="center" gap="5px">
               <ThemeIcon size="lg" color="violet">
                 <IconWorldQuestion />
@@ -92,10 +93,14 @@ export default function Nav() {
             </Group>
           </Link>
 
-          {!loading && avatar && (
-            <UnstyledButton style={{ marginLeft: 'auto' }} onClick={open}>
-              <Avatar src={avatar} alt="User avatar" />
-            </UnstyledButton>
+          {!loading && !user && pathname !== '/login' ? (
+            <Login />
+          ) : (
+            avatar && (
+              <UnstyledButton style={{ marginLeft: 'auto' }} onClick={open}>
+                <Avatar src={avatar} alt="User avatar" />
+              </UnstyledButton>
+            )
           )}
         </Group>
       </header>
