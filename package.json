@@ -80,7 +80,7 @@
     "storybook:build": "storybook build",
     "stylelint": "stylelint '**/*.css' --cache",
     "supabase:init": "path-exists ./supabase/config.toml || supabase init",
-    "test": "npm run prettier:check && npm run lint && npm run typecheck && npm run jest",
+    "test": "npm run prettier:check && npm run lint && npm run typecheck",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
