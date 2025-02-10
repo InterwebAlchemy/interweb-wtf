@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import Haikunator from 'haikunator';
-import { chromium } from 'playwright-extra';
-import stealth from 'puppeteer-extra-plugin-stealth';
+import { chromium } from 'playwright';
+// TODO: enable stealth
+// import { chromium } from 'playwright-extra';
+// import stealth from 'puppeteer-extra-plugin-stealth';=
 import { createClient } from '@/app/_adapters/supabase/server';
 import { removeTrackingParams } from '@/app/_utils/url';
 import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
@@ -118,7 +120,8 @@ export async function POST(request: NextRequest) {
       };
 
       try {
-        chromium.use(stealth());
+        // TODO: enable stealth
+        // chromium.use(stealth());
 
         const browser = await chromium.launch(launchOptions);
 
