@@ -215,6 +215,10 @@ export async function POST(request: NextRequest) {
             favicon = new URL(favicon, urlObj.origin).toString();
           }
 
+          const screenshotImg = await page.screenshot({ type: 'png' });
+
+          await browser.close();
+
           try {
             let finalScreenshotPath;
 
@@ -252,8 +256,6 @@ export async function POST(request: NextRequest) {
             if (!finalScreenshotPath) {
               try {
                 const screenshotName = `${screenshotPath}/${new Date().toISOString()}.png`;
-
-                const screenshotImg = await page.screenshot({ type: 'png' });
 
                 finalScreenshotPath = screenshotName;
 
@@ -360,8 +362,6 @@ export async function POST(request: NextRequest) {
             } catch (error) {
               console.error(error);
             }
-
-            await browser.close();
 
             return new NextResponse(JSON.stringify({ ...storedUrl }), {
               status: 201,
