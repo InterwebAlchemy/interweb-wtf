@@ -2,7 +2,8 @@
 
 import { NextRequest, NextResponse } from 'next/server';
 // import { subtle } from 'node:crypto';
-import { chromium } from 'playwright';
+import chromium from '@sparticuz/chromium';
+import { chromium as playwright } from 'playwright-core';
 import { createClient } from '@/app/_adapters/supabase/server';
 // import rehypeParse from 'rehype-parse';
 // import rehypeRemark from 'rehype-remark';
@@ -101,15 +102,18 @@ export async function POST(request: NextRequest) {
 
   // scrape url with playwright
   const launchOptions = {
-    headless: true,
+    args: chromium.args,
+    defaultViewport: chromium.defaultViewport,
+    executablePath: await chromium.executablePath(),
+    headless: chromium.headless,
     chromiumSandbox: true,
-    env: {},
     timeout: 5000,
     userAgent,
   };
 
   try {
-    const browser = await chromium.launch(launchOptions);
+    // @ts-expect-error - chromium types are incomplete
+    const browser = await playwright.launch(launchOptions);
 
     const context = await browser.newContext();
 
@@ -341,6 +345,8 @@ export async function POST(request: NextRequest) {
           console.error(error);
         }
 
+        await browser.close();
+
         return new NextResponse(
           JSON.stringify({ metadata, screenshotPath: finalScreenshotPath, favicon }),
           {
@@ -350,10 +356,14 @@ export async function POST(request: NextRequest) {
       } catch (error) {
         console.error(error);
 
+        await browser.close();
+
         return new NextResponse(JSON.stringify({ metadata, favicon }), { status: 201 });
       }
     } catch (error) {
       console.error(error);
+
+      await browser.close();
 
       return new NextResponse(JSON.stringify({ message: 'Could not scrape URL' }), {
         status: 500,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
+import chromium from '@sparticuz/chromium';
 import Haikunator from 'haikunator';
-import { chromium } from 'playwright';
+import { chromium as playwright } from 'playwright-core';
 // TODO: enable stealth
 // import { chromium } from 'playwright-extra';
 // import stealth from 'puppeteer-extra-plugin-stealth';=
@@ -112,9 +113,11 @@ export async function POST(request: NextRequest) {
 
       // scrape url with playwright
       const launchOptions = {
-        headless: true,
+        args: chromium.args,
+        defaultViewport: chromium.defaultViewport,
+        executablePath: await chromium.executablePath(),
+        headless: chromium.headless,
         chromiumSandbox: true,
-        env: {},
         timeout: 5000,
         userAgent,
       };
@@ -123,8 +126,8 @@ export async function POST(request: NextRequest) {
         // TODO: enable stealth
         // chromium.use(stealth());
 
-        const browser = await chromium.launch(launchOptions);
-
+        // @ts-expect-error - chromium package types are different
+        const browser = await playwright.launch(launchOptions);
         const context = await browser.newContext();
 
         const page = await context.newPage();
@@ -357,16 +360,22 @@ export async function POST(request: NextRequest) {
               console.error(error);
             }
 
+            await browser.close();
+
             return new NextResponse(JSON.stringify({ ...storedUrl }), {
               status: 201,
             });
           } catch (error) {
             console.error(error);
 
+            await browser.close();
+
             return new NextResponse(JSON.stringify({ ...storedUrl }), { status: 201 });
           }
         } catch (error) {
           console.error(error);
+
+          await browser.close();
 
           return new NextResponse(JSON.stringify({ message: 'Could not scrape URL' }), {
             status: 500,
