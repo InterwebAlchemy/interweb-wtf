@@ -18,12 +18,11 @@ export default function InterstitialCheckbox() {
 
   useEffect(() => {
     // get the cookie value
-    const cookieValue = Boolean(
+    const cookieValue =
       document.cookie
         .split('; ')
         .find((row) => row.startsWith('skip_info_interstitial'))
-        ?.split('=')[1]
-    );
+        ?.split('=')[1] === 'true';
 
     setSkipInspector(cookieValue);
   }, []);
