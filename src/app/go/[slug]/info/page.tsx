@@ -38,10 +38,22 @@ export default async function InspectorPage({ params }: Params) {
     data: { title, description, metadata, screenshot, favicon },
   } = await supabase.from('url_info').select('*').eq('url_id', id).single();
 
+  let summary;
+
   // TODO: render summary as Markdown
-  const {
-    data: { summary },
-  } = await supabase.from('url_summaries').select('*').eq('url_id', id).single();
+  const { data: summaryData, error: summaryError } = await supabase
+    .from('url_summaries')
+    .select('*')
+    .eq('url_id', id)
+    .single();
+
+  if (summaryError) {
+    console.error(summaryError);
+  }
+
+  if (summaryData && summaryData?.summary) {
+    summary = summaryData?.summary;
+  }
 
   const getUrlInfo = async (url: URL): Promise<Response> => {
     const response = await fetch(url.href);
