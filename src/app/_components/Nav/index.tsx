@@ -9,6 +9,7 @@ import {
   Avatar,
   Drawer,
   Group,
+  Indicator,
   Stack,
   Text,
   ThemeIcon,
@@ -122,14 +123,24 @@ export default function Nav() {
             href={!user ? '/' : '/dashboard'}
             style={{ marginRight: 'auto', textDecoration: 'none', color: 'inherit' }}
           >
-            <Group align="center" gap="5px">
-              <ThemeIcon size="lg" color="violet">
-                <IconWorldQuestion />
-              </ThemeIcon>
-              <Text size="xl" fw="bold">
-                interweb.wtf
-              </Text>
-            </Group>
+            <Indicator
+              inline
+              label="Beta"
+              radius="sm"
+              size="md"
+              color="gray"
+              position="middle-end"
+              offset={-30}
+            >
+              <Group align="center" gap="5px">
+                <ThemeIcon size="lg" color="violet">
+                  <IconWorldQuestion />
+                </ThemeIcon>
+                <Text size="xl" fw="bold">
+                  interweb.wtf
+                </Text>
+              </Group>
+            </Indicator>
           </Link>
 
           {!loading && !user && pathname !== '/login' ? (
