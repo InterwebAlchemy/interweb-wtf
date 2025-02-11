@@ -148,6 +148,20 @@ export async function POST(request: NextRequest) {
 
       const metadata = [];
 
+      const title = await page.title();
+
+      metadata.push({
+        title,
+      });
+
+      const language = await page.getAttribute('html', 'lang');
+
+      if (language) {
+        metadata.push({
+          language,
+        });
+      }
+
       for (const m of await meta.all()) {
         if (await m.getAttribute('charset')) {
           metadata.push({

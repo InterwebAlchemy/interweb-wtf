@@ -1,15 +1,14 @@
 import { IconWorldWww } from '@tabler/icons-react';
 import {
-  ActionIcon,
   Anchor,
   Avatar,
   Badge,
   Blockquote,
+  Button,
   Center,
   Flex,
   Group,
   Image,
-  Pill,
   Spoiler,
   Stack,
   Text,
@@ -94,6 +93,11 @@ export default async function InspectorPage({ params }: Params) {
       return meta?.charset;
     })?.charset ?? 'unknown';
 
+  const language =
+    metadata.find((meta: Record<string, any>) => {
+      return meta?.language;
+    })?.language ?? 'unknown';
+
   // TODO: grab extra details from metadata
   // parseMetadata(metadata);
 
@@ -114,40 +118,28 @@ export default async function InspectorPage({ params }: Params) {
             WTF Link Inspector
           </Text>
           {status >= 200 && status < 400 ? (
-            <Anchor href={fullUrl} title="Go to full URL" rel="noreferrer" ml="auto">
-              <ActionIcon bg="violet">
-                <IconWorldWww />
-              </ActionIcon>
-            </Anchor>
+            <Button
+              color="violet"
+              component="a"
+              href={fullUrl}
+              title="Go to full URL"
+              rel="noreferrer"
+              ml="auto"
+              leftSection={<IconWorldWww size={20} />}
+              style={{ color: 'white' }}
+              tt="uppercase"
+            >
+              Visit
+            </Button>
           ) : (
             <></>
           )}
         </Group>
       }
     >
-      <Title order={2}>{title}</Title>
-      <Title order={3}>
-        <Group wrap="nowrap" align="center">
-          <Pill c="white" bg={pillColor} radius="xs">
-            {status}
-          </Pill>
-          <Text span inherit truncate="end">
-            <Anchor
-              rel="noreferrer"
-              href={displayUrlNoQueryParams.toString()}
-              underline="hover"
-              style={{ display: 'flex' }}
-            >
-              {displayUrlNoQueryParams.toString()}
-            </Anchor>
-          </Text>
-          <Pill radius="xs">{contentType}</Pill>
-          <Pill radius="xs">{charset}</Pill>
-        </Group>
+      <Title order={2} lineClamp={3}>
+        {title}
       </Title>
-      {redirected && (
-        <Text>The destination of this shortened URL was redirected while retrieving the URL.</Text>
-      )}
       {imageSrc && (
         <Center w="80%" mx="auto" my="md" pos="relative">
           <Anchor
@@ -168,8 +160,10 @@ export default async function InspectorPage({ params }: Params) {
       {description && (
         <Center w="90%" mx="auto" my="md" maw="640">
           <Blockquote
+            radius="xs"
+            iconSize={30}
             cite={`- ${title ? title : displayUrlNoQueryParams.toString()}`}
-            icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
+            icon={favicon ? <Avatar src={favicon} radius="xs" size="md" /> : <></>}
           >
             {description}
           </Blockquote>
@@ -182,16 +176,89 @@ export default async function InspectorPage({ params }: Params) {
               {summary}
             </Spoiler>
 
-            <Anchor href="https://help.kagi.com/kagi/api/summarizer.html" ml="auto">
+            <Anchor
+              href="https://help.kagi.com/kagi/api/summarizer.html"
+              ml="auto"
+              c="gray"
+              size="xs"
+            >
               <Flex align="center" justify="start">
-                <Image display="inline" src="/assets/kagi.png" h={20} w="auto" mr="xs" />
-                <Text span mr="xs">
-                  Powered by Kagi
-                </Text>
+                <Image display="inline" src="/assets/kagi.png" h={14} w="auto" mr="xs" />
+                <Text span>Powered by Kagi</Text>
               </Flex>
             </Anchor>
           </Stack>
         </Center>
+      )}
+      <Group align="center" justify="center" w="100%">
+        <Badge
+          color="white"
+          bg={pillColor}
+          leftSection={
+            <Text span inherit fw={300}>
+              Status:
+            </Text>
+          }
+          radius="sm"
+        >
+          <Text span inherit fw={700}>
+            {status}
+          </Text>
+        </Badge>
+        {language !== 'unknown' && (
+          <Badge
+            variant="light"
+            color="gray"
+            leftSection={
+              <Text span inherit fw={300}>
+                Language:
+              </Text>
+            }
+            radius="sm"
+          >
+            <Text span inherit fw={700} tt="initial">
+              {language}
+            </Text>
+          </Badge>
+        )}
+        <Badge
+          variant="light"
+          color="gray"
+          leftSection={
+            <Text span inherit fw={300}>
+              Content-Type:
+            </Text>
+          }
+          radius="sm"
+        >
+          <Text span inherit fw={700}>
+            {contentType}
+          </Text>
+        </Badge>
+        {charset !== 'unknown' && !contentType?.includes('charset') && (
+          <Badge
+            variant="light"
+            color="gray"
+            leftSection={
+              <Text span inherit fw={300}>
+                Charset:
+              </Text>
+            }
+            radius="sm"
+          >
+            <Text span inherit fw={700}>
+              {charset}
+            </Text>
+          </Badge>
+        )}
+      </Group>
+      {redirected && (
+        <Text>
+          <Text span inherit fw={700}>
+            Note:
+          </Text>
+          The destination of this shortened URL was redirected while retrieving the URL.
+        </Text>
       )}
       {displayUrl.searchParams.size > 0 && (
         <Stack>

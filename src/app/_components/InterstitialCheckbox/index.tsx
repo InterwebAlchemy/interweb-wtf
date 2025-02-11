@@ -1,8 +1,16 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { IconWorldQuestion, IconWorldWww } from '@tabler/icons-react';
-import { Switch, Tooltip } from '@mantine/core';
+import { IconInfoCircle, IconWorldQuestion, IconWorldWww } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  createTheme,
+  Group,
+  MantineProvider,
+  Popover,
+  Switch,
+  Text,
+} from '@mantine/core';
 
 export default function InterstitialCheckbox() {
   const [skipInspector, setSkipInspector] = useState(false);
@@ -16,6 +24,10 @@ export default function InterstitialCheckbox() {
     setSkipInspector(value);
   };
 
+  const theme = createTheme({
+    cursorType: 'pointer',
+  });
+
   useEffect(() => {
     // get the cookie value
     const cookieValue =
@@ -28,27 +40,38 @@ export default function InterstitialCheckbox() {
   }, []);
 
   return (
-    <Tooltip
-      label="Enabling this will skip the WTF Link Inspector and redirect you
-          directly to the cleaned destination URL when navigating to a WTF Link."
-      refProp="rootRef"
-    >
-      <Switch
-        label="Skip the Inspector"
-        labelPosition="left"
-        color="violet"
-        radius="sm"
-        size="md"
-        onChange={onChange}
-        checked={skipInspector}
-        thumbIcon={
-          skipInspector ? (
-            <IconWorldWww size="sm" color="var(--mantine-color-red-text)" />
-          ) : (
-            <IconWorldQuestion size="sm" color="var(--mantine-color-violet-filled)" />
-          )
-        }
-      />
-    </Tooltip>
+    <Group justify="center" align="center">
+      <MantineProvider theme={theme}>
+        <Switch
+          label="Skip the Inspector"
+          labelPosition="left"
+          color="violet"
+          radius="sm"
+          size="md"
+          onChange={onChange}
+          checked={skipInspector}
+          thumbIcon={
+            skipInspector ? (
+              <IconWorldWww size="sm" color="var(--mantine-color-red-text)" />
+            ) : (
+              <IconWorldQuestion size="sm" color="var(--mantine-color-violet-filled)" />
+            )
+          }
+        />
+      </MantineProvider>
+      <Popover width={200} position="top" withArrow>
+        <Popover.Target>
+          <ActionIcon c="cyan" size="sm" bg="transparent">
+            <IconInfoCircle />
+          </ActionIcon>
+        </Popover.Target>
+        <Popover.Dropdown>
+          <Text size="xs">
+            Enabling this will skip the WTF Link Inspector and redirect you directly to the cleaned
+            destination URL when navigating to a WTF Link.
+          </Text>
+        </Popover.Dropdown>
+      </Popover>
+    </Group>
   );
 }

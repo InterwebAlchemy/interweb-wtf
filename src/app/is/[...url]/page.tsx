@@ -1,11 +1,11 @@
 import { headers } from 'next/headers';
 import { IconWorldWww } from '@tabler/icons-react';
 import {
-  ActionIcon,
   Anchor,
   Avatar,
   Badge,
   Blockquote,
+  Button,
   Center,
   Group,
   Image,
@@ -143,6 +143,11 @@ export default async function InspectorPage({ params }: Params) {
         return meta?.charset;
       })?.charset ?? 'unknown';
 
+    const language =
+      metadata.find((meta: Record<string, any>) => {
+        return meta?.language;
+      })?.language ?? 'unknown';
+
     // TODO: grab extra details from metadata
     // parseMetadata(metadata);
 
@@ -157,91 +162,138 @@ export default async function InspectorPage({ params }: Params) {
       console.error(error);
     }
 
+    const title = getPageTitle(metadata);
     const description = getPageDescription(metadata);
-
-    const isImageDescription =
-      description.startsWith('http') &&
-      (description.endsWith('.jpg') ||
-        description.endsWith('.png') ||
-        description.endsWith('.jpeg') ||
-        description.endsWith('.gif') ||
-        description.endsWith('.webp') ||
-        description.endsWith('.svg'));
 
     return (
       <Screen
         title={
           <Group align="center">
             <Text span inherit>
-              Shortlink Expander
+              WTF Link Inspector
             </Text>
-            <Badge>{shortLinkProvider}</Badge>
             {status >= 200 && status < 400 ? (
-              <Anchor href={cleanUrl.toString()} title="Go to full URL" rel="noreferrer" ml="auto">
-                <ActionIcon bg="violet">
-                  <IconWorldWww />
-                </ActionIcon>
-              </Anchor>
+              <Button
+                color="violet"
+                component="a"
+                href={cleanUrl.toString()}
+                title="Go to full URL"
+                rel="noreferrer"
+                ml="auto"
+                leftSection={<IconWorldWww size={20} />}
+                style={{ color: 'white' }}
+                tt="uppercase"
+              >
+                Visit
+              </Button>
             ) : (
               <></>
             )}
           </Group>
         }
       >
-        <Title order={2}>{getPageTitle(metadata)}</Title>
-        <Title order={3}>
-          <Group wrap="nowrap" align="center">
-            <Pill c="white" bg={pillColor} radius="xs">
-              {status}
-            </Pill>
-            <Text span inherit truncate="end">
-              <Anchor
-                rel="noreferrer"
-                href={cleanUrl.toString()}
-                underline="hover"
-                style={{ display: 'flex' }}
-              >
-                {displayUrlNoQueryParams.toString()}
-              </Anchor>
-            </Text>
-            <Pill radius="xs">{contentType}</Pill>
-            <Pill radius="xs">{charset}</Pill>
-          </Group>
+        <Title order={2} lineClamp={3}>
+          {title}
         </Title>
+        {imageSrc && (
+          <Center w="80%" mx="auto" my="md" pos="relative">
+            <Anchor
+              id="page-screenshot"
+              rel="noreferrer"
+              href={cleanUrl.toString()}
+              underline="never"
+            >
+              <Image
+                radius="sm"
+                src={imageSrc}
+                alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
+                mih={600}
+              />
+            </Anchor>
+          </Center>
+        )}
+        {description && (
+          <Center w="90%" mx="auto" my="md" maw="640">
+            <Blockquote
+              radius="xs"
+              iconSize={30}
+              cite={`- ${title ? title : displayUrlNoQueryParams.toString()}`}
+              icon={favicon ? <Avatar src={favicon} radius="xs" size="md" /> : <></>}
+            >
+              {description}
+            </Blockquote>
+          </Center>
+        )}
+        <Group align="center" justify="center" w="100%">
+          <Badge
+            color="white"
+            bg={pillColor}
+            leftSection={
+              <Text span inherit fw={300}>
+                Status:
+              </Text>
+            }
+            radius="sm"
+          >
+            <Text span inherit fw={700}>
+              {status}
+            </Text>
+          </Badge>
+          {language !== 'unknown' && (
+            <Badge
+              variant="light"
+              color="gray"
+              leftSection={
+                <Text span inherit fw={300}>
+                  Language:
+                </Text>
+              }
+              radius="sm"
+            >
+              <Text span inherit fw={700} tt="initial">
+                {language}
+              </Text>
+            </Badge>
+          )}
+          <Badge
+            variant="light"
+            color="gray"
+            leftSection={
+              <Text span inherit fw={300}>
+                Content-Type:
+              </Text>
+            }
+            radius="sm"
+          >
+            <Text span inherit fw={700}>
+              {contentType}
+            </Text>
+          </Badge>
+          {charset !== 'unknown' && !contentType?.includes('charset') && (
+            <Badge
+              variant="light"
+              color="gray"
+              leftSection={
+                <Text span inherit fw={300}>
+                  Charset:
+                </Text>
+              }
+              radius="sm"
+            >
+              <Text span inherit fw={700}>
+                {charset}
+              </Text>
+            </Badge>
+          )}
+        </Group>
         {redirected && (
           <Text>
+            <Text span inherit fw={700}>
+              Note:
+            </Text>
             The destination of this shortened URL was redirected while retrieving the URL.
           </Text>
         )}
-        {imageSrc && (
-          <Anchor
-            id="page-screenshot"
-            rel="noreferrer"
-            href={cleanUrl.toString()}
-            underline="never"
-          >
-            <Image
-              radius="sm"
-              src={imageSrc}
-              alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
-            />
-          </Anchor>
-        )}
-        <Center my="md">
-          <Blockquote
-            cite={`- ${getPageTitle(metadata) ? getPageTitle(metadata) : displayUrlNoQueryParams.toString()}`}
-            icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
-          >
-            {isImageDescription ? (
-              <Image
-                src={description}
-                alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
-              />
-            ) : (
-              description
-            )}
-          </Blockquote>
-        </Center>
         {displayUrl.searchParams.size > 0 && (
           <Stack>
             <Title order={3}>URL Parameters</Title>

@@ -4,7 +4,7 @@ import InterstitialCheckbox from '@/app/_components/InterstitialCheckbox';
 export default function Footer() {
   return (
     <Center w="100%" mb="auto" pt="xl" pb="sm">
-      <Stack>
+      <Stack justify="center">
         <InterstitialCheckbox />
         <Group>
           <Anchor href="/privacy.txt" c="gray" size="sm">
