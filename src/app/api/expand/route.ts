@@ -103,19 +103,20 @@ export async function POST(request: NextRequest) {
   // scrape url with playwright
   const launchOptions = {
     args: chromium.args,
-    defaultViewport: chromium.defaultViewport,
     executablePath: await chromium.executablePath(),
-    headless: chromium.headless,
-    chromiumSandbox: true,
+    headless: true,
     timeout: 5000,
     userAgent,
   };
 
   try {
-    // @ts-expect-error - chromium types are incomplete
     const browser = await playwright.launch(launchOptions);
 
     const context = await browser.newContext();
+
+    for (const page of await context.pages()) {
+      await page.close();
+    }
 
     const page = await context.newPage();
 

@@ -9,7 +9,7 @@ export default withBundleAnalyzer({
   eslint: {
     ignoreDuringBuilds: true,
   },
-  serverExternalPackages: ['playwright-extra', 'puppeteer-extra-plugin-stealth'],
+  serverExternalPackages: ['@sparticuz/chromium'],
   experimental: {
     optimizePackageImports: ['@mantine/core', '@mantine/hooks'],
   },

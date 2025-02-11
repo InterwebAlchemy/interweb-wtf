@@ -114,10 +114,8 @@ export async function POST(request: NextRequest) {
       // scrape url with playwright
       const launchOptions = {
         args: chromium.args,
-        defaultViewport: chromium.defaultViewport,
         executablePath: await chromium.executablePath(),
-        headless: chromium.headless,
-        chromiumSandbox: true,
+        headless: true,
         timeout: 5000,
         userAgent,
       };
@@ -126,9 +124,12 @@ export async function POST(request: NextRequest) {
         // TODO: enable stealth
         // chromium.use(stealth());
 
-        // @ts-expect-error - chromium package types are different
         const browser = await playwright.launch(launchOptions);
         const context = await browser.newContext();
+
+        for (const page of await context.pages()) {
+          await page.close();
+        }
 
         const page = await context.newPage();
 
