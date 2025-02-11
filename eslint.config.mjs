@@ -8,5 +8,5 @@ export default tseslint.config(
       'no-console': 'off',
     },
   },
-  { ignores: ['**/*.{mjs,cjs,js,d.ts,d.mts}'] }
+  { ignores: ['**/*.{mjs,cjs,js,d.ts,d.mts}', 'src/types/supabase.ts'] }
 );
