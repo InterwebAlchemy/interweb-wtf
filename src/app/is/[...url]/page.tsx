@@ -18,8 +18,9 @@ import {
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UnknownShortener from '@/app/_components/UnknownShortener';
+import { getTrackingParams, removeTrackingParams } from '@/app/_utils/url';
 import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
-import { KNOWN_SHORTENERS, KNOWN_TRACKING_PARAM_PREFIXES } from '@/constants';
+import { KNOWN_SHORTENERS } from '@/constants';
 
 import '@/app/_styles/info.css';
 
@@ -90,10 +91,12 @@ export default async function InspectorPage({ params }: Params) {
   const renderSearchParams = (url: URL): React.ReactNode => {
     const searchParams = url.searchParams;
 
+    const trackers = getTrackingParams(url);
+
     return searchParams.entries().map(([key, value]) => {
       let trackingParam = false;
 
-      if (KNOWN_TRACKING_PARAM_PREFIXES.some((prefix) => key.startsWith(prefix))) {
+      if (trackers.some((tracker) => tracker[key])) {
         trackingParam = true;
       }
 
@@ -108,6 +111,7 @@ export default async function InspectorPage({ params }: Params) {
             </Text>
           }
           radius="sm"
+          title={trackingParam ? 'This is a known tracking parameter' : ''}
         >
           <Text span inherit fw={300}>
             {value}
@@ -126,6 +130,8 @@ export default async function InspectorPage({ params }: Params) {
   const shortLinkProvider = url.hostname;
 
   const displayUrl = new URL(fullUrl);
+
+  const cleanUrl = removeTrackingParams(displayUrl);
 
   const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
 
@@ -171,7 +177,7 @@ export default async function InspectorPage({ params }: Params) {
             </Text>
             <Badge>{shortLinkProvider}</Badge>
             {status >= 200 && status < 400 ? (
-              <Anchor href={fullUrl} title="Go to full URL" rel="noreferrer" ml="auto">
+              <Anchor href={cleanUrl.toString()} title="Go to full URL" rel="noreferrer" ml="auto">
                 <ActionIcon bg="violet">
                   <IconWorldWww />
                 </ActionIcon>
@@ -191,7 +197,7 @@ export default async function InspectorPage({ params }: Params) {
             <Text span inherit truncate="end">
               <Anchor
                 rel="noreferrer"
-                href={displayUrlNoQueryParams.toString()}
+                href={cleanUrl.toString()}
                 underline="hover"
                 style={{ display: 'flex' }}
               >
@@ -211,7 +217,7 @@ export default async function InspectorPage({ params }: Params) {
           <Anchor
             id="page-screenshot"
             rel="noreferrer"
-            href={displayUrlNoQueryParams.toString()}
+            href={cleanUrl.toString()}
             underline="never"
           >
             <Image
@@ -223,7 +229,7 @@ export default async function InspectorPage({ params }: Params) {
         )}
         <Center my="md">
           <Blockquote
-            cite={`- ${displayUrlNoQueryParams.toString()}`}
+            cite={`- ${getPageTitle(metadata) ? getPageTitle(metadata) : displayUrlNoQueryParams.toString()}`}
             icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
           >
             {isImageDescription ? (
@@ -264,7 +270,7 @@ export default async function InspectorPage({ params }: Params) {
           <Text span inherit truncate="end">
             <Anchor
               rel="noreferrer"
-              href={displayUrlNoQueryParams.toString()}
+              href={cleanUrl.toString()}
               underline="hover"
               style={{ display: 'flex' }}
             >

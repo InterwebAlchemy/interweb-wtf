@@ -42,13 +42,13 @@ export async function POST(request: NextRequest) {
       .from('short_url_providers')
       .select('*')
       .eq('provider', provider)
-      .limit(1);
+      .single();
 
     if (error) {
       console.error(error);
     }
 
-    if (!data || data.length === 0) {
+    if (!data) {
       const { data, error } = await supabase
         .from('short_url_providers')
         .insert([
@@ -56,17 +56,18 @@ export async function POST(request: NextRequest) {
             provider,
           },
         ])
-        .select();
+        .select()
+        .single();
 
       if (error) {
         console.error(error);
       }
 
       if (data) {
-        providerId = data[0].id;
+        providerId = data.id;
       }
     } else {
-      providerId = data[0].id;
+      providerId = data.id;
     }
   } catch (error) {
     console.error(error);
@@ -78,18 +79,18 @@ export async function POST(request: NextRequest) {
       .from('expanded_urls')
       .select('*')
       .eq('short_url', shortUrlObj.toString())
-      .limit(1);
+      .single();
 
     if (error) {
       console.error(error);
     }
 
-    if (data && data.length > 0) {
+    if (data) {
       return new NextResponse(
         JSON.stringify({
-          metadata: data[0].metadata,
-          screenshotPath: data[0].screenshot,
-          favicon: data[0].favicon,
+          metadata: data.metadata,
+          screenshotPath: data.screenshot,
+          favicon: data.favicon,
         }),
         {
           status: 200,
@@ -122,7 +123,7 @@ export async function POST(request: NextRequest) {
 
     await page.goto(shortUrlObj.toString());
 
-    await page.waitForLoadState('load');
+    await page.waitForLoadState('domcontentloaded');
 
     // TODO: check for interstitial pages with actual URL and click on the links if necessary
     // then send updated URL info to the client

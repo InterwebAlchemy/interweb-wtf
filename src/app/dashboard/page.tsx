@@ -16,7 +16,11 @@ export default async function DashboardPage() {
     redirect('/login');
   }
 
-  const { data } = await supabase.from('short_urls').select('*').eq('created_by', user?.id);
+  const { data } = await supabase
+    .from('short_urls')
+    .select('*')
+    .eq('created_by', user?.id)
+    .eq('deleted', false);
 
   if (typeof data !== 'undefined' && data !== null) {
     urls.push(...data);

@@ -4,7 +4,16 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { IconWorldQuestion } from '@tabler/icons-react';
-import { Avatar, Drawer, Group, Stack, Text, ThemeIcon, UnstyledButton } from '@mantine/core';
+import {
+  Anchor,
+  Avatar,
+  Drawer,
+  Group,
+  Stack,
+  Text,
+  ThemeIcon,
+  UnstyledButton,
+} from '@mantine/core';
 import { useDisclosure } from '@mantine/hooks';
 import Login from '@/app/_components/Login';
 import UrlInput from '@/app/_components/UrlInput';
@@ -83,15 +92,15 @@ export default function Nav() {
     const { link, label } = item;
 
     return (
-      <Link key={label} href={link}>
+      <Anchor key={label} href={link} component={Link}>
         {label}
-      </Link>
+      </Anchor>
     );
   });
 
   items.push(
     <UnstyledButton key="logout" onClick={logout}>
-      Sign out
+      <Anchor href="#">Sign out</Anchor>
     </UnstyledButton>
   );
 

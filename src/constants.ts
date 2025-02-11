@@ -52,16 +52,159 @@ export const KNOWN_SHORTENERS = [
 ];
 
 // list out typical URL tracking query param prefixes like `utm_` and `fb_`
-export const KNOWN_TRACKING_PARAM_PREFIXES = [
-  'utm_',
-  'fb_',
-  'gclid',
-  'msclkid',
-  'mc_cid',
-  'mc_eid',
-  'mc_lid',
-  'mc_mid',
-  'mc_rid',
-  'mc_t',
-  'mc_uid',
-];
+export const KNOWN_TRACKING_PARAM_PREFIXES = ['utm_', 'fb_', 'mc_', 'ref_'];
+
+export const KNOWN_TRACKING_PARAMS = Array.from(
+  new Set([
+    // stolen from: https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/query-stripping/records
+    'gclid',
+    'dclid',
+    'msclkid',
+    '_openstat',
+    'yclid',
+    'wickedid',
+    'twclid',
+    '_hsenc',
+    '__hssc',
+    '__hstc',
+    '__hsfp',
+    'hsctatracking',
+    'wbraid',
+    'gbraid',
+    'ysclid',
+    'mc_eid',
+    'oly_anon_id',
+    'oly_enc_id',
+    '__s',
+    'vero_id',
+    '_hsenc',
+    'mkt_tok',
+    'fbclid',
+
+    // stolen from: https://github.com/brave/brave-core/blob/master/components/query_filter/utils.cc#27
+    // https://github.com/brave/brave-browser/issues/9019
+    '__hsfp',
+    '__hssc',
+    '__hstc',
+    // https://github.com/brave/brave-browser/issues/8975
+    '__s',
+    // https://github.com/brave/brave-browser/issues/40716
+    '_bhlid',
+    // https://github.com/brave/brave-browser/issues/39575
+    '_branch_match_id',
+    '_branch_referrer',
+    // https://github.com/brave/brave-browser/issues/33188
+    '_gl',
+    // https://github.com/brave/brave-browser/issues/9019
+    '_hsenc',
+    // https://github.com/brave/brave-browser/issues/34578
+    '_kx',
+    // https://github.com/brave/brave-browser/issues/11579
+    '_openstat',
+    // https://github.com/brave/brave-browser/issues/32488
+    'at_recipient_id',
+    'at_recipient_list',
+    // https://github.com/brave/brave-browser/issues/37971
+    'bbeml',
+    // https://github.com/brave/brave-browser/issues/25238
+    'bsft_clkid',
+    'bsft_uid',
+    // https://github.com/brave/brave-browser/issues/9879
+    'dclid',
+    // https://github.com/brave/brave-browser/issues/37847
+    'et_rid',
+    // https://github.com/brave/brave-browser/issues/33984
+    'fb_action_ids',
+    'fb_comment_id',
+    // https://github.com/brave/brave-browser/issues/4239
+    'fbclid',
+    // https://github.com/brave/brave-browser/issues/18758
+    'gbraid',
+    // https://github.com/brave/brave-browser/issues/4239
+    'gclid',
+    // https://github.com/brave/brave-browser/issues/25691
+    'guce_referrer',
+    'guce_referrer_sig',
+    // https://github.com/brave/brave-browser/issues/9019
+    'hsCtaTracking',
+    // https://github.com/brave/brave-browser/issues/33952
+    'irclickid',
+    // https://github.com/brave/brave-browser/issues/4239
+    'mc_eid',
+    // https://github.com/brave/brave-browser/issues/17507
+    'ml_subscriber',
+    'ml_subscriber_hash',
+    // https://github.com/brave/brave-browser/issues/4239
+    'msclkid',
+    // https://github.com/brave/brave-browser/issues/31084
+    'mtm_cid',
+    // https://github.com/brave/brave-browser/issues/22082
+    'oft_c',
+    'oft_ck',
+    'oft_d',
+    'oft_id',
+    'oft_ids',
+    'oft_k',
+    'oft_lk',
+    'oft_sk',
+    // https://github.com/brave/brave-browser/issues/13644
+    'oly_anon_id',
+    'oly_enc_id',
+    // https://github.com/brave/brave-browser/issues/31084
+    'pk_cid',
+    // https://github.com/brave/brave-browser/issues/17451
+    'rb_clickid',
+    // https://github.com/brave/brave-browser/issues/17452
+    's_cid',
+    // https://github.com/brave/brave-browser/issues/43077
+    'sc_customer',
+    'sc_eh',
+    'sc_uid',
+    // https://github.com/brave/brave-browser/issues/40912
+    'srsltid',
+    // https://github.com/brave/brave-browser/issues/24988
+    'ss_email_id',
+    // https://github.com/brave/brave-browser/issues/18020
+    'twclid',
+    // https://github.com/brave/brave-browser/issues/33172
+    'unicorn_click_id',
+    // https://github.com/brave/brave-browser/issues/11817
+    'vero_conv',
+    'vero_id',
+    // https://github.com/brave/brave-browser/issues/26295
+    'vgo_ee',
+    // https://github.com/brave/brave-browser/issues/18758
+    'wbraid',
+    // https://github.com/brave/brave-browser/issues/13647
+    'wickedid',
+    // https://github.com/brave/brave-browser/issues/11578
+    'yclid',
+    // https://github.com/brave/brave-browser/issues/33216
+    'ymclid',
+    'ysclid',
+
+    // analytics
+    'utm_source',
+    'utm_medium',
+    'utm_campaign',
+    'utm_term',
+    'utm_content',
+
+    // mailchimp
+    'mc_cid',
+    'mc_eid',
+    'mc_lid',
+    'mc_mid',
+    'mc_rid',
+    'mc_t',
+    'mc_uid',
+  ])
+);
+
+export const DOMAIN_SPECIFIC_TRACKING_PARAMS: Record<string, string[]> = {
+  'youtube.com': ['si'],
+  'youtu.be': ['si'],
+  'instagram.com': ['igshid', 'igsh'],
+  'twitter.com': ['ref_src', 'ref_url'],
+  'x.com': ['ref_src', 'ref_url'],
+};

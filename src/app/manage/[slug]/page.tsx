@@ -29,19 +29,17 @@ export default async function ManageLinkPage({ params }: Params) {
     .select('*')
     .eq('created_by', user?.id)
     .eq('slug', slug)
-    .limit(1);
+    .single();
 
   if (error) {
     console.error(error);
   }
 
-  const info = data?.[0];
-
   return (
     <Screen title="Edit WTFLink">
       <Stack>
-        <UrlInput defaultValue={info.url} readOnly />
-        <ShortLinkInput slug={slug} linkId={info.id} />
+        <UrlInput defaultValue={data.url} readOnly />
+        <ShortLinkInput slug={slug} linkId={data.id} />
       </Stack>
     </Screen>
   );

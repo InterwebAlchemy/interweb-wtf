@@ -19,17 +19,17 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
       .from('short_urls')
       .select('url')
       .eq('slug', slug)
-      .limit(1);
+      .single();
 
     if (error) {
       console.error(error);
     }
 
-    if (!data || data.length === 0) {
+    if (!data) {
       redirect('/404');
     }
 
-    const redirectUrl = data[0].url;
+    const redirectUrl = data.url;
 
     if (redirectUrl) {
       if (typeof skipInfoInterstitial !== 'undefined' && skipInfoInterstitial.value === 'true') {

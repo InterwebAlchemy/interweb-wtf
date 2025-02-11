@@ -1,7 +1,8 @@
 'use client';
 
 import { ChangeEvent, useEffect, useState } from 'react';
-import { Switch } from '@mantine/core';
+import { IconWorldQuestion, IconWorldWww } from '@tabler/icons-react';
+import { Switch, Tooltip } from '@mantine/core';
 
 export default function InterstitialCheckbox() {
   const [skipInspector, setSkipInspector] = useState(false);
@@ -28,13 +29,27 @@ export default function InterstitialCheckbox() {
   }, []);
 
   return (
-    <Switch
-      label="Skip the Inspector Interstitial"
-      labelPosition="left"
-      color="violet"
-      radius="xs"
-      onChange={onChange}
-      checked={skipInspector}
-    />
+    <Tooltip
+      label="Enabling this will skip the WTF Link Inspector and redirect you
+          directly to the cleaned destination URL when navigating to a WTF Link."
+      refProp="rootRef"
+    >
+      <Switch
+        label="Skip the Inspector"
+        labelPosition="left"
+        color="violet"
+        radius="sm"
+        size="md"
+        onChange={onChange}
+        checked={skipInspector}
+        thumbIcon={
+          skipInspector ? (
+            <IconWorldWww size="sm" color="var(--mantine-color-red-text)" />
+          ) : (
+            <IconWorldQuestion size="sm" color="var(--mantine-color-violet-filled)" />
+          )
+        }
+      />
+    </Tooltip>
   );
 }
