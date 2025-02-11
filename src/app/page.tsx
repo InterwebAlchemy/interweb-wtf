@@ -6,8 +6,8 @@ import { Welcome } from '@/app/_components/Welcome/Welcome';
 export default function HomePage() {
   return (
     <Screen>
-      <Center h="100%">
-        <Stack align="center">
+      <Center h="100%" w="100%">
+        <Stack align="center" w="100%" maw="780">
           <Welcome />
           <Intro />
         </Stack>

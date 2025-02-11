@@ -91,6 +91,7 @@ export default function UrlInput({
             }}
             placeholder={placeholder}
             style={{ width: '100%' }}
+            size="lg"
             leftSection={slug ? <IconWorldQuestion /> : <IconWorldWww />}
             rightSection={
               isLoading ? (

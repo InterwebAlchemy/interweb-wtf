@@ -63,8 +63,12 @@ export default function Login() {
 
   return (
     <>
-      <Button leftSection={<IconBrandGithubFilled />} onClick={onClick} bg="violet">
-        {isLoggedIn ? 'Sign out' : 'Sign in w/ Github'}
+      <Button
+        leftSection={!isLoggedIn ? <IconBrandGithubFilled /> : <></>}
+        onClick={onClick}
+        bg="violet"
+      >
+        {isLoggedIn ? 'Sign out' : 'Sign in'}
       </Button>
     </>
   );

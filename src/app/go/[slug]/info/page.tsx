@@ -166,9 +166,9 @@ export default async function InspectorPage({ params }: Params) {
         </Center>
       )}
       {description && (
-        <Center w="50%" mx="auto" my="md">
+        <Center w="90%" mx="auto" my="md" maw="640">
           <Blockquote
-            cite={`- ${displayUrlNoQueryParams.toString()}`}
+            cite={`- ${title ? title : displayUrlNoQueryParams.toString()}`}
             icon={favicon ? <Avatar src={favicon} radius={0} size="sm" /> : <></>}
           >
             {description}

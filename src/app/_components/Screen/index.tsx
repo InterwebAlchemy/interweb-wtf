@@ -14,7 +14,7 @@ export default async function Screen({ children, ...props }: React.PropsWithChil
     <Container fluid h="100%" p="md" display="flex" w="100%">
       <Stack h="100%" w="100%">
         <Nav />
-        <Stack h="100%">
+        <Stack h="100%" w="100%">
           {title ? (
             <Title order={1} {...titleProps}>
               {title}

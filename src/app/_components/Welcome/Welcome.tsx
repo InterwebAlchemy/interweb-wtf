@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import Haikunator from 'haikunator';
-import { Anchor, Text, Title } from '@mantine/core';
+import { Anchor, Flex, Text, Title } from '@mantine/core';
 import CipherText from '../CipherText';
 
 const haikunator = new Haikunator();
@@ -10,24 +10,31 @@ export function Welcome() {
 
   const url = new URL(process.env.NEXT_PUBLIC_APPLICATION_URL ?? 'interweb.wtf');
 
+  const displayUrl = url.hostname.split('.').slice(-2).join('.');
+
   return (
     <>
-      <Title order={2} mb="20" size="h1">
-        {url.hostname}/go
-        <Text span inherit c="violet">
-          /<CipherText text={slug} speed={50} />
-        </Text>
-        <Text span inherit c="gray">
-          /<CipherText text="info" speed={100} />
-        </Text>
-      </Title>
-      <Title order={1} mb="100" size="h3">
+      <Title order={1} mt="50" mb="50" size="h1" ta="left" w="100%">
         Simple.{' '}
         <Anchor inherit c="violet" td="underline" href="/is" component={Link}>
           Inspectable
         </Anchor>
         {'. '}
         Shortlinks.
+      </Title>
+      <Title order={2} mb="20" textWrap="balance" ta="left" w="100%">
+        <Flex w="100%" direction={{ base: 'column', md: 'row' }}>
+          <Text span inherit c="gray">
+            {displayUrl}
+          </Text>
+          <Text span inherit c="violet" size="md">
+            /go/
+            <CipherText text={slug} speed={50} />
+          </Text>
+          <Text span inherit c="gray">
+            /info
+          </Text>
+        </Flex>
       </Title>
     </>
   );
