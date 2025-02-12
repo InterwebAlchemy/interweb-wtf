@@ -95,6 +95,7 @@
     "haikunator": "^2.1.2",
     "next": "15.1.5",
     "playwright-core": "^1.50.1",
+    "qrcode.react": "^4.2.0",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "rehype-stringify": "^10.0.1",

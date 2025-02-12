@@ -1,4 +1,4 @@
-import { IconWorldWww } from '@tabler/icons-react';
+import { IconAppWindow, IconQrcode, IconWorldWww } from '@tabler/icons-react';
 import {
   Anchor,
   Avatar,
@@ -11,11 +11,17 @@ import {
   Image,
   Spoiler,
   Stack,
+  Tabs,
+  TabsList,
+  TabsPanel,
+  TabsTab,
   Text,
   Title,
 } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
+import QRCode from '@/app/_components/QRCode';
 import Screen from '@/app/_components/Screen';
+import UrlMetadata from '@/app/_components/UrlMetadata';
 
 import '@/app/_styles/info.css';
 
@@ -30,6 +36,8 @@ export default async function InspectorPage({ params }: Params) {
 
   const slug = (await params).slug;
 
+  const shortUrl = new URL(`/go/${slug}`, process.env.NEXT_PUBLIC_APPLICATION_URL);
+
   const {
     data: { id, url },
   } = await supabase.from('short_urls').select('*').eq('slug', slug).single();
@@ -38,7 +46,7 @@ export default async function InspectorPage({ params }: Params) {
     data: { title, description, metadata, screenshot, favicon },
   } = await supabase.from('url_info').select('*').eq('url_id', id).single();
 
-  let summary;
+  let summary: string;
 
   // TODO: render summary as Markdown
   const { data: summaryData, error: summaryError } = await supabase
@@ -55,10 +63,111 @@ export default async function InspectorPage({ params }: Params) {
     summary = summaryData?.summary;
   }
 
-  const getUrlInfo = async (url: URL): Promise<Response> => {
-    const response = await fetch(url.href);
+  const displayUrl = new URL(url);
 
-    return response;
+  const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
+
+  const language =
+    metadata.find((meta: Record<string, any>) => {
+      return meta?.language;
+    })?.language ?? 'unknown';
+
+  let imageSrc: string;
+
+  try {
+    const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
+    imageSrc = data?.publicUrl;
+  } catch (error) {
+    console.error(error);
+  }
+
+  const renderScreenshotAndQrCode = (): React.ReactNode => {
+    const tabList = ['details', 'qrcode'];
+
+    return (
+      <Tabs defaultValue={tabList[0]}>
+        <TabsList>
+          {tabList.map((tab) => (
+            <TabsTab
+              key={tab}
+              value={tab}
+              leftSection={
+                tab === 'details' ? <IconAppWindow size={20} /> : <IconQrcode size={20} />
+              }
+            >
+              {tab === 'details' ? 'Details' : 'QR Code'}
+            </TabsTab>
+          ))}
+        </TabsList>
+        {tabList.map((tab) => (
+          <TabsPanel key={tab} value={tab}>
+            {tab === 'details' ? (
+              <Stack>
+                <Center w="80%" mx="auto" my="md" pos="relative">
+                  <Anchor
+                    id="page-screenshot"
+                    rel="noreferrer"
+                    href={displayUrl.toString()}
+                    underline="never"
+                  >
+                    <Image
+                      radius="sm"
+                      src={imageSrc}
+                      alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
+                      mah={600}
+                      mih={200}
+                    />
+                  </Anchor>
+                </Center>
+                {description && (
+                  <Center w="90%" mx="auto" my="md" maw="640">
+                    <Blockquote
+                      radius="xs"
+                      iconSize={30}
+                      cite={`- ${title ? title : displayUrlNoQueryParams.toString()}`}
+                      icon={favicon ? <Avatar src={favicon} radius="xs" size="md" /> : <></>}
+                    >
+                      {description}
+                    </Blockquote>
+                  </Center>
+                )}
+                {summary && (
+                  <Center w="80%" mx="auto" my="md">
+                    <Stack>
+                      <Spoiler showLabel="More" hideLabel="Less">
+                        {summary}
+                      </Spoiler>
+
+                      <Anchor
+                        href="https://help.kagi.com/kagi/api/summarizer.html"
+                        ml="auto"
+                        c="gray"
+                        size="xs"
+                      >
+                        <Flex align="center" justify="start">
+                          <Image display="inline" src="/assets/kagi.png" h={14} w="auto" mr="xs" />
+                          <Text span>Powered by Kagi</Text>
+                        </Flex>
+                      </Anchor>
+                    </Stack>
+                  </Center>
+                )}
+                {displayUrl.searchParams.size > 0 && (
+                  <Stack>
+                    <Title order={3}>URL Parameters</Title>
+                    <Group>{renderSearchParams(displayUrl)}</Group>
+                  </Stack>
+                )}
+              </Stack>
+            ) : (
+              <Center w="80%" mx="auto" my="md" pos="relative">
+                <QRCode url={shortUrl.toString()} title={title} />
+              </Center>
+            )}
+          </TabsPanel>
+        ))}
+      </Tabs>
+    );
   };
 
   const renderSearchParams = (url: URL): React.ReactNode => {
@@ -77,50 +186,13 @@ export default async function InspectorPage({ params }: Params) {
           }
           radius="sm"
         >
-          <Text span inherit fw={300}>
+          <Text span inherit fw={300} tt="initial">
             {value}
           </Text>
         </Badge>
       );
     });
   };
-
-  const {
-    status,
-    url: fullUrl,
-    redirected,
-    headers: requestHeaders,
-  } = await getUrlInfo(new URL(url));
-
-  const contentType = requestHeaders.get('content-type');
-
-  const pillColor = status >= 200 && status < 400 ? 'green' : 'red';
-
-  const displayUrl = new URL(fullUrl);
-
-  const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
-
-  const charset =
-    metadata.find((meta: Record<string, any>) => {
-      return meta?.charset;
-    })?.charset ?? 'unknown';
-
-  const language =
-    metadata.find((meta: Record<string, any>) => {
-      return meta?.language;
-    })?.language ?? 'unknown';
-
-  // TODO: grab extra details from metadata
-  // parseMetadata(metadata);
-
-  let imageSrc;
-
-  try {
-    const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
-    imageSrc = data?.publicUrl;
-  } catch (error) {
-    console.error(error);
-  }
 
   return (
     <Screen
@@ -129,155 +201,45 @@ export default async function InspectorPage({ params }: Params) {
           <Text span inherit>
             WTF Link Inspector
           </Text>
-          {status >= 200 && status < 400 ? (
-            <Button
-              color="violet"
-              component="a"
-              href={fullUrl}
-              title="Go to full URL"
-              rel="noreferrer"
-              ml="auto"
-              leftSection={<IconWorldWww size={20} />}
-              style={{ color: 'white' }}
-              tt="uppercase"
-            >
-              Visit
-            </Button>
-          ) : (
-            <></>
-          )}
+          <Button
+            color="violet"
+            component="a"
+            href={displayUrl.toString()}
+            title="Go to full URL"
+            rel="noreferrer"
+            ml="auto"
+            leftSection={<IconWorldWww size={20} />}
+            style={{ color: 'white' }}
+            tt="uppercase"
+          >
+            Visit
+          </Button>
         </Group>
       }
     >
       <Title order={2} lineClamp={3}>
-        {title}
-      </Title>
-      {imageSrc && (
-        <Center w="80%" mx="auto" my="md" pos="relative">
-          <Anchor
-            id="page-screenshot"
-            rel="noreferrer"
-            href={displayUrlNoQueryParams.toString()}
-            underline="never"
-          >
-            <Image
+        <Group align="center">
+          {title}
+          {title && language !== 'unknown' && (
+            <Badge
+              variant="light"
+              color="gray"
+              leftSection={
+                <Text span inherit fw={300}>
+                  Lang:
+                </Text>
+              }
               radius="sm"
-              src={imageSrc}
-              alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
-              mih={600}
-            />
-          </Anchor>
-        </Center>
-      )}
-      {description && (
-        <Center w="90%" mx="auto" my="md" maw="640">
-          <Blockquote
-            radius="xs"
-            iconSize={30}
-            cite={`- ${title ? title : displayUrlNoQueryParams.toString()}`}
-            icon={favicon ? <Avatar src={favicon} radius="xs" size="md" /> : <></>}
-          >
-            {description}
-          </Blockquote>
-        </Center>
-      )}
-      {summary && (
-        <Center w="80%" mx="auto" my="md">
-          <Stack>
-            <Spoiler showLabel="More" hideLabel="Less">
-              {summary}
-            </Spoiler>
-
-            <Anchor
-              href="https://help.kagi.com/kagi/api/summarizer.html"
-              ml="auto"
-              c="gray"
-              size="xs"
             >
-              <Flex align="center" justify="start">
-                <Image display="inline" src="/assets/kagi.png" h={14} w="auto" mr="xs" />
-                <Text span>Powered by Kagi</Text>
-              </Flex>
-            </Anchor>
-          </Stack>
-        </Center>
-      )}
-      <Group align="center" justify="center" w="100%">
-        <Badge
-          color="white"
-          bg={pillColor}
-          leftSection={
-            <Text span inherit fw={300}>
-              Status:
-            </Text>
-          }
-          radius="sm"
-        >
-          <Text span inherit fw={700}>
-            {status}
-          </Text>
-        </Badge>
-        {language !== 'unknown' && (
-          <Badge
-            variant="light"
-            color="gray"
-            leftSection={
-              <Text span inherit fw={300}>
-                Language:
+              <Text span inherit fw={700} tt="initial">
+                {language}
               </Text>
-            }
-            radius="sm"
-          >
-            <Text span inherit fw={700} tt="initial">
-              {language}
-            </Text>
-          </Badge>
-        )}
-        <Badge
-          variant="light"
-          color="gray"
-          leftSection={
-            <Text span inherit fw={300}>
-              Content-Type:
-            </Text>
-          }
-          radius="sm"
-        >
-          <Text span inherit fw={700}>
-            {contentType}
-          </Text>
-        </Badge>
-        {charset !== 'unknown' && !contentType?.includes('charset') && (
-          <Badge
-            variant="light"
-            color="gray"
-            leftSection={
-              <Text span inherit fw={300}>
-                Charset:
-              </Text>
-            }
-            radius="sm"
-          >
-            <Text span inherit fw={700}>
-              {charset}
-            </Text>
-          </Badge>
-        )}
-      </Group>
-      {redirected && (
-        <Text>
-          <Text span inherit fw={700}>
-            Note:
-          </Text>
-          The destination of this shortened URL was redirected while retrieving the URL.
-        </Text>
-      )}
-      {displayUrl.searchParams.size > 0 && (
-        <Stack>
-          <Title order={3}>URL Parameters</Title>
-          <Group>{renderSearchParams(displayUrl)}</Group>
-        </Stack>
-      )}
+            </Badge>
+          )}
+        </Group>
+      </Title>
+      <UrlMetadata url={url} />
+      {renderScreenshotAndQrCode()}
     </Screen>
   );
 }

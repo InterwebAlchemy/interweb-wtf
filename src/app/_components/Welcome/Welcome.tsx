@@ -1,13 +1,9 @@
 import Link from 'next/link';
-import Haikunator from 'haikunator';
 import { Anchor, Flex, Text, Title } from '@mantine/core';
-import CipherText from '../CipherText';
-
-const haikunator = new Haikunator();
+import CipherText from '@/app/_components/CipherText';
+import { generateSlug } from '@/app/_services/url';
 
 export function Welcome() {
-  const slug = haikunator.haikunate({ tokenLength: 0 });
-
   const url = new URL(process.env.NEXT_PUBLIC_APPLICATION_URL ?? 'interweb.wtf');
 
   const displayUrl = url.hostname.split('.').slice(-2).join('.');
@@ -29,7 +25,7 @@ export function Welcome() {
           </Text>
           <Text span inherit c="violet" size="md">
             /go/
-            <CipherText text={slug} speed={50} />
+            <CipherText text={generateSlug()} speed={50} />
           </Text>
           <Text span inherit c="gray">
             /info

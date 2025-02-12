@@ -7,6 +7,7 @@ import { IconTrash } from '@tabler/icons-react';
 import { ActionIcon, Box, Center, Stack, Table, Text } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/client';
 import UrlInput from '@/app/_components/UrlInput';
+import { KNOWN_SHORTENERS } from '@/constants';
 import { Tables } from '@/types/supabase';
 
 export interface UrlDashboardProps {
@@ -18,13 +19,46 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const onSubmit = async (url: string): Promise<void> => {
+    let actualUrl = url;
+
+    if (KNOWN_SHORTENERS.includes(new URL(url).hostname)) {
+      try {
+        actualUrl = await fetch('/api/fetch', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ url }),
+        })
+          .then(async (res) => {
+            if (res.ok) {
+              return await res.json();
+            }
+
+            setErrorMessage('Could not expand URL.');
+          })
+          .then(async (response) => {
+            const { url: resolvedUrl } = response;
+
+            return resolvedUrl;
+          })
+          .catch((error) => {
+            console.error(error);
+            setErrorMessage('Could not expand URL.');
+          });
+      } catch (error) {
+        console.error(error);
+        setErrorMessage('Could not expand URL.');
+      }
+    }
+
     try {
       const slug = await fetch('/api/shorten', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ url, userAgent: navigator.userAgent }),
+        body: JSON.stringify({ url: actualUrl, userAgent: navigator.userAgent }),
       })
         .then(async (res) => {
           if (res.ok) {

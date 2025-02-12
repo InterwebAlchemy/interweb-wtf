@@ -18,12 +18,14 @@ export const KNOWN_DOMAINS = [
   'linkedin.com',
   'stackoverflow.com',
   'stackexchange.com',
+  'youtube.com',
 ];
 
 export const KNOWN_SHORTENERS = [
   'bit.ly',
   'lnkd.in',
   'goo.gl',
+  'youtu.be',
   't.co',
   'ow.ly',
   'tinyurl.com',

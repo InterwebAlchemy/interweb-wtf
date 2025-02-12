@@ -1,12 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import chromium from '@sparticuz/chromium';
-import Haikunator from 'haikunator';
 import playwright from 'playwright';
 import { chromium as playwrightCore } from 'playwright-core';
 // TODO: enable stealth
 // import { chromium } from 'playwright-extra';
 // import stealth from 'puppeteer-extra-plugin-stealth';=
 import { createClient } from '@/app/_adapters/supabase/server';
+import { generateSlug } from '@/app/_services/url';
 import { removeTrackingParams } from '@/app/_utils/url';
 import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
 import { STORAGE_REFRESH_INTERVAL } from '@/constants';
@@ -26,8 +26,6 @@ export async function POST(request: NextRequest) {
   const { url, userAgent } = requestObj;
 
   const urlObj = removeTrackingParams(new URL(url));
-
-  const haikunator = new Haikunator();
 
   const supabase = await createClient();
 
@@ -102,7 +100,7 @@ export async function POST(request: NextRequest) {
     try {
       // generate a unique slug
       while (existingSlug) {
-        slug = haikunator.haikunate({ tokenLength: 0 });
+        slug = generateSlug();
 
         const { data, error } = await supabase
           .from('short_urls')
