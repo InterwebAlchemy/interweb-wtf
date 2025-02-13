@@ -13,7 +13,7 @@ export default async function Screen({ children, ...props }: React.PropsWithChil
 
   return (
     <>
-      <Notifications position="bottom-right" pos="fixed" bottom="10px" right="10px" />
+      <Notifications position="bottom-right" />
       <Container fluid h="100%" p="md" display="flex" w="100%">
         <Stack h="100%" w="100%">
           <Nav />

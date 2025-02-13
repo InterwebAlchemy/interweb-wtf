@@ -1,4 +1,5 @@
 import '@mantine/core/styles.css';
+import '@mantine/notifications/styles.css';
 import '@/app/_styles/global.css';
 
 import React from 'react';
