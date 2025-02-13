@@ -24,6 +24,7 @@ export default function Login() {
           setIsLoggedIn(false);
         }
       } catch (error) {
+        console.error(error);
         setIsLoggedIn(false);
       }
     })();
@@ -36,17 +37,19 @@ export default function Login() {
           setIsLoggedIn(false);
         })
         .finally(() => {
-          router.push('/');
+          window.location.href = '/';
         });
     } else {
       signInWithGithub()
         .then(() => {
+          console.log('LOGGED IN');
           setIsLoggedIn(true);
-
-          router.push('/dashboard/');
         })
         .catch(() => {
-          router.push('/request-invite/');
+          router.push('/request-invite');
+        })
+        .finally(() => {
+          router.push('/dashboard');
         });
     }
   };
