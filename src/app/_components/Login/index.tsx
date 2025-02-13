@@ -12,11 +12,16 @@ export default function Login() {
   const supabase = createClient();
 
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [redirectTo, setRedirectTo] = useState<string | null>(null);
 
   useEffect(() => {
     (async function () {
       try {
-        const { data } = await supabase.auth.getUser();
+        const { data, error } = await supabase.auth.getUser();
+
+        if (error) {
+          console.error(error);
+        }
 
         if (data.user !== null && data.user.aud === 'authenticated') {
           setIsLoggedIn(true);
@@ -30,6 +35,16 @@ export default function Login() {
     })();
   }, []);
 
+  useEffect(() => {
+    if (redirectTo) {
+      if (redirectTo === '/') {
+        window.location.href = '/';
+      } else {
+        router.push(redirectTo);
+      }
+    }
+  }, [redirectTo]);
+
   const onClick = () => {
     if (isLoggedIn) {
       signOut()
@@ -37,7 +52,7 @@ export default function Login() {
           setIsLoggedIn(false);
         })
         .finally(() => {
-          window.location.href = '/';
+          setRedirectTo('/');
         });
     } else {
       signInWithGithub()
@@ -46,10 +61,10 @@ export default function Login() {
           setIsLoggedIn(true);
         })
         .catch(() => {
-          router.push('/request-invite');
+          setRedirectTo('/request-invite');
         })
         .finally(() => {
-          router.push('/dashboard');
+          setRedirectTo('/dashboard');
         });
     }
   };
