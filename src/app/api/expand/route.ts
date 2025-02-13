@@ -3,7 +3,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 // import { subtle } from 'node:crypto';
 import chromium from '@sparticuz/chromium';
-import { chromium as playwright } from 'playwright-core';
+import playwright from 'playwright';
+import { chromium as playwrightCore } from 'playwright-core';
 import { createClient } from '@/app/_adapters/supabase/server';
 // import rehypeParse from 'rehype-parse';
 // import rehypeRemark from 'rehype-remark';
@@ -104,15 +105,20 @@ export async function POST(request: NextRequest) {
   // scrape url with playwright
   const launchOptions = {
     args: chromium.args,
-    executablePath: await chromium.executablePath(),
+    executablePath:
+      process.env.NEXT_PUBLIC_VERCEL_ENV === 'production'
+        ? await chromium.executablePath()
+        : playwright.chromium.executablePath(),
     headless: true,
     timeout: 5000,
     userAgent,
   };
 
   try {
-    const browser = await playwright.launch(launchOptions);
+    // TODO: enable stealth
+    // chromium.use(stealth());
 
+    const browser = await playwrightCore.launch(launchOptions);
     const context = await browser.newContext();
 
     for (const page of await context.pages()) {
@@ -121,7 +127,7 @@ export async function POST(request: NextRequest) {
 
     const page = await context.newPage();
 
-    await page.goto(shortUrlObj.toString());
+    await page.goto(urlObj.toString());
 
     await page.waitForLoadState('domcontentloaded');
 

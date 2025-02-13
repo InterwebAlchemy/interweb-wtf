@@ -97,11 +97,21 @@ export default function UrlInput({
               isLoading ? (
                 <Loader size="sm" />
               ) : submitButton ? (
-                <ActionIcon color="violet" title={submitTitle} type="submit" disabled={isLoading}>
+                <ActionIcon
+                  color="violet"
+                  title={submitTitle}
+                  type="submit"
+                  disabled={isLoading || readOnly}
+                >
                   {submitButton}
                 </ActionIcon>
               ) : !readOnly ? (
-                <ActionIcon color="violet" title={submitTitle} type="submit" disabled={isLoading}>
+                <ActionIcon
+                  color="violet"
+                  title={submitTitle}
+                  type="submit"
+                  disabled={isLoading || readOnly}
+                >
                   {slug ? <IconEdit /> : <IconWorldQuestion />}
                 </ActionIcon>
               ) : (

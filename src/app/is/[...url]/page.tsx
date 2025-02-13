@@ -18,6 +18,7 @@ import {
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UnknownShortener from '@/app/_components/UnknownShortener';
+import UrlMetadata from '@/app/_components/UrlMetadata';
 import { getTrackingParams, removeTrackingParams } from '@/app/_utils/url';
 import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
 import { KNOWN_SHORTENERS } from '@/constants';
@@ -83,11 +84,6 @@ export default async function InspectorPage({ params }: Params) {
     return response;
   };
 
-  // TODO: grab extra details from metadata
-  // const parseMetadata = (metadata: Record<string, any>): void => {
-  //   console.log(metadata);
-  // };
-
   const renderSearchParams = (url: URL): React.ReactNode => {
     const searchParams = url.searchParams;
 
@@ -113,7 +109,7 @@ export default async function InspectorPage({ params }: Params) {
           radius="sm"
           title={trackingParam ? 'This is a known tracking parameter' : ''}
         >
-          <Text span inherit fw={300}>
+          <Text span inherit fw={300} tt="initial">
             {value}
           </Text>
         </Badge>
@@ -138,26 +134,21 @@ export default async function InspectorPage({ params }: Params) {
   if (status >= 200 && status < 400) {
     const { metadata, screenshotPath, favicon } = await getContent(displayUrl, url);
 
-    const charset =
-      metadata.find((meta: Record<string, any>) => {
-        return meta?.charset;
-      })?.charset ?? 'unknown';
-
     const language =
-      metadata.find((meta: Record<string, any>) => {
+      metadata?.find((meta: Record<string, any>) => {
         return meta?.language;
       })?.language ?? 'unknown';
-
-    // TODO: grab extra details from metadata
-    // parseMetadata(metadata);
 
     let imageSrc;
 
     try {
-      const { data } = await supabase.storage
-        .from('inspector-screenshots')
-        .getPublicUrl(screenshotPath);
-      imageSrc = data?.publicUrl;
+      if (screenshotPath) {
+        const { data } = await supabase.storage
+          .from('inspector-screenshots')
+          .getPublicUrl(screenshotPath);
+
+        imageSrc = data?.publicUrl;
+      }
     } catch (_error) {
       void 0;
     }
@@ -193,8 +184,27 @@ export default async function InspectorPage({ params }: Params) {
         }
       >
         <Title order={2} lineClamp={3}>
-          {title}
+          <Group align="center">
+            {title && title !== 'undefined' ? title : displayUrlNoQueryParams.toString()}
+            {language !== 'unknown' && (
+              <Badge
+                variant="light"
+                color="gray"
+                leftSection={
+                  <Text span inherit fw={300}>
+                    Lang:
+                  </Text>
+                }
+                radius="sm"
+              >
+                <Text span inherit fw={700} tt="initial">
+                  {language}
+                </Text>
+              </Badge>
+            )}
+          </Group>
         </Title>
+        <UrlMetadata url={cleanUrl.toString()} />
         {imageSrc && (
           <Center w="80%" mx="auto" my="md" pos="relative">
             <Anchor
@@ -212,7 +222,7 @@ export default async function InspectorPage({ params }: Params) {
             </Anchor>
           </Center>
         )}
-        {description && (
+        {description && description !== 'undefined' && (
           <Center w="90%" mx="auto" my="md" maw="640">
             <Blockquote
               radius="xs"
@@ -223,76 +233,6 @@ export default async function InspectorPage({ params }: Params) {
               {description}
             </Blockquote>
           </Center>
-        )}
-        <Group align="center" justify="center" w="100%">
-          <Badge
-            color="white"
-            bg={pillColor}
-            leftSection={
-              <Text span inherit fw={300}>
-                Status:
-              </Text>
-            }
-            radius="sm"
-          >
-            <Text span inherit fw={700}>
-              {status}
-            </Text>
-          </Badge>
-          {language !== 'unknown' && (
-            <Badge
-              variant="light"
-              color="gray"
-              leftSection={
-                <Text span inherit fw={300}>
-                  Language:
-                </Text>
-              }
-              radius="sm"
-            >
-              <Text span inherit fw={700} tt="initial">
-                {language}
-              </Text>
-            </Badge>
-          )}
-          <Badge
-            variant="light"
-            color="gray"
-            leftSection={
-              <Text span inherit fw={300}>
-                Content-Type:
-              </Text>
-            }
-            radius="sm"
-          >
-            <Text span inherit fw={700}>
-              {contentType}
-            </Text>
-          </Badge>
-          {charset !== 'unknown' && !contentType?.includes('charset') && (
-            <Badge
-              variant="light"
-              color="gray"
-              leftSection={
-                <Text span inherit fw={300}>
-                  Charset:
-                </Text>
-              }
-              radius="sm"
-            >
-              <Text span inherit fw={700}>
-                {charset}
-              </Text>
-            </Badge>
-          )}
-        </Group>
-        {redirected && (
-          <Text>
-            <Text span inherit fw={700}>
-              Note:
-            </Text>
-            The destination of this shortened URL was redirected while retrieving the URL.
-          </Text>
         )}
         {displayUrl.searchParams.size > 0 && (
           <Stack>

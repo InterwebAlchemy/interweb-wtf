@@ -18,9 +18,13 @@ export async function middleware(request: NextRequest) {
         new URL(`${request.nextUrl.pathname}/info`, request.nextUrl.origin).toString()
       );
     }
-  } else {
-    return await updateSession(request);
   }
+
+  if (request.nextUrl.pathname === '/') {
+    return;
+  }
+
+  return await updateSession(request);
 }
 
 export const config = {

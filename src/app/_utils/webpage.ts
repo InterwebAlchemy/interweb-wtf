@@ -5,11 +5,12 @@ export function getPageTitle(metadata: PageMetadata): string {
   const title = '';
 
   // get title-like items from page metadata
-  const titles = metadata.filter(
-    (meta) =>
-      meta?.name === 'title' ||
-      (typeof meta?.property !== 'undefined' && meta.property.endsWith(':title'))
-  );
+  const titles =
+    metadata?.filter(
+      (meta) =>
+        meta?.name === 'title' ||
+        (typeof meta?.property !== 'undefined' && meta.property.endsWith(':title'))
+    ) ?? [];
 
   if (titles.length > 0) {
     const ogTitle = titles.find((meta) => meta?.property === 'og:title');
@@ -31,7 +32,7 @@ export function getPageTitle(metadata: PageMetadata): string {
     }
   }
 
-  const pageTitle = metadata.find((meta) => Object.hasOwn(meta, 'title'))?.title;
+  const pageTitle = metadata?.find((meta) => Object.hasOwn(meta, 'title'))?.title;
 
   return pageTitle || title;
 }
@@ -40,11 +41,12 @@ export function getPageTitle(metadata: PageMetadata): string {
 export function getPageDescription(metadata: PageMetadata): string {
   const description = '';
 
-  const descriptions = metadata.filter(
-    (meta) =>
-      meta?.name === 'description' ||
-      (typeof meta?.property !== 'undefined' && meta.property.endsWith(':description'))
-  );
+  const descriptions =
+    metadata?.filter(
+      (meta) =>
+        meta?.name === 'description' ||
+        (typeof meta?.property !== 'undefined' && meta.property.endsWith(':description'))
+    ) ?? [];
 
   if (descriptions.length > 0) {
     const ogDescription = descriptions.find((meta) => meta?.property === 'og:description');

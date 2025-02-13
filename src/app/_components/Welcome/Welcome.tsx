@@ -25,7 +25,7 @@ export function Welcome() {
           </Text>
           <Text span inherit c="violet" size="md">
             /go/
-            <CipherText text={generateSlug()} speed={50} />
+            <CipherText defaultText={generateSlug()} speed={50} />
           </Text>
           <Text span inherit c="gray">
             /info
