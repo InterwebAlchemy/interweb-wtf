@@ -1,4 +1,3 @@
-import { cookies } from 'next/headers';
 import { permanentRedirect, redirect, RedirectType } from 'next/navigation';
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
@@ -7,10 +6,59 @@ export interface RequestProps {
   slug: string;
 }
 
+export async function generateMetadata({ params }: { params: Promise<RequestProps> }) {
+  const supabase = await createClient();
+
+  const slug = (await params).slug;
+
+  const {
+    data: { id, url },
+  } = await supabase.from('short_urls').select('*').eq('slug', slug).single();
+
+  const {
+    data: { title, description, metadata, screenshot, favicon },
+  } = await supabase.from('url_info').select('*').eq('url_id', id).single();
+
+  let imageSrc: string = '';
+
+  try {
+    const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
+    imageSrc = data?.publicUrl;
+  } catch (error) {
+    console.error(error);
+  }
+
+  return {
+    metadataBase: url,
+    generator: 'Interweb.WTF',
+    applicationName: 'Interweb.WTF',
+    title,
+    description,
+    referrer: '',
+    icons: {
+      icon: favicon,
+    },
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      images: imageSrc,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+      images: [imageSrc],
+    },
+    ...metadata,
+  };
+}
+
 export async function GET(_request: NextRequest, { params }: { params: Promise<RequestProps> }) {
-  const cookieStore = await cookies();
   const slug = (await params)?.slug;
-  const skipInfoInterstitial = cookieStore.get('skip_info_interstitial');
 
   if (typeof slug !== 'undefined') {
     const supabase = await createClient();
@@ -32,13 +80,9 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
     const redirectUrl = data.url;
 
     if (redirectUrl) {
-      if (typeof skipInfoInterstitial !== 'undefined' && skipInfoInterstitial.value === 'true') {
-        permanentRedirect(redirectUrl, RedirectType.replace);
-      } else {
-        redirect(`/go/${slug}/info`);
-      }
+      permanentRedirect(redirectUrl, RedirectType.replace);
     }
-  } else {
-    return new NextResponse(JSON.stringify({ message: 'Not found' }), { status: 404 });
   }
+
+  return new NextResponse(JSON.stringify({ message: 'Not found' }), { status: 404 });
 }

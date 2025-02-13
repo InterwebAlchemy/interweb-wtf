@@ -22,8 +22,6 @@ export async function POST(request: NextRequest) {
 
     const contentType = requestHeaders.get('content-type');
 
-    console.log(requestHeaders);
-
     return new NextResponse(
       JSON.stringify({ status, url: fullUrl, redirected, headers: requestHeaders, contentType }),
       {

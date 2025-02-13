@@ -26,12 +26,61 @@ import UrlMetadata from '@/app/_components/UrlMetadata';
 import '@/app/_styles/info.css';
 
 type Params = {
-  params: Promise<{
-    slug: string;
-  }>;
+  slug: string;
 };
 
-export default async function InspectorPage({ params }: Params) {
+export async function generateMetadata({ params }: { params: Promise<Params> }) {
+  const supabase = await createClient();
+
+  const slug = (await params).slug;
+
+  const {
+    data: { id, url },
+  } = await supabase.from('short_urls').select('*').eq('slug', slug).single();
+
+  const {
+    data: { title, description, metadata, screenshot, favicon },
+  } = await supabase.from('url_info').select('*').eq('url_id', id).single();
+
+  let imageSrc: string = '';
+
+  try {
+    const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
+    imageSrc = data?.publicUrl;
+  } catch (_error) {
+    void 0;
+  }
+
+  return {
+    metadataBase: url,
+    generator: 'Interweb.WTF',
+    applicationName: 'Interweb.WTF',
+    title,
+    description,
+    referrer: '',
+    icons: {
+      icon: favicon,
+    },
+    alternates: {
+      canonical: url,
+    },
+    openGraph: {
+      title,
+      description,
+      url,
+      images: imageSrc,
+    },
+    twitter: {
+      card: 'summary',
+      title,
+      description,
+      images: [imageSrc],
+    },
+    ...metadata,
+  };
+}
+
+export default async function InspectorPage({ params }: { params: Promise<Params> }) {
   const supabase = await createClient();
 
   const slug = (await params).slug;
@@ -49,15 +98,11 @@ export default async function InspectorPage({ params }: Params) {
   let summary: string;
 
   // TODO: render summary as Markdown
-  const { data: summaryData, error: summaryError } = await supabase
+  const { data: summaryData } = await supabase
     .from('url_summaries')
     .select('*')
     .eq('url_id', id)
     .single();
-
-  if (summaryError) {
-    console.error(summaryError);
-  }
 
   if (summaryData && summaryData?.summary) {
     summary = summaryData?.summary;
@@ -77,8 +122,8 @@ export default async function InspectorPage({ params }: Params) {
   try {
     const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
     imageSrc = data?.publicUrl;
-  } catch (error) {
-    console.error(error);
+  } catch (_error) {
+    void 0;
   }
 
   const renderScreenshotAndQrCode = (): React.ReactNode => {

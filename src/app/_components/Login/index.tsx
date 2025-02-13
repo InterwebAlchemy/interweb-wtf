@@ -16,11 +16,7 @@ export default function Login() {
   useEffect(() => {
     (async function () {
       try {
-        const { data, error } = await supabase.auth.getUser();
-
-        if (error) {
-          console.log('GETUSER ERROR:', error);
-        }
+        const { data } = await supabase.auth.getUser();
 
         if (data.user !== null && data.user.aud === 'authenticated') {
           setIsLoggedIn(true);
@@ -28,7 +24,6 @@ export default function Login() {
           setIsLoggedIn(false);
         }
       } catch (error) {
-        console.error('GETUSER EXCEPTION:', error);
         setIsLoggedIn(false);
       }
     })();
@@ -40,9 +35,6 @@ export default function Login() {
         .then(() => {
           setIsLoggedIn(false);
         })
-        .catch((error) => {
-          console.error('SIGNOUT ERROR:', error);
-        })
         .finally(() => {
           router.push('/');
         });
@@ -53,9 +45,7 @@ export default function Login() {
 
           router.push('/dashboard/');
         })
-        .catch((error) => {
-          console.error('LOGIN ERROR:', error);
-
+        .catch(() => {
           router.push('/request-invite/');
         });
     }

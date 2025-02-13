@@ -30,8 +30,8 @@ export default function useUserProfile() {
             setProfile(profileData[0]);
           }
         }
-      } catch (error) {
-        console.error('GETUSER EXCEPTION:', error);
+      } catch (_error) {
+        void 0;
       } finally {
         setLoading(false);
       }

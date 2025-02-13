@@ -158,8 +158,8 @@ export default async function InspectorPage({ params }: Params) {
         .from('inspector-screenshots')
         .getPublicUrl(screenshotPath);
       imageSrc = data?.publicUrl;
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
+      void 0;
     }
 
     const title = getPageTitle(metadata);

@@ -29,7 +29,6 @@ export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactEleme
           return response.json();
         }
 
-        console.error(response.statusText);
         setErrorMessage(response.statusText);
       })
       .then(({ status, contentType: resolvedContentType, url: resolvedUrl, redirected }) => {
@@ -40,8 +39,7 @@ export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactEleme
 
         console.log(resolvedUrl, url);
       })
-      .catch((error) => {
-        console.error(error);
+      .catch(() => {
         setErrorMessage('Could not resolve URL.');
       })
       .finally(() => {

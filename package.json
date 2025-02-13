@@ -84,8 +84,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@mantine/core": "7.16.2",
-    "@mantine/hooks": "7.16.2",
+    "@mantine/core": "^7.16.3",
+    "@mantine/hooks": "^7.16.3",
+    "@mantine/notifications": "^7.16.3",
     "@next/bundle-analyzer": "^15.1.5",
     "@sparticuz/chromium": "^132.0.0",
     "@supabase/ssr": "^0.5.2",

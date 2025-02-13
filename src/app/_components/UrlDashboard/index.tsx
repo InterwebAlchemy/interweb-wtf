@@ -3,8 +3,20 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { IconTrash } from '@tabler/icons-react';
-import { ActionIcon, Box, Center, Stack, Table, Text } from '@mantine/core';
+import { IconClipboardCheck, IconExternalLink, IconLinkPlus, IconTrash } from '@tabler/icons-react';
+import {
+  ActionIcon,
+  Box,
+  Center,
+  Code,
+  Group,
+  Kbd,
+  Stack,
+  Table,
+  Text,
+  Tooltip,
+} from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { createClient } from '@/app/_adapters/supabase/client';
 import UrlInput from '@/app/_components/UrlInput';
 import { KNOWN_SHORTENERS } from '@/constants';
@@ -17,6 +29,18 @@ export interface UrlDashboardProps {
 export default function UrlDashboard({ urls }: UrlDashboardProps) {
   const [redirectSlug, setRedirectSlug] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
+  // HACK: this is "deprecated", but the navigator.userAgentData.platform isn't widely supported yet
+  // we just want to know if the user is on a Mac
+  const platform =
+    // @ts-expect-error - TS doesn't know about navigator.userAgentData yet
+    typeof navigator?.userAgentData !== 'undefined' &&
+    // @ts-expect-error - TS doesn't know about navigator.userAgentData yet
+    navigator?.userAgentData?.platform !== 'undefined'
+      ? // @ts-expect-error - TS doesn't know about navigator.userAgentData yet
+        navigator.userAgentData.platform
+      : navigator.platform;
+
+  const metaKey = platform === 'MacIntel' || platform === 'macOS' ? '⌘' : 'Ctrl';
 
   const onSubmit = async (url: string): Promise<void> => {
     let actualUrl = url;
@@ -42,12 +66,10 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
 
             return resolvedUrl;
           })
-          .catch((error) => {
-            console.error(error);
+          .catch(() => {
             setErrorMessage('Could not expand URL.');
           });
-      } catch (error) {
-        console.error(error);
+      } catch (_error) {
         setErrorMessage('Could not expand URL.');
       }
     }
@@ -86,25 +108,21 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
               .then(async (response) => {
                 console.log(response);
               })
-              .catch((error) => {
-                console.error(error);
-              });
-          } catch (error) {
-            console.error(error);
+              .catch(void 0);
+          } catch (_error) {
+            void 0;
           }
 
           return slug;
         })
-        .catch((error) => {
-          console.error(error);
+        .catch(() => {
           setErrorMessage('Could not create WTF Link.');
         });
 
       if (slug) {
         setRedirectSlug(slug);
       }
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       setErrorMessage('Could not create WTF Link.');
     }
   };
@@ -118,47 +136,99 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
       const { error } = await supabase.from('short_urls').update({ deleted: true }).eq('id', id);
 
       if (error) {
-        console.error(error);
         setErrorMessage('Could not delete WTF Link.');
       }
-    } catch (error) {
-      console.error(error);
+    } catch (_error) {
       setErrorMessage('Could not delete WTF Link.');
     }
   };
 
   const renderRows = () => {
     return urls.map((url) => {
+      const wtfLinkPath = `/go/${url.slug}/`;
+      const wtfInfoLinkPath = `/go/${url.slug}/info`;
+      const wtfLink = new URL(wtfLinkPath, process.env.NEXT_PUBLIC_APPLICATION_URL);
+      const wtfInfoLink = new URL(wtfInfoLinkPath, process.env.NEXT_PUBLIC_APPLICATION_URL);
+
       return (
         <Table.Tr key={url.id}>
           <Table.Td>
-            <Link href={`/go/${url.slug}/info`}>{url.slug}</Link>
+            <Link href={wtfInfoLink}>{url.slug}</Link>
           </Table.Td>
-          <Table.Td>
-            <Text>{url.url}</Text>
+          <Table.Td w="50%">
+            <Text span truncate="end" lineClamp={1} title={url.url}>
+              {url.url}
+            </Text>
           </Table.Td>
-          <Table.Td>
-            <Text>{url.updated_at}</Text>
-          </Table.Td>
-          <Table.Td>
-            <ActionIcon
-              c="red"
-              bg="transparent"
-              size="sm"
-              title="Delete WTF Link"
-              onClick={() => {
-                onDelete(url.id)
-                  .then(() => {
-                    setRedirectSlug('/dashboard');
-                  })
-                  .catch((error) => {
-                    console.error(error);
-                    setErrorMessage('Could not delete WTF Link.');
-                  });
-              }}
-            >
-              <IconTrash />
-            </ActionIcon>
+          <Table.Td w="20%">
+            <Group justify="end">
+              <Tooltip label="Copy WTF Link">
+                <ActionIcon
+                  c="violet"
+                  bg="transparent"
+                  size="sm"
+                  title="Copy WTF Link"
+                  onClick={() => {
+                    navigator.clipboard
+                      .writeText(wtfLink.toString())
+                      .then(() => {
+                        notifications.show({
+                          title: 'Copied WTF Link',
+                          message: (
+                            <Stack>
+                              <Text>
+                                <Code>{wtfLink.toString()}</Code> copied to clipboard.
+                              </Text>
+                              <Text>
+                                You can use <Kbd>{metaKey}</Kbd>+<Kbd>V</Kbd> to paste the URL.
+                              </Text>
+                            </Stack>
+                          ),
+                          color: 'violet',
+                          icon: <IconClipboardCheck />,
+                        });
+                      })
+                      .catch(() => {
+                        setErrorMessage('Could not copy WTF Link.');
+                      });
+                  }}
+                >
+                  <IconLinkPlus />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label="Visit WTF Link">
+                <ActionIcon
+                  c="gray"
+                  bg="transparent"
+                  size="sm"
+                  title="Visit WTF Link"
+                  onClick={() => {
+                    window.open(url.url, '_blank', 'noopener noreferrer');
+                  }}
+                >
+                  <IconExternalLink />
+                </ActionIcon>
+              </Tooltip>
+              <Tooltip label="Delete WTF Link">
+                <ActionIcon
+                  c="red"
+                  bg="transparent"
+                  size="sm"
+                  title="Delete WTF Link"
+                  onClick={() => {
+                    onDelete(url.id)
+                      .then(() => {
+                        setRedirectSlug('/dashboard');
+                      })
+                      .catch(() => {
+                        setErrorMessage('Could not delete WTF Link.');
+                      });
+                  }}
+                >
+                  <IconTrash />
+                </ActionIcon>
+              </Tooltip>
+            </Group>
           </Table.Td>
         </Table.Tr>
       );
@@ -191,18 +261,16 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
             <Text>You haven't created any WTF Links yet.</Text>
           </Center>
         ) : (
-          <Table>
+          <Table striped layout="fixed">
             <Table.Thead>
-              <Table.Tr>
+              <Table.Tr w="20%">
                 <Table.Th>
                   <Text>Slug</Text>
                 </Table.Th>
-                <Table.Th>
+                <Table.Th w="65%">
                   <Text>URL</Text>
                 </Table.Th>
-                <Table.Th>
-                  <Text>Updated</Text>
-                </Table.Th>
+                <Table.Th w="15%" />
               </Table.Tr>
             </Table.Thead>
             <Table.Tbody>{renderRows()}</Table.Tbody>

@@ -64,15 +64,11 @@ export default function Nav() {
               return await res.json();
             }
           })
-          .catch((error) => {
-            console.error(error);
-          });
+          .catch(void 0);
 
         router.push(`/go/${slug}/info`);
       })
-      .catch((error) => {
-        console.error(error);
-      });
+      .catch(void 0);
   };
 
   useEffect(() => {
@@ -84,9 +80,11 @@ export default function Nav() {
   }, [loading, profile]);
 
   const logout = () => {
-    signOut().then(() => {
-      router.push('/');
-    });
+    signOut()
+      .catch(void 0)
+      .finally(() => {
+        window.location.href = '/';
+      });
   };
 
   const items = links.map((item) => {
@@ -100,8 +98,8 @@ export default function Nav() {
   });
 
   items.push(
-    <UnstyledButton key="logout" onClick={logout}>
-      <Anchor href="#">Sign out</Anchor>
+    <UnstyledButton key="logout" id="signout-link" onClick={logout} c="blue">
+      <Text c="blue">Sign out</Text>
     </UnstyledButton>
   );
 

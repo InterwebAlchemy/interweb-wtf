@@ -18,6 +18,7 @@ export async function signInWithGithub(): Promise<void> {
 }
 
 export async function signOut(): Promise<void> {
+  console.log('Signing out');
   const { error } = await supabase.auth.signOut();
 
   if (error) {
