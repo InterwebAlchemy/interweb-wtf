@@ -2,8 +2,6 @@ import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
 export async function updateSession(request: NextRequest) {
-  console.log('SESSION MIDDLEWARE');
-
   let supabaseResponse = NextResponse.next({
     request,
   });
