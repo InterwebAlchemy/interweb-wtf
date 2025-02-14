@@ -8,13 +8,11 @@ export async function middleware(request: NextRequest) {
         const cookie = request.cookies.get('skip_info_interstitial');
 
         if (cookie?.value === 'false') {
-          return;
+          return NextResponse.redirect(
+            new URL(`${request.nextUrl.pathname}/info`, request.nextUrl.origin).toString()
+          );
         }
       }
-
-      return NextResponse.redirect(
-        new URL(`${request.nextUrl.pathname}/info`, request.nextUrl.origin).toString()
-      );
     }
 
     return;
