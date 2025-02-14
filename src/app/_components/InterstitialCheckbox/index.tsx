@@ -31,13 +31,14 @@ export default function InterstitialCheckbox() {
 
   useEffect(() => {
     // get the cookie value
-    const cookieValue =
-      document.cookie
-        .split('; ')
-        .find((row) => row.startsWith('skip_info_interstitial'))
-        ?.split('=')[1] === 'true';
+    const cookieValue = document.cookie
+      .split('; ')
+      .find((row) => row.startsWith('skip_info_interstitial'))
+      ?.split('=')[1];
 
-    setSkipInspector(cookieValue);
+    if (typeof cookieValue !== 'undefined' && cookieValue === 'false') {
+      setSkipInspector(false);
+    }
   }, []);
 
   return (

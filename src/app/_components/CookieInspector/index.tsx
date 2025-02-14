@@ -10,7 +10,8 @@ export default function CookieInspector() {
     return <></>;
   }
 
-  const cookies = document.cookie.split(';');
+  // get cookies for current domain
+  const cookies = document.cookie.split(';').filter((cookie) => cookie);
 
   const renderCookies = () => {
     return cookies.map((cookie) => {
@@ -43,6 +44,7 @@ export default function CookieInspector() {
   return (
     <Stack w="100%">
       <Title order={4}>Active {process.env.NEXT_PUBLIC_APPLICATION_URL} Cookies</Title>
+      <Text>Here are the cookies currently associated with this website in your browser.</Text>
       <Group>{renderCookies()}</Group>
     </Stack>
   );

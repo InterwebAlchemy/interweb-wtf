@@ -37,6 +37,13 @@ export default async function PrivacyPage() {
             destination of a the WTF Link. You can always append <Code>/info</Code> to any WTF Link
             to view the WTF Link Inspector for it.
           </Text>
+          <Text>
+            <Text span inherit c="violet">
+              Interweb.WTF
+            </Text>{' '}
+            uses <Anchor href="">Supabase</Anchor> for authentication, authorization, and data
+            storage. Once you log in, Supabase might store user session cookies in your browser.
+          </Text>
           <CookieInspector />
         </Stack>
       </Center>
