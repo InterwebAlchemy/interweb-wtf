@@ -7,11 +7,9 @@ export async function middleware(request: NextRequest) {
       if (request.cookies.has('skip_info_interstitial')) {
         const cookie = request.cookies.get('skip_info_interstitial');
 
-        if (cookie?.value === 'true') {
+        if (cookie?.value === 'false') {
           return;
         }
-      } else if (request.headers.has('x-interwebwtf-skip-insterstitial')) {
-        return;
       }
 
       return NextResponse.redirect(

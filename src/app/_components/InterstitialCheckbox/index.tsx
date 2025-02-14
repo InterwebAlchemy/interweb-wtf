@@ -13,7 +13,7 @@ import {
 } from '@mantine/core';
 
 export default function InterstitialCheckbox() {
-  const [skipInspector, setSkipInspector] = useState(false);
+  const [skipInspector, setSkipInspector] = useState(true);
 
   const onChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.currentTarget.checked;
