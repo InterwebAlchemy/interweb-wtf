@@ -22,6 +22,7 @@ import { createClient } from '@/app/_adapters/supabase/server';
 import QRCode from '@/app/_components/QRCode';
 import Screen from '@/app/_components/Screen';
 import UrlMetadata from '@/app/_components/UrlMetadata';
+import UrlScreenshot from '@/app/_components/UrlScreenshot';
 
 import '@/app/_styles/info.css';
 
@@ -34,49 +35,48 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 
   const slug = (await params).slug;
 
+  const shortUrl = new URL(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/slug`);
+
   const {
-    data: { id, url },
+    data: { id },
   } = await supabase.from('short_urls').select('*').eq('slug', slug).single();
 
   const {
-    data: { title, description, metadata, screenshot, favicon },
+    data: { screenshot },
   } = await supabase.from('url_info').select('*').eq('url_id', id).single();
 
-  let imageSrc: string = '';
+  const favicon = `${process.env.NEXT_PUBLIC_APPLICATION_URL}/favicon.svg`;
+
+  const images = [favicon];
 
   try {
     const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
-    imageSrc = data?.publicUrl;
+
+    if (data?.publicUrl) {
+      images.unshift(data?.publicUrl);
+    }
   } catch (_error) {
     void 0;
   }
 
   return {
-    metadataBase: url,
     generator: 'Interweb.WTF',
     applicationName: 'Interweb.WTF',
-    title,
-    description,
+    title: `Interweb.WTF | WTF Link Inspector | ${shortUrl.toString()}`,
+    description: `Interweb.WTF Inspector for ${shortUrl.toString()}`,
     referrer: '',
-    icons: {
-      icon: favicon,
-    },
-    alternates: {
-      canonical: url,
-    },
     openGraph: {
-      title,
-      description,
-      url,
-      images: imageSrc,
+      title: `Interweb.WTF | WTF Link Inspector | ${shortUrl.toString()}`,
+      description: `Interweb.WTF Inspector for ${shortUrl.toString()}`,
+      url: shortUrl.toString(),
+      images,
     },
     twitter: {
       card: 'summary',
-      title,
-      description,
-      images: [imageSrc],
+      title: `Interweb.WTF | WTF Link Inspector | ${shortUrl.toString()}`,
+      description: `Interweb.WTF Inspector for ${shortUrl.toString()}`,
+      images,
     },
-    ...metadata,
   };
 }
 
@@ -148,22 +148,7 @@ export default async function InspectorPage({ params }: { params: Promise<Params
           <TabsPanel key={tab} value={tab}>
             {tab === 'details' ? (
               <Stack>
-                <Center w="80%" mx="auto" my="md" pos="relative">
-                  <Anchor
-                    id="page-screenshot"
-                    rel="noreferrer"
-                    href={displayUrl.toString()}
-                    underline="never"
-                  >
-                    <Image
-                      radius="sm"
-                      src={imageSrc}
-                      alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
-                      mah={600}
-                      mih={200}
-                    />
-                  </Anchor>
-                </Center>
+                <UrlScreenshot url={displayUrl} src={imageSrc} />
                 {description && (
                   <Center w="90%" mx="auto" my="md" maw="640">
                     <Blockquote

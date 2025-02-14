@@ -31,13 +31,15 @@ export const config = {
   matcher: [
     /*
      * Match all request paths except for the ones starting with:
+     * - is (expanded short links from other providers)
      * - api (API routes)
      * - login (login page)
      * - request-invite (request invite page)
+     * - about (about page)
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    '/((?!api|login|request-invite|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    '/((?!is|api|login|request-invite|about|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
   ],
 };

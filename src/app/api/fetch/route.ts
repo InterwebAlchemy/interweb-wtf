@@ -9,33 +9,47 @@ export async function POST(request: NextRequest) {
 
   const { url } = requestObj;
 
-  const urlObj = new URL(url);
+  let fixedUrl = url;
 
-  if (!urlObj.hostname) {
-    return new NextResponse(JSON.stringify({ message: 'Invalid URL' }), { status: 400 });
+  // ensure http/https is present
+  if (!url.startsWith('http:') && !url.startsWith('https:')) {
+    fixedUrl = `https://${fixedUrl
+      .split('/')
+      .filter((part) => part)
+      .join('/')}`;
   }
 
   try {
-    const response = await fetch(url);
+    const urlObj = new URL(fixedUrl);
 
-    const { status, redirected, headers: requestHeaders, url: fullUrl } = response;
+    if (!urlObj.hostname) {
+      return new NextResponse(JSON.stringify({ message: 'Invalid URL' }), { status: 400 });
+    }
 
-    const contentType = requestHeaders.get('content-type');
+    try {
+      const response = await fetch(url);
 
-    return new NextResponse(
-      JSON.stringify({ status, url: fullUrl, redirected, headers: requestHeaders, contentType }),
-      {
-        status: 200,
-      }
-    );
+      const { status, redirected, headers: requestHeaders, url: fullUrl } = response;
+
+      const contentType = requestHeaders.get('content-type');
+
+      return new NextResponse(
+        JSON.stringify({ status, url: fullUrl, redirected, headers: requestHeaders, contentType }),
+        {
+          status: 200,
+        }
+      );
+    } catch (error) {
+      console.error(error);
+
+      return new NextResponse(
+        JSON.stringify({ message: `Could not connect to ${urlObj.hostname}` }),
+        {
+          status: 500,
+        }
+      );
+    }
   } catch (error) {
-    console.error(error);
-
-    return new NextResponse(
-      JSON.stringify({ message: `Could not connect to ${urlObj.hostname}` }),
-      {
-        status: 500,
-      }
-    );
+    return new NextResponse(JSON.stringify({ message: 'Invalid URL' }), { status: 400 });
   }
 }

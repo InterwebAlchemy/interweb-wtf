@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { IconBrandGithub } from '@tabler/icons-react';
 import { Anchor, Center, Group, Stack, Text } from '@mantine/core';
 import InterstitialCheckbox from '@/app/_components/InterstitialCheckbox';
@@ -8,7 +9,10 @@ export default function Footer() {
       <Stack justify="center" w="100%">
         <InterstitialCheckbox />
         <Group align="center" justify="center">
-          <Anchor href="/privacy.txt" c="gray" size="sm">
+          <Anchor href="/about" component={Link} c="gray" size="sm">
+            About
+          </Anchor>
+          <Anchor href="/privacy.txt" component={Link} c="gray" size="sm">
             Privacy
           </Anchor>
           <Text c="gray" size="sm">

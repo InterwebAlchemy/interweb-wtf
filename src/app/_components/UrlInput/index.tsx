@@ -7,7 +7,8 @@ import {
   IconWorldQuestion,
   IconWorldWww,
 } from '@tabler/icons-react';
-import { ActionIcon, Group, Loader, Stack, Text, TextInput } from '@mantine/core';
+import { ActionIcon, Group, Loader, Stack, TextInput } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 export interface UrlInputProps {
   defaultValue?: string;
@@ -32,7 +33,6 @@ export default function UrlInput({
 }: UrlInputProps) {
   const [url, setUrl] = useState<string>(defaultValue);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setUrl(event.target.value);
@@ -44,22 +44,46 @@ export default function UrlInput({
     setIsLoading(true);
 
     let isUrl = false;
+    let testUrl: URL | string = url;
 
     try {
-      const testUrl = new URL(url);
-
-      if (testUrl.protocol === 'http:' || testUrl.protocol === 'https:') {
-        isUrl = true;
-      } else {
-        isUrl = false;
-      }
+      testUrl = new URL(url);
+      isUrl = true;
     } catch (error) {
-      isUrl = false;
+      if (!url.startsWith('http:') && !url.startsWith('https:')) {
+        // remove the protocol if it's there
+        const splitProtocol = url.split(':');
+
+        // add back in any port numbers, or other colons in query params
+        if (splitProtocol.length > 1) {
+          testUrl = splitProtocol.slice(1).join(':');
+        }
+
+        // prepend an https protocol and remove relative protocol if present
+        testUrl = `https://${url
+          .split('/')
+          .filter((part) => part)
+          .join('/')}`;
+
+        try {
+          testUrl = new URL(testUrl);
+
+          isUrl = true;
+        } catch (_error) {
+          isUrl = false;
+        }
+      }
     }
 
     if (!isUrl) {
       setIsLoading(false);
-      setErrorMessage('Please enter a valid URL.');
+      notifications.show({
+        title: 'Invalid URL',
+        message: 'Please enter a valid URL.',
+        color: 'red',
+        icon: <IconExclamationCircle />,
+      });
+
       return;
     }
 
@@ -68,11 +92,21 @@ export default function UrlInput({
       return;
     }
 
-    onSubmit?.(url)
+    onSubmit?.(testUrl.toString())
       .then(() => {
         if (clearOnSubmit) {
           setUrl('');
         }
+      })
+      .catch((error) => {
+        console.error(error);
+
+        notifications.show({
+          title: 'Could not shorten URL',
+          message: 'Please try again later.',
+          color: 'red',
+          icon: <IconExclamationCircle />,
+        });
       })
       .finally(() => {
         setIsLoading(false);
@@ -95,7 +129,7 @@ export default function UrlInput({
             leftSection={slug ? <IconWorldQuestion /> : <IconWorldWww />}
             rightSection={
               isLoading ? (
-                <Loader size="sm" />
+                <Loader size="sm" c="violet" />
               ) : submitButton ? (
                 <ActionIcon
                   color="violet"
@@ -123,14 +157,6 @@ export default function UrlInput({
             onChange={handleChange}
           />
         </Group>
-        {errorMessage !== '' ? (
-          <Group>
-            <IconExclamationCircle color="red" />
-            <Text c="red">{errorMessage}</Text>
-          </Group>
-        ) : (
-          <></>
-        )}
       </Stack>
     </form>
   );

@@ -16,15 +16,12 @@ export default function Login() {
       .getUser()
       .then(({ data }) => {
         if (data.user !== null && data.user.aud === 'authenticated') {
-          console.log('Logged in.', data);
           setIsLoggedIn(true);
         } else {
-          console.log('null User');
           setIsLoggedIn(false);
         }
       })
-      .catch((error) => {
-        console.error('Not logged in.', error);
+      .catch(() => {
         setIsLoggedIn(false);
       });
   }, [isLoggedIn]);
@@ -32,13 +29,10 @@ export default function Login() {
   const onClick = () => {
     if (isLoggedIn) {
       signOut(() => {
-        console.log('LOGGED OUT');
         window.location.href = '/';
       });
     } else {
-      signInWithGithub(() => {
-        console.log('LOGGED IN');
-      });
+      signInWithGithub();
     }
   };
 

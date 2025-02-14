@@ -109,9 +109,6 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                   return await res.json();
                 }
               })
-              .then(async (response) => {
-                console.log(response);
-              })
               .catch((error) => {
                 console.error(error);
               });
@@ -136,8 +133,6 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
   };
 
   const onDelete = async (id: number): Promise<void> => {
-    console.log('Deleting:', id);
-
     const supabase = createClient();
 
     try {

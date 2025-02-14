@@ -137,8 +137,6 @@ export async function POST(request: NextRequest) {
         let snapshot;
         let screenshot;
 
-        // TODO: generate QR code for short URL
-
         // TODO: Add scanning for malicious domains
         // if (!KNOWN_DOMAINS.includes(urlObj.hostname.split('.').slice(-2).join('.'))) {
         //   try {

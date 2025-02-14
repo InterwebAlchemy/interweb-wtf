@@ -11,13 +11,13 @@ const BASE_SPEED = 120;
 const defaultMaxIterations = {
   encode: BASE_MAX_ITERATIONS,
   decode: BASE_MAX_ITERATIONS,
-  transform: Math.ceil(BASE_MAX_ITERATIONS * 1.5),
+  transform: BASE_MAX_ITERATIONS,
 };
 
 const defaultSpeed = {
   encode: BASE_SPEED,
   decode: BASE_SPEED,
-  transform: BASE_SPEED,
+  transform: BASE_SPEED * 1.5,
 };
 
 export interface CipherTextProps {
@@ -71,20 +71,56 @@ export default function CipherText({
     let transformedText = text;
 
     if (text.length > targetText.length) {
-      transformedText = text.slice(0, -1);
+      // remove a random number of characters less than the difference between the text lengths
+      // from the end of the string; clamped between 1 and 5
+      const maxNumberOfCharactersToRemove = Math.min(
+        Math.max(1, text.length - targetText.length),
+        5
+      );
+
+      let numberOfCharactersToRemove =
+        Math.floor(Math.random() * maxNumberOfCharactersToRemove) + 1;
+
+      // fully cut the string if we have reached the max iterations
+      if (iterations >= maxIterations) {
+        numberOfCharactersToRemove = text.length - targetText.length;
+      }
+
+      transformedText = transformedText.slice(0, -1 * numberOfCharactersToRemove);
+    } else if (text.length < targetText.length) {
+      // add a random number of characters less than the difference between the text lengths
+      // to the end of the string; clamped between 1 and 5
+      const maxNumberOfCharactersToAdd = Math.min(Math.max(1, targetText.length - text.length), 5);
+
+      let numberOfCharactersToAdd = Math.floor(Math.random() * maxNumberOfCharactersToAdd) + 1;
+
+      // fully pad the string if we have reached the max iterations
+      if (iterations >= maxIterations) {
+        numberOfCharactersToAdd = targetText.length - text.length;
+      }
+
+      for (let i = 0; i < numberOfCharactersToAdd; i += 1) {
+        transformedText +=
+          printableCharacters[Math.floor(Math.random() * printableCharacters.length)];
+      }
     }
 
-    if (text.length < targetText.length) {
-      transformedText =
-        text + printableCharacters[Math.floor(Math.random() * printableCharacters.length)];
-    }
+    // choose random number of characters to reveal between 1 and 5
+    const numberOfCharactersToReveal = Math.floor(Math.random() * 3) + 1;
+
+    let charactersRevealed = 0;
 
     return transformedText
       .split('')
       .map((char, i) => {
         if (transformedText[i] !== targetText[i]) {
-          if ((Math.random() > 0.75 || iterations >= maxIterations) && !hasRevealed) {
-            setHasRevealed(true);
+          if ((Math.random() > 0.5 && !hasRevealed) || iterations >= maxIterations) {
+            charactersRevealed += 1;
+
+            if (charactersRevealed >= numberOfCharactersToReveal) {
+              setHasRevealed(true);
+            }
+
             return targetText[i];
           }
 
@@ -103,12 +139,22 @@ export default function CipherText({
       return text;
     }
 
+    // choose random number of characters to reveal between 1 and 5
+    const numberOfCharactersToReveal = Math.floor(Math.random() * 5) + 1;
+
+    let charactersRevealed = 0;
+
     return text
       .split('')
       .map((char, i) => {
         if (text[i] !== defaultText[i]) {
-          if ((Math.random() > 0.75 || iterations >= maxIterations) && !hasRevealed) {
-            setHasRevealed(true);
+          if ((Math.random() > 0.5 && !hasRevealed) || iterations >= maxIterations) {
+            charactersRevealed += 1;
+
+            if (charactersRevealed >= numberOfCharactersToReveal) {
+              setHasRevealed(true);
+            }
+
             return defaultText[i];
           }
 

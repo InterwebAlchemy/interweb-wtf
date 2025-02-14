@@ -7,8 +7,6 @@ export function signInWithGithub(afterSignin?: () => void): void {
     ? `${process.env.NEXT_PUBLIC_APPLICATION_URL}/auth/callback`
     : `https://${process?.env?.NEXT_PUBLIC_VERCEL_URL ?? ''}/auth/callback`;
 
-  console.log('REDIRECTTO:', redirectTo);
-
   supabase.auth
     .signInWithOAuth({
       provider: 'github',
@@ -16,8 +14,7 @@ export function signInWithGithub(afterSignin?: () => void): void {
         redirectTo,
       },
     })
-    .then(({ data }) => {
-      console.log('DATA:', data);
+    .then(() => {
       afterSignin?.();
     })
     .catch((error) => {

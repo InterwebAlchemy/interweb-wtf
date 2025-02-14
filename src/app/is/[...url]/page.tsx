@@ -8,7 +8,6 @@ import {
   Button,
   Center,
   Group,
-  Image,
   Indicator,
   Pill,
   Stack,
@@ -19,6 +18,7 @@ import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UnknownShortener from '@/app/_components/UnknownShortener';
 import UrlMetadata from '@/app/_components/UrlMetadata';
+import UrlScreenshot from '@/app/_components/UrlScreenshot';
 import { getTrackingParams, removeTrackingParams } from '@/app/_utils/url';
 import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
 import { KNOWN_SHORTENERS } from '@/constants';
@@ -205,23 +205,7 @@ export default async function ExpanderPage({ params }: Params) {
           </Group>
         </Title>
         <UrlMetadata url={cleanUrl.toString()} />
-        {imageSrc && (
-          <Center w="80%" mx="auto" my="md" pos="relative">
-            <Anchor
-              id="page-screenshot"
-              rel="noreferrer"
-              href={cleanUrl.toString()}
-              underline="never"
-            >
-              <Image
-                radius="sm"
-                src={imageSrc}
-                alt={`Screenshot of ${displayUrlNoQueryParams.toString()}`}
-                mih={600}
-              />
-            </Anchor>
-          </Center>
-        )}
+        <UrlScreenshot url={cleanUrl.toString()} src={imageSrc} />
         {description && description !== 'undefined' && (
           <Center w="90%" mx="auto" my="md" maw="640">
             <Blockquote

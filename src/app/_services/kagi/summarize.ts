@@ -35,13 +35,11 @@ export const summarize = async (url: string | URL): Promise<SummarizerServiceRes
       }),
     })
       .then(async (response) => {
-        console.log(response);
         if (response.ok) {
           return await response.json();
         }
       })
       .then((response) => {
-        console.log(response);
         return response;
       });
 

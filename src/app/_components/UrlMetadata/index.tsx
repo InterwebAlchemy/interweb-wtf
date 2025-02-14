@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { Alert, Badge, Code, Group, Loader, Stack, Text } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 
 export interface UrlMetadataProps {
   url: URL | string;
@@ -14,9 +15,16 @@ export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactEleme
   const [fullUrl, setFullUrl] = useState<string>();
   const [redirected, setRedirected] = useState<boolean>();
   const [contentType, setContentType] = useState<string>();
-  const [errorMessage, setErrorMessage] = useState<string>('');
 
   useEffect(() => {
+    const notificationId = notifications.show({
+      title: 'Checking URL Status',
+      message: `Resolving ${url.toString()} and checking its status...`,
+      autoClose: false,
+      color: 'violet',
+      loading: true,
+    });
+
     fetch('/api/fetch', {
       method: 'POST',
       headers: {
@@ -29,20 +37,33 @@ export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactEleme
           return response.json();
         }
 
-        setErrorMessage(response.statusText);
+        notifications.hide(notificationId);
+
+        notifications.show({
+          title: 'Error',
+          message: 'Could not resolve URL.',
+          color: 'red',
+          icon: <IconAlertTriangle />,
+        });
       })
       .then(({ status, contentType: resolvedContentType, url: resolvedUrl, redirected }) => {
         setStatus(status);
         setFullUrl(resolvedUrl);
         setRedirected(redirected);
         setContentType(resolvedContentType);
-
-        console.log(resolvedUrl, url);
       })
       .catch(() => {
-        setErrorMessage('Could not resolve URL.');
+        notifications.hide(notificationId);
+
+        notifications.show({
+          title: 'Error',
+          message: 'Could not resolve URL.',
+          color: 'red',
+          icon: <IconAlertTriangle />,
+        });
       })
       .finally(() => {
+        notifications.hide(notificationId);
         setIsLoading(false);
       });
   }, []);
@@ -123,8 +144,8 @@ export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactEleme
   };
 
   return (
-    <Group align="center" justify="center" w="100%">
-      {isLoading ? <Loader /> : errorMessage ? <Text>{errorMessage}</Text> : renderMetadata()}
+    <Group align="center" w="100%">
+      {isLoading ? <Loader size="sm" c="gray" /> : renderMetadata()}
     </Group>
   );
 }
