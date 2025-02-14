@@ -2,35 +2,36 @@ import { createClient } from '@/app/_adapters/supabase/client';
 
 const supabase = createClient();
 
-export async function signInWithGithub(): Promise<void> {
+export function signInWithGithub(afterSignin?: () => void): void {
   const redirectTo = ['production', 'local'].includes(process.env.NEXT_PUBLIC_VERCEL_ENV ?? '')
     ? `${process.env.NEXT_PUBLIC_APPLICATION_URL}/auth/callback`
     : `https://${process?.env?.NEXT_PUBLIC_VERCEL_URL ?? ''}/auth/callback`;
 
-  console.log(redirectTo);
+  console.log('REDIRECTTO:', redirectTo);
 
-  try {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+  supabase.auth
+    .signInWithOAuth({
       provider: 'github',
       options: {
         redirectTo,
       },
+    })
+    .then(({ data }) => {
+      console.log('DATA:', data);
+      afterSignin?.();
+    })
+    .catch((error) => {
+      console.error('Login Error:', error);
     });
-
-    if (error) {
-      console.error('Error:', error);
-    }
-
-    console.log('Data:', data);
-  } catch (error) {
-    console.error('Error:', error);
-  }
 }
 
-export async function signOut(): Promise<void> {
-  const { error } = await supabase.auth.signOut();
-
-  if (error) {
-    console.error('Error:', error);
-  }
+export function signOut(afterSignout?: () => void): void {
+  supabase.auth
+    .signOut()
+    .then(() => {
+      afterSignout?.();
+    })
+    .catch((error) => {
+      console.error('Logout Error:', error);
+    });
 }

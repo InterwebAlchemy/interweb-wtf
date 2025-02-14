@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { Suspense, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { IconWorldQuestion } from '@tabler/icons-react';
@@ -10,6 +10,7 @@ import {
   Drawer,
   Group,
   Indicator,
+  Skeleton,
   Stack,
   Text,
   ThemeIcon,
@@ -80,11 +81,9 @@ export default function Nav() {
   }, [loading, profile]);
 
   const logout = () => {
-    signOut()
-      .catch(void 0)
-      .finally(() => {
-        window.location.href = '/';
-      });
+    signOut(() => {
+      window.location.href = '/';
+    });
   };
 
   const items = links.map((item) => {
@@ -143,11 +142,15 @@ export default function Nav() {
 
           {!loading && !user && pathname !== '/login' ? (
             <Login />
+          ) : loading ? (
+            <Skeleton radius="md" />
           ) : (
             avatar && (
-              <UnstyledButton style={{ marginLeft: 'auto' }} onClick={open}>
-                <Avatar src={avatar} alt="User avatar" />
-              </UnstyledButton>
+              <Suspense fallback={<Skeleton radius="md" />}>
+                <UnstyledButton style={{ marginLeft: 'auto' }} onClick={open}>
+                  <Avatar src={avatar} alt="User avatar" />
+                </UnstyledButton>
+              </Suspense>
             )
           )}
         </Group>

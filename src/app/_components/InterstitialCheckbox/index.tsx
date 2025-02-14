@@ -52,9 +52,9 @@ export default function InterstitialCheckbox() {
           checked={skipInspector}
           thumbIcon={
             skipInspector ? (
-              <IconWorldWww size="sm" color="var(--mantine-color-red-text)" />
+              <IconWorldWww size={16} color="var(--mantine-color-red-text)" />
             ) : (
-              <IconWorldQuestion size="sm" color="var(--mantine-color-violet-filled)" />
+              <IconWorldQuestion size={16} color="var(--mantine-color-violet-filled)" />
             )
           }
         />

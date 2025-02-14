@@ -31,7 +31,7 @@ type Params = {
   }>;
 };
 
-export default async function InspectorPage({ params }: Params) {
+export default async function ExpanderPage({ params }: Params) {
   const supabase = await createClient();
 
   const headersList = await headers();

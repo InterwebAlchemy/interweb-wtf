@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { IconClipboardCheck, IconExternalLink, IconLinkPlus, IconTrash } from '@tabler/icons-react';
 import {
   ActionIcon,
@@ -27,6 +27,8 @@ export interface UrlDashboardProps {
 }
 
 export default function UrlDashboard({ urls }: UrlDashboardProps) {
+  const router = useRouter();
+
   const [redirectSlug, setRedirectSlug] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
   // HACK: this is "deprecated", but the navigator.userAgentData.platform isn't widely supported yet
@@ -66,10 +68,12 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
 
             return resolvedUrl;
           })
-          .catch(() => {
+          .catch((error) => {
+            console.error(error);
             setErrorMessage('Could not expand URL.');
           });
-      } catch (_error) {
+      } catch (error) {
+        console.error(error);
         setErrorMessage('Could not expand URL.');
       }
     }
@@ -108,21 +112,25 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
               .then(async (response) => {
                 console.log(response);
               })
-              .catch(void 0);
-          } catch (_error) {
-            void 0;
+              .catch((error) => {
+                console.error(error);
+              });
+          } catch (error) {
+            console.error(error);
           }
 
           return slug;
         })
-        .catch(() => {
+        .catch((error) => {
+          console.error(error);
           setErrorMessage('Could not create WTF Link.');
         });
 
       if (slug) {
         setRedirectSlug(slug);
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error(error);
       setErrorMessage('Could not create WTF Link.');
     }
   };
@@ -136,9 +144,11 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
       const { error } = await supabase.from('short_urls').update({ deleted: true }).eq('id', id);
 
       if (error) {
+        console.error(error);
         setErrorMessage('Could not delete WTF Link.');
       }
-    } catch (_error) {
+    } catch (error) {
+      console.error(error);
       setErrorMessage('Could not delete WTF Link.');
     }
   };
@@ -188,7 +198,8 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                           icon: <IconClipboardCheck />,
                         });
                       })
-                      .catch(() => {
+                      .catch((error) => {
+                        console.error(error);
                         setErrorMessage('Could not copy WTF Link.');
                       });
                   }}
@@ -220,7 +231,8 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                       .then(() => {
                         setRedirectSlug('/dashboard');
                       })
-                      .catch(() => {
+                      .catch((error) => {
+                        console.error(error);
                         setErrorMessage('Could not delete WTF Link.');
                       });
                   }}
@@ -238,9 +250,9 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
   useEffect(() => {
     if (redirectSlug) {
       if (redirectSlug.startsWith('/')) {
-        redirect(redirectSlug);
+        router.push(redirectSlug);
       } else {
-        redirect(`/go/${redirectSlug}/info`);
+        router.push(`/go/${redirectSlug}/info`);
       }
     }
   }, [redirectSlug]);
