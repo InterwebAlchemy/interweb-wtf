@@ -117,9 +117,9 @@ export default function UrlExpander() {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                url: url.toString(),
+                url: fullUrl.toString(),
                 userAgent: navigator.userAgent,
-                shortUrl: url,
+                shortUrl: urlString,
               }),
             })
               .then(async (res) => {
