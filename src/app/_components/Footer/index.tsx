@@ -12,7 +12,7 @@ export default function Footer() {
           <Anchor href="/about" component={Link} c="gray" size="sm">
             About
           </Anchor>
-          <Anchor href="/privacy.txt" component={Link} c="gray" size="sm">
+          <Anchor href="/privacy" component={Link} c="gray" size="sm">
             Privacy
           </Anchor>
           <Text c="gray" size="sm">
