@@ -23,13 +23,16 @@ export async function generateMetadata({
     data: { title, description, metadata, screenshot, favicon },
   } = await supabase.from('url_info').select('*').eq('url_id', id).single();
 
-  let imageSrc: string = '';
+  const images = [favicon];
 
   try {
     const { data } = await supabase.storage.from('inspector-screenshots').getPublicUrl(screenshot);
-    imageSrc = data?.publicUrl;
-  } catch (error) {
-    console.error(error);
+
+    if (data?.publicUrl) {
+      images.unshift(data?.publicUrl);
+    }
+  } catch (_error) {
+    void 0;
   }
 
   return {
@@ -49,13 +52,13 @@ export async function generateMetadata({
       title,
       description,
       url,
-      images: imageSrc,
+      images,
     },
     twitter: {
       card: 'summary',
       title,
       description,
-      images: [imageSrc],
+      images,
     },
     ...metadata,
   };
