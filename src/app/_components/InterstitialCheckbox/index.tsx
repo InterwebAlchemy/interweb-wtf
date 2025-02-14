@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState } from 'react';
 import { IconInfoCircle, IconWorldQuestion, IconWorldWww } from '@tabler/icons-react';
 import {
   ActionIcon,
+  Code,
   createTheme,
   Group,
   MantineProvider,
@@ -67,8 +68,9 @@ export default function InterstitialCheckbox() {
         </Popover.Target>
         <Popover.Dropdown>
           <Text size="xs">
-            Enabling this will skip the WTF Link Inspector and redirect you directly to the cleaned
-            destination URL when navigating to a WTF Link.
+            Disabling this will always redirect you to the WTF Link Inspector (avaialable by
+            appending <Code>/info</Code> to any WTF Link) instead of redirecting you to the URL that
+            a WTF Link is pointing to.
           </Text>
         </Popover.Dropdown>
       </Popover>
