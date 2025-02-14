@@ -36,7 +36,7 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
 
   const slug = (await params).slug;
 
-  const shortUrl = new URL(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/slug`);
+  const shortUrl = new URL(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/${slug}`);
 
   const {
     data: { id },
