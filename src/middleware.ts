@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { updateSession } from '@/app/_adapters/supabase/middleware';
+import { PUBLIC_ROUTES } from './constants';
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith('/go')) {
@@ -38,6 +39,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt (metadata files)
      */
-    '/((?!is|api|login|request-invite|about|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt).*)',
+    `/((?!${PUBLIC_ROUTES.join('|')}|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt).*)`,
   ],
 };

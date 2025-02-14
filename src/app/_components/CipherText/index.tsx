@@ -11,13 +11,13 @@ const BASE_SPEED = 120;
 const defaultMaxIterations = {
   encode: BASE_MAX_ITERATIONS,
   decode: BASE_MAX_ITERATIONS,
-  transform: BASE_MAX_ITERATIONS,
+  transform: BASE_MAX_ITERATIONS * 1.5,
 };
 
 const defaultSpeed = {
   encode: BASE_SPEED,
   decode: BASE_SPEED,
-  transform: BASE_SPEED * 1.5,
+  transform: BASE_SPEED * 1.25,
 };
 
 export interface CipherTextProps {
@@ -70,6 +70,10 @@ export default function CipherText({
 
     let transformedText = text;
 
+    // weigh the amount of characters to reveal and add/remove based on the difference between the text lengths
+    // higher discrepancies lead to higher weights
+    const weight = Math.abs(text.length - targetText.length) / targetText.length;
+
     if (text.length > targetText.length) {
       // remove a random number of characters less than the difference between the text lengths
       // from the end of the string; clamped between 1 and 5
@@ -78,8 +82,13 @@ export default function CipherText({
         5
       );
 
+      // apply the weight to the max number of characters to remove
+      const weightedMaxNumberOfCharactersToRemove = Math.floor(
+        maxNumberOfCharactersToRemove * weight
+      );
+
       let numberOfCharactersToRemove =
-        Math.floor(Math.random() * maxNumberOfCharactersToRemove) + 1;
+        Math.floor(Math.random() * weightedMaxNumberOfCharactersToRemove) + 1;
 
       // fully cut the string if we have reached the max iterations
       if (iterations >= maxIterations) {
@@ -92,7 +101,11 @@ export default function CipherText({
       // to the end of the string; clamped between 1 and 5
       const maxNumberOfCharactersToAdd = Math.min(Math.max(1, targetText.length - text.length), 5);
 
-      let numberOfCharactersToAdd = Math.floor(Math.random() * maxNumberOfCharactersToAdd) + 1;
+      // apply the weight to the max number of characters to add
+      const weightedMaxNumberOfCharactersToAdd = Math.floor(maxNumberOfCharactersToAdd * weight);
+
+      let numberOfCharactersToAdd =
+        Math.floor(Math.random() * weightedMaxNumberOfCharactersToAdd) + 1;
 
       // fully pad the string if we have reached the max iterations
       if (iterations >= maxIterations) {
@@ -105,8 +118,11 @@ export default function CipherText({
       }
     }
 
-    // choose random number of characters to reveal between 1 and 5
+    // choose random number of characters to reveal between 1 and 3
     const numberOfCharactersToReveal = Math.floor(Math.random() * 3) + 1;
+
+    // apply the weight to the number of characters to reveal
+    const weightedNumberOfCharactersToReveal = Math.floor(numberOfCharactersToReveal * weight);
 
     let charactersRevealed = 0;
 
@@ -117,7 +133,7 @@ export default function CipherText({
           if ((Math.random() > 0.5 && !hasRevealed) || iterations >= maxIterations) {
             charactersRevealed += 1;
 
-            if (charactersRevealed >= numberOfCharactersToReveal) {
+            if (charactersRevealed >= weightedNumberOfCharactersToReveal) {
               setHasRevealed(true);
             }
 

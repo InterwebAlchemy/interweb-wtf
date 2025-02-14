@@ -101,7 +101,7 @@ export default function UrlExpander() {
 
             const notificationId = notifications.show({
               title: 'Expanding shortlink...',
-              message: "We're expanding your shorklink. This may take a little while.",
+              message: "We're expanding your shortlink. This may take a little while.",
               color: 'violet',
               icon: <IconEyePlus />,
               withCloseButton: false,
