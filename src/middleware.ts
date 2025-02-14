@@ -18,6 +18,8 @@ export async function middleware(request: NextRequest) {
         new URL(`${request.nextUrl.pathname}/info`, request.nextUrl.origin).toString()
       );
     }
+
+    return;
   }
 
   if (request.nextUrl.pathname === '/') {

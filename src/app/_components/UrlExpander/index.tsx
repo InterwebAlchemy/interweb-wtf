@@ -42,6 +42,7 @@ export default function UrlExpander() {
         color: 'red',
         icon: <IconAlertTriangle />,
       });
+
       setShortUrl('');
       setIsExpanded(false);
       setShouldRedirect(false);
