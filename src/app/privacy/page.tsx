@@ -41,8 +41,9 @@ export default async function PrivacyPage() {
             <Text span inherit c="violet">
               Interweb.WTF
             </Text>{' '}
-            uses <Anchor href="">Supabase</Anchor> for authentication, authorization, and data
-            storage. Once you log in, Supabase might store user session cookies in your browser.
+            uses <Anchor href="https://supabase.com/">Supabase</Anchor> for authentication,
+            authorization, and data storage. Once you log in, Supabase may store user session
+            cookies in your browser.
           </Text>
           <CookieInspector />
         </Stack>
