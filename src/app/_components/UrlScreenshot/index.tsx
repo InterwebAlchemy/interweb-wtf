@@ -17,7 +17,7 @@ export default function UrlScreenshot({ url, src }: UrlScreenshotProps): React.R
         underline="never"
       >
         <Skeleton h={600} w="100%" visible={typeof src === 'undefined'}>
-          <Image radius="sm" src={src} alt={`Screenshot of ${url.toString()}`} mih={600} />
+          <Image radius={0} src={src} alt={`Screenshot of ${url.toString()}`} mih={600} />
         </Skeleton>
       </Anchor>
     </Center>

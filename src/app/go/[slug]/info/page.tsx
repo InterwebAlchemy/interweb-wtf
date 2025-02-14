@@ -22,6 +22,7 @@ import { createClient } from '@/app/_adapters/supabase/server';
 import QRCode from '@/app/_components/QRCode';
 import Screen from '@/app/_components/Screen';
 import UrlMetadata from '@/app/_components/UrlMetadata';
+import UrlParams from '@/app/_components/UrlParams';
 import UrlScreenshot from '@/app/_components/UrlScreenshot';
 
 import '@/app/_styles/info.css';
@@ -182,12 +183,7 @@ export default async function InspectorPage({ params }: { params: Promise<Params
                     </Stack>
                   </Center>
                 )}
-                {displayUrl.searchParams.size > 0 && (
-                  <Stack>
-                    <Title order={3}>URL Parameters</Title>
-                    <Group>{renderSearchParams(displayUrl)}</Group>
-                  </Stack>
-                )}
+                <UrlParams url={displayUrl} />
               </Stack>
             ) : (
               <Center w="80%" mx="auto" my="md" pos="relative">
@@ -198,30 +194,6 @@ export default async function InspectorPage({ params }: { params: Promise<Params
         ))}
       </Tabs>
     );
-  };
-
-  const renderSearchParams = (url: URL): React.ReactNode => {
-    const searchParams = url.searchParams;
-
-    return searchParams.entries().map(([key, value]) => {
-      return (
-        <Badge
-          variant="light"
-          color="gray"
-          key={key}
-          leftSection={
-            <Text span inherit fw={700}>
-              {key}:
-            </Text>
-          }
-          radius="sm"
-        >
-          <Text span inherit fw={300} tt="initial">
-            {value}
-          </Text>
-        </Badge>
-      );
-    });
   };
 
   return (

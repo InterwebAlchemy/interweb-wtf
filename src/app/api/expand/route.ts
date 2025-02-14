@@ -26,8 +26,6 @@ export async function POST(request: NextRequest) {
 
   const { url, shortUrl, userAgent } = requestObj;
 
-  console.log(url, shortUrl, userAgent);
-
   const urlObj = new URL(url);
 
   const shortUrlObj = new URL(shortUrl);

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { PropsWithChildren, useEffect, useState } from 'react';
 import { IconAlertTriangle } from '@tabler/icons-react';
 import { Alert, Badge, Code, Group, Loader, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
@@ -9,7 +9,10 @@ export interface UrlMetadataProps {
   url: URL | string;
 }
 
-export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactElement {
+export default function UrlMetadata({
+  url,
+  children,
+}: PropsWithChildren<UrlMetadataProps>): React.ReactElement {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [status, setStatus] = useState<number>();
   const [fullUrl, setFullUrl] = useState<string>();
@@ -118,6 +121,7 @@ export default function UrlMetadata({ url }: UrlMetadataProps): React.ReactEleme
         <Group align="center" w="100%">
           {renderStatus()}
           {renderContentType()}
+          {children}
         </Group>
         {fullUrl?.toString() !== url.toString() && (
           <Alert

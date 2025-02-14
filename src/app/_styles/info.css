@@ -23,7 +23,7 @@ body {
   border-radius: 8px 8px 0 0;
 }
 
-#page-screenshot > img {
+#page-screenshot img {
   border: 2px solid #000;
   border-top: none;
   border-radius: 0 0 8px 8px;

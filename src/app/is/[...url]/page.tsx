@@ -1,25 +1,15 @@
 import { headers } from 'next/headers';
-import { IconWorldWww } from '@tabler/icons-react';
-import {
-  Anchor,
-  Avatar,
-  Badge,
-  Blockquote,
-  Button,
-  Center,
-  Group,
-  Indicator,
-  Pill,
-  Stack,
-  Text,
-  Title,
-} from '@mantine/core';
+import { notFound } from 'next/navigation';
+import { IconWorldBolt, IconWorldWww } from '@tabler/icons-react';
+import { Badge, Button, Group, Text, Title } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
 import Screen from '@/app/_components/Screen';
 import UnknownShortener from '@/app/_components/UnknownShortener';
+import UrlDescription from '@/app/_components/UrlDescription';
 import UrlMetadata from '@/app/_components/UrlMetadata';
+import UrlParams from '@/app/_components/UrlParams';
 import UrlScreenshot from '@/app/_components/UrlScreenshot';
-import { getTrackingParams, removeTrackingParams } from '@/app/_utils/url';
+import { removeTrackingParams } from '@/app/_utils/url';
 import { getPageDescription, getPageTitle } from '@/app/_utils/webpage';
 import { KNOWN_SHORTENERS } from '@/constants';
 
@@ -35,7 +25,11 @@ export default async function ExpanderPage({ params }: Params) {
   const supabase = await createClient();
 
   const headersList = await headers();
+
   const userAgent = headersList.get('user-agent');
+
+  let fullUrl;
+
   const url = new URL(
     (await params).url
       .map((part, i) => {
@@ -64,14 +58,38 @@ export default async function ExpanderPage({ params }: Params) {
     );
   }
 
-  const getUrlInfo = async (url: URL): Promise<Response> => {
-    const response = await fetch(url.href);
+  const { data, error } = await supabase
+    .from('expanded_urls')
+    .select('*')
+    .eq('short_url', url.toString())
+    .single();
 
-    return response;
-  };
+  if (error || !data) {
+    const apiUrl = new URL('/api/fetch', process.env.NEXT_PUBLIC_APPLICATION_URL);
+
+    const response = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ url: url.toString() }),
+    }).then(async (res) => {
+      return await res.json();
+    });
+
+    if (response.error) {
+      return notFound();
+    }
+
+    fullUrl = new URL(response.url);
+  } else {
+    fullUrl = new URL(data.expanded_url);
+  }
 
   const getContent = async (url: URL, shortUrl: URL): Promise<Record<string, any>> => {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/api/expand`, {
+    const apiUrl = new URL('/api/expand', process.env.NEXT_PUBLIC_APPLICATION_URL);
+
+    const response = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -84,45 +102,6 @@ export default async function ExpanderPage({ params }: Params) {
     return response;
   };
 
-  const renderSearchParams = (url: URL): React.ReactNode => {
-    const searchParams = url.searchParams;
-
-    const trackers = getTrackingParams(url);
-
-    return searchParams.entries().map(([key, value]) => {
-      let trackingParam = false;
-
-      if (trackers.some((tracker) => tracker[key])) {
-        trackingParam = true;
-      }
-
-      return (
-        <Badge
-          variant={trackingParam ? 'outline' : 'light'}
-          color={trackingParam ? 'red' : 'gray'}
-          key={key}
-          leftSection={
-            <Text span inherit fw={700}>
-              {key}:
-            </Text>
-          }
-          radius="sm"
-          title={trackingParam ? 'This is a known tracking parameter' : ''}
-        >
-          <Text span inherit fw={300} tt="initial">
-            {value}
-          </Text>
-        </Badge>
-      );
-    });
-  };
-
-  const { status, url: fullUrl, redirected, headers: requestHeaders } = await getUrlInfo(url);
-
-  const contentType = requestHeaders.get('content-type');
-
-  const pillColor = status >= 200 && status < 400 ? 'green' : 'red';
-
   const shortLinkProvider = url.hostname;
 
   const displayUrl = new URL(fullUrl);
@@ -131,140 +110,87 @@ export default async function ExpanderPage({ params }: Params) {
 
   const displayUrlNoQueryParams = new URL(displayUrl.pathname, displayUrl.origin);
 
-  if (status >= 200 && status < 400) {
-    const { metadata, screenshotPath, favicon } = await getContent(displayUrl, url);
+  const { metadata, screenshotPath, favicon } = await getContent(displayUrl, url);
 
-    const language =
-      metadata?.find((meta: Record<string, any>) => {
-        return meta?.language;
-      })?.language ?? 'unknown';
+  const language =
+    metadata?.find((meta: Record<string, any>) => {
+      return meta?.language;
+    })?.language ?? 'unknown';
 
-    let imageSrc;
+  let imageSrc;
 
-    try {
-      if (screenshotPath) {
-        const { data } = await supabase.storage
-          .from('inspector-screenshots')
-          .getPublicUrl(screenshotPath);
+  try {
+    if (screenshotPath) {
+      const { data } = await supabase.storage
+        .from('inspector-screenshots')
+        .getPublicUrl(screenshotPath);
 
-        imageSrc = data?.publicUrl;
-      }
-    } catch (_error) {
-      void 0;
+      imageSrc = data?.publicUrl;
     }
-
-    const title = getPageTitle(metadata);
-    const description = getPageDescription(metadata);
-
-    return (
-      <Screen
-        title={
-          <Group align="center">
-            <Text span inherit>
-              WTF Link Inspector
-            </Text>
-            {status >= 200 && status < 400 ? (
-              <Button
-                color="violet"
-                component="a"
-                href={cleanUrl.toString()}
-                title="Go to full URL"
-                rel="noreferrer"
-                ml="auto"
-                leftSection={<IconWorldWww size={20} />}
-                style={{ color: 'white' }}
-                tt="uppercase"
-              >
-                Visit
-              </Button>
-            ) : (
-              <></>
-            )}
-          </Group>
-        }
-      >
-        <Title order={2} lineClamp={3}>
-          <Group align="center">
-            {title && title !== 'undefined' ? title : displayUrlNoQueryParams.toString()}
-            {language !== 'unknown' && (
-              <Badge
-                variant="light"
-                color="gray"
-                leftSection={
-                  <Text span inherit fw={300}>
-                    Lang:
-                  </Text>
-                }
-                radius="sm"
-              >
-                <Text span inherit fw={700} tt="initial">
-                  {language}
-                </Text>
-              </Badge>
-            )}
-          </Group>
-        </Title>
-        <UrlMetadata url={cleanUrl.toString()} />
-        <UrlScreenshot url={cleanUrl.toString()} src={imageSrc} />
-        {description && description !== 'undefined' && (
-          <Center w="90%" mx="auto" my="md" maw="640">
-            <Blockquote
-              radius="xs"
-              iconSize={30}
-              cite={`- ${title ? title : displayUrlNoQueryParams.toString()}`}
-              icon={favicon ? <Avatar src={favicon} radius="xs" size="md" /> : <></>}
-            >
-              {description}
-            </Blockquote>
-          </Center>
-        )}
-        {displayUrl.searchParams.size > 0 && (
-          <Stack>
-            <Title order={3}>URL Parameters</Title>
-            <Group>{renderSearchParams(displayUrl)}</Group>
-          </Stack>
-        )}
-      </Screen>
-    );
+  } catch (_error) {
+    void 0;
   }
+
+  const title = getPageTitle(metadata);
+  const description = getPageDescription(metadata);
 
   return (
     <Screen
       title={
-        <Indicator inline label={shortLinkProvider} size={16}>
+        <Group align="center">
           <Text span inherit>
             Shortlink Expander
           </Text>
-        </Indicator>
+          <Button
+            color="violet"
+            component="a"
+            href={cleanUrl.toString()}
+            title={`Go to ${cleanUrl.toString()}`}
+            rel="noreferrer"
+            ml="auto"
+            leftSection={<IconWorldWww size={20} />}
+            style={{ color: 'white' }}
+            tt="uppercase"
+          >
+            Visit
+          </Button>
+        </Group>
       }
     >
-      <Title order={1}>
-        <Group wrap="nowrap" align="center">
-          <Pill c="white" bg={pillColor} radius="xs">
-            {status}
-          </Pill>
-          <Text span inherit truncate="end">
-            <Anchor
-              rel="noreferrer"
-              href={cleanUrl.toString()}
-              underline="hover"
-              style={{ display: 'flex' }}
-            >
-              {displayUrlNoQueryParams.toString()}
-            </Anchor>
-          </Text>
-          <Pill radius="xs">{contentType}</Pill>
-        </Group>
+      <Title order={2} lineClamp={3} mb={10}>
+        {title && title !== 'undefined' ? title : displayUrlNoQueryParams.toString()}
       </Title>
-      {redirected && (
-        <Text>The destination of this shortened URL was redirected while retrieving the URL.</Text>
-      )}
-      {displayUrl.searchParams.size > 0 && (
-        <Stack>
-          <Title order={3}>URL Parameters</Title>
-          <Group>{renderSearchParams(displayUrl)}</Group>
-        </Stack>
-      )}
+      <UrlMetadata url={cleanUrl.toString()}>
+        <Badge variant="light" color="gray" leftSection={<IconWorldBolt size={12} />} radius="sm">
+          <Text span inherit fw={700} title={url.toString()}>
+            {shortLinkProvider}
+          </Text>
+        </Badge>
+        {language !== 'unknown' && (
+          <Badge
+            variant="light"
+            color="gray"
+            leftSection={
+              <Text span inherit fw={300}>
+                Lang:
+              </Text>
+            }
+            radius="sm"
+          >
+            <Text span inherit fw={700} tt="initial">
+              {language}
+            </Text>
+          </Badge>
+        )}
+      </UrlMetadata>
+      <UrlScreenshot url={cleanUrl.toString()} src={imageSrc} />
+      <UrlDescription
+        url={cleanUrl.toString()}
+        description={description}
+        title={title}
+        favicon={favicon}
+      />
+      <UrlParams url={displayUrl.toString()} />
     </Screen>
   );
 }

@@ -19,7 +19,7 @@ export default async function Screen({ children, ...props }: React.PropsWithChil
           <Nav />
           <Stack h="100%" w="100%">
             {title ? (
-              <Title order={1} {...titleProps}>
+              <Title order={1} {...titleProps} mb={40}>
                 {title}
               </Title>
             ) : (
