@@ -27,7 +27,7 @@ export default async function DashboardPage() {
   }
 
   return (
-    <Screen title="Dashboard">
+    <Screen title="Dashboard" authenticated>
       <UrlDashboard urls={urls} />
     </Screen>
   );

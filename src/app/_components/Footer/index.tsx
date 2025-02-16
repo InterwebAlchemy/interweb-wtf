@@ -6,7 +6,7 @@ import InterstitialCheckbox from '@/app/_components/InterstitialCheckbox';
 export default function Footer() {
   return (
     <Center w="100%" mb="auto" pt="xl" pb="sm" pos="relative" bottom={0}>
-      <Stack justify="center" w="100%">
+      <Stack justify="center" align="center" w="100%">
         <InterstitialCheckbox />
         <Group align="center" justify="center">
           <Anchor href="/about" component={Link} c="gray" size="sm">

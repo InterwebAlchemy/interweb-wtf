@@ -25,6 +25,7 @@ import { signOut } from '@/app/_services/github/auth';
 const links = [
   { link: '/dashboard', label: 'Dashboard' },
   { link: '/is', label: 'Expander' },
+  { link: '/settings', label: 'Settings' },
 ];
 
 export default function Nav() {

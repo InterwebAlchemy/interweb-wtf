@@ -42,7 +42,7 @@ export default function InterstitialCheckbox() {
   }, []);
 
   return (
-    <Group justify="center" align="center">
+    <Group align="center">
       <MantineProvider theme={theme}>
         <Switch
           label="Skip the Inspector"
