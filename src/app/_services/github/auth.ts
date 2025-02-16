@@ -2,20 +2,27 @@ import { createClient } from '@/app/_adapters/supabase/client';
 
 const supabase = createClient();
 
-export function signInWithGithub(afterSignin?: () => void): void {
+export function signInWithGithub(): void {
   const redirectTo = ['production', 'local'].includes(process.env.NEXT_PUBLIC_VERCEL_ENV ?? '')
-    ? `${process.env.NEXT_PUBLIC_APPLICATION_URL}/auth/callback`
-    : `https://${process?.env?.NEXT_PUBLIC_VERCEL_URL ?? ''}/auth/callback`;
+    ? `${process.env.NEXT_PUBLIC_APPLICATION_URL}/auth/callback?next=/dashboard`
+    : `https://${process?.env?.NEXT_PUBLIC_VERCEL_URL ?? ''}/auth/callback?next="/dashboard`;
+
+  console.log('redirectTo:', redirectTo);
 
   supabase.auth
     .signInWithOAuth({
       provider: 'github',
       options: {
-        redirectTo,
+        // redirectTo,
       },
     })
-    .then(() => {
-      afterSignin?.();
+    .then(({ data, error }) => {
+      if (error) {
+        console.error('Login Error:', error);
+        return;
+      }
+
+      console.log('DATA:', data);
     })
     .catch((error) => {
       console.error('Login Error:', error);

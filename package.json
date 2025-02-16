@@ -125,6 +125,7 @@
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
     "@types/react": "19.0.7",
+    "@types/user-agents": "^1.0.4",
     "babel-loader": "^9.2.1",
     "dotenv-cli": "^8.0.0",
     "eslint": "^9.18.0",

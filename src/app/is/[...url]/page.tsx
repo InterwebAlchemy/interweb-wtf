@@ -26,7 +26,13 @@ export default async function ExpanderPage({ params }: Params) {
 
   const headersList = await headers();
 
-  const userAgent = headersList.get('user-agent');
+  let userAgent = headersList.get('user-agent');
+
+  if (!userAgent) {
+    // Fallback to a common user agent
+    // taken from: https://www.useragents.me/ 2025-02-16
+    userAgent = `Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.3`;
+  }
 
   let fullUrl;
 

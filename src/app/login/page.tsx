@@ -1,5 +1,3 @@
-'use client';
-
 import { Center, Stack } from '@mantine/core';
 import Login from '@/app/_components/Login';
 import Screen from '@/app/_components/Screen';
