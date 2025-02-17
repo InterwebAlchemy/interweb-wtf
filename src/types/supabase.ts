@@ -416,6 +416,7 @@ export type Database = {
           _key_id: string
         }
         Returns: {
+          id: string
           name: string
           key: string
         }[]
@@ -425,6 +426,7 @@ export type Database = {
           _user_id: string
         }
         Returns: {
+          id: string
           name: string
           key: string
         }[]

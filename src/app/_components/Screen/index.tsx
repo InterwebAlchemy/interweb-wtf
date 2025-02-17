@@ -1,5 +1,5 @@
 import { redirect, RedirectType } from 'next/navigation';
-import { Container, Stack, Title, type TitleProps } from '@mantine/core';
+import { Flex, Stack, Title, type TitleProps } from '@mantine/core';
 import { Notifications } from '@mantine/notifications';
 import { createClient } from '@/app/_adapters/supabase/server';
 import Footer from '@/app/_components/Footer';
@@ -33,10 +33,18 @@ export default async function Screen({
   return (
     <>
       <Notifications position="bottom-right" />
-      <Container fluid h="100%" p="lg" display="flex" w="100%">
+      <Flex
+        h="100%"
+        p="lg"
+        w="100%"
+        direction="column"
+        justify="flex-start"
+        align="flex-start"
+        mih="100vh"
+      >
         <Stack h="100%" w="100%">
           <Nav />
-          <Stack h="100%" w="100%">
+          <Stack w="100%">
             {title ? (
               <Title order={1} {...titleProps} mb={40}>
                 {title}
@@ -48,7 +56,7 @@ export default async function Screen({
           </Stack>
           <Footer />
         </Stack>
-      </Container>
+      </Flex>
     </>
   );
 }

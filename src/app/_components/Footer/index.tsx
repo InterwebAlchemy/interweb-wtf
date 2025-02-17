@@ -5,10 +5,13 @@ import InterstitialCheckbox from '@/app/_components/InterstitialCheckbox';
 
 export default function Footer() {
   return (
-    <Center w="100%" mb="auto" pt="xl" pb="sm" pos="relative" bottom={0}>
+    <Center w="100%" pt="xl" pb="sm" mt="auto">
       <Stack justify="center" align="center" w="100%">
         <InterstitialCheckbox />
-        <Group align="center" justify="center">
+        <Group align="center" w="100%" justify="flex-start">
+          <Anchor href="/docs" component={Link} c="gray" size="sm">
+            API
+          </Anchor>
           <Anchor href="/about" component={Link} c="gray" size="sm">
             About
           </Anchor>
@@ -21,12 +24,11 @@ export default function Footer() {
               Interweb Alchemy
             </Anchor>
           </Text>
-        </Group>
-        <Group w="100%" justify="end">
           <Anchor
             href="https://github.com/InterwebAlchemy/interweb.wtf"
             c="gray"
             title="View the source code on GitHub"
+            ml="auto"
           >
             <IconBrandGithub size={18} />
           </Anchor>

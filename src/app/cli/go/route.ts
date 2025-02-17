@@ -20,5 +20,8 @@ export async function GET(request: NextRequest) {
 
   return new NextResponse(json ? JSON.stringify({ url }) : url, {
     status: 200,
+    headers: {
+      'content-type': json ? 'application/json' : 'text/plain',
+    },
   });
 }

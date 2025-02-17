@@ -22,5 +22,8 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
 
   return new NextResponse(url, {
     status: 200,
+    headers: {
+      'content-type': 'text/plain',
+    },
   });
 }
