@@ -34,7 +34,9 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - is (expanded short links from other providers)
+     * - clean (clean links)
      * - api (API routes)
+     * - docs (documentation page)
      * - login (login page)
      * - request-invite (request invite page)
      * - about (about page)
@@ -43,6 +45,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt, llms.txt (metadata files)
      */
-    '/((?!is|api|login|request-invite|about|privacy|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt).*)',
+    '/((?!is|clean|api|docs|login|request-invite|about|privacy|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt).*)',
   ],
 };

@@ -6,9 +6,11 @@ export interface RequestProps {
   url: string[];
 }
 
-export async function GET(_request: NextRequest, { params }: { params: Promise<RequestProps> }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<RequestProps> }) {
   let expectsJson = false;
   let mightExpectJson = false;
+
+  const searchParams = request.nextUrl.searchParams;
 
   const supabase = await createClient();
 
@@ -31,6 +33,12 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<R
       })
       .join('/')
   );
+
+  searchParams.forEach((value, key) => {
+    if (typeof value !== 'undefined') {
+      shortUrl.searchParams.set(key, value as string);
+    }
+  });
 
   let fullUrl;
 

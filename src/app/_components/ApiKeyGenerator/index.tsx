@@ -21,8 +21,8 @@ import {
   TextInput,
   Title,
 } from '@mantine/core';
-import { notifications } from '@mantine/notifications';
 import { useDisclosure } from '@mantine/hooks';
+import { notifications } from '@mantine/notifications';
 import { createClient } from '@/app/_adapters/supabase/client';
 import { InterwebWtfApiKey } from '@/types';
 
@@ -44,8 +44,6 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
   };
 
   const onDelete = async (): Promise<void> => {
-    console.log('Deleting key:', keyToDelete);
-
     try {
       await fetch('/api/user/key/delete', {
         method: 'POST',
@@ -233,11 +231,15 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
                   <IconClipboardCopy />
                 </ActionIcon>
               )}
-              <ActionIcon variant="transparent" color="red" title="Delete API Key" onClick={() => {
-                console.log('Deleting key:', id);
-                setKeyToDelete(id);
-                open();
-              }}>
+              <ActionIcon
+                variant="transparent"
+                color="red"
+                title="Delete API Key"
+                onClick={() => {
+                  setKeyToDelete(id);
+                  open();
+                }}
+              >
                 <IconTrash />
               </ActionIcon>
             </Group>
@@ -252,50 +254,52 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
       <Modal opened={opened} onClose={close} title="Delete API Key">
         <Text>Are you sure you want to delete this API key?</Text>
         <Group>
-          <Button leftSection={<IconTrash />} color="red" onClick={onDelete}>Delete</Button>
+          <Button leftSection={<IconTrash />} color="red" onClick={onDelete}>
+            Delete
+          </Button>
           <Button onClick={close}>Cancel</Button>
         </Group>
       </Modal>
       <Stack w="100%" h="100%">
         <form onSubmit={onSubmit}>
           <Group w="100%">
-          <TextInput
-            disabled={isGenerating}
-            placeholder="API Key Name"
-            value={keyName}
-            onChange={onChange}
-            rightSection={isGenerating ? <Loader size="sm" /> : <></>}
-          />
-          <ActionIcon
-            type="submit"
-            color="violet"
-            title="Generate API Key"
-            disabled={!keyName || isGenerating}
-          >
-            <IconSquareKey />
-          </ActionIcon>
-        </Group>
-      </form>
-      {renderedKeys.length > 0 && (
-        <Group h="100%" w="100%">
-          <Title order={3}>API Keys</Title>
-          <Table striped layout="fixed">
-            <Table.Thead>
-              <Table.Tr w="30%">
-                <Table.Th>
-                  <Text>Name</Text>
-                </Table.Th>
-                <Table.Th w="60%">
-                  <Text>Key</Text>
-                </Table.Th>
-                <Table.Th w="10%" />
-              </Table.Tr>
-            </Table.Thead>
-            <Table.Tbody>{renderKeys()}</Table.Tbody>
-          </Table>
-        </Group>
-      )}
-    </Stack>
+            <TextInput
+              disabled={isGenerating}
+              placeholder="API Key Name"
+              value={keyName}
+              onChange={onChange}
+              rightSection={isGenerating ? <Loader size="sm" /> : <></>}
+            />
+            <ActionIcon
+              type="submit"
+              color="violet"
+              title="Generate API Key"
+              disabled={!keyName || isGenerating}
+            >
+              <IconSquareKey />
+            </ActionIcon>
+          </Group>
+        </form>
+        {renderedKeys.length > 0 && (
+          <Group h="100%" w="100%">
+            <Title order={3}>API Keys</Title>
+            <Table striped layout="fixed">
+              <Table.Thead>
+                <Table.Tr w="30%">
+                  <Table.Th>
+                    <Text>Name</Text>
+                  </Table.Th>
+                  <Table.Th w="60%">
+                    <Text>Key</Text>
+                  </Table.Th>
+                  <Table.Th w="10%" />
+                </Table.Tr>
+              </Table.Thead>
+              <Table.Tbody>{renderKeys()}</Table.Tbody>
+            </Table>
+          </Group>
+        )}
+      </Stack>
     </>
   );
 }

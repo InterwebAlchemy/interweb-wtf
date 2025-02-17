@@ -19,9 +19,12 @@ type Params = {
   params: Promise<{
     url: string[];
   }>;
+  searchParams: Promise<{
+    [key: string]: string | string[] | undefined;
+  }>;
 };
 
-export default async function ExpanderPage({ params }: Params) {
+export default async function ExpanderPage({ params, searchParams }: Params) {
   const supabase = await createClient();
 
   const headersList = await headers();
@@ -55,6 +58,14 @@ export default async function ExpanderPage({ params }: Params) {
       })
       .join('/')
   );
+
+  const queryParams = await searchParams;
+
+  Object.entries(queryParams).forEach(([key, value]) => {
+    if (typeof value !== 'undefined') {
+      url.searchParams.set(key, value as string);
+    }
+  });
 
   if (!KNOWN_SHORTENERS.includes(url.hostname)) {
     return (

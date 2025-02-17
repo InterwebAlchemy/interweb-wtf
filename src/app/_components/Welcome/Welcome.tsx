@@ -16,6 +16,10 @@ export function Welcome() {
           Inspectable
         </Anchor>
         {'. '}
+        <Anchor inherit c="violet" td="underline" href="/clean" component={Link}>
+          Private
+        </Anchor>
+        {'. '}
         Shortlinks.
       </Title>
       <Title order={2} mb="20" textWrap="balance" ta="left" w="100%">
