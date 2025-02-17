@@ -1,0 +1,58 @@
+---
+description: Project Import Paths
+globs: *.{ts,tsx}
+---
+# Project Import Path Standards
+
+Standards for using absolute imports with the `@` prefix in the project.
+
+<rule>
+name: project_import_paths
+description: Enforces consistent use of absolute imports with @ prefix
+
+filters:
+  - type: file_extension
+    pattern: "\\.(ts|tsx)$"
+  - type: content
+    pattern: "import.*from"
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "import.*from '(\\.\\.?/.*?)'"
+        message: "Use absolute imports with @ prefix instead of relative imports"
+        
+  - type: suggest
+    message: |
+      Use the following absolute import paths for project-level imports:
+
+      - Adapters: `@/app/_adapters`
+      - Components: `@/app/_components`
+      - Hooks: `@/app/_hooks`
+      - Services: `@/app/_services`
+      - Styles: `@/app/_styles`
+      - Utilities: `@/app/_utils`
+      - Types: `@/types`
+      - Constants: `@/constants`
+      
+      Examples:
+      ```typescript
+      // ❌ Don't use relative imports
+      import { Component } from '../../../components/Component'
+      
+      // ✅ Use absolute imports with @ prefix
+      import { Component } from '@/app/_components/Component'
+      ```
+
+examples:
+  - input: |
+      import { Something } from '../../../components/Something'
+      import { Other } from '../../utils/other'
+    output: |
+      import { Something } from '@/app/_components/Something'
+      import { Other } from '@/app/_utils/other'
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

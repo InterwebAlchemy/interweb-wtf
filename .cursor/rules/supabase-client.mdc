@@ -1,0 +1,59 @@
+---
+description: Importing and Using the Supabase Client
+globs: *{.ts,tsx}
+---
+# Supabase Import Path Standards
+
+Standards for importing the Supabase client in the correct context.
+
+<rule>
+name: supabase_import_path
+description: Enforces consistent and correct imports of the supabase client
+
+filters:
+  - type: file_extension
+    pattern: "\\.(ts|tsx)$"
+  - type: content
+    pattern: "import\s\{createClient\}\sfrom"
+
+    TODO: update the rules
+
+actions:
+  - type: reject
+    conditions:
+      - pattern: "import.*from '(\\.\\.?/.*?)'"
+        message: "Use absolute imports with @ prefix instead of relative imports"
+        
+  - type: suggest
+    message: |
+      Use the following guidelines to import the Supabase client
+
+      - Client Components (`"use client;"`): `@/app/_adapters/supabase/client`
+      - Server Components: `@/app/_adapters/supabase/server`
+      - Middleware: `@/app/_adapters/suapbase/middleware`
+      
+      Examples:
+      ```typescript
+      "use client";
+
+      // ❌ Don't import server in client components
+      import { createClient } from '@/app/_adapters/supabase/server'
+      
+      // ✅ Use absolute imports with @ prefix
+      import { createClient } from '@/app/_adapters/supabase/client'
+      ```
+
+examples:
+  - input: |
+      import { createClient } from '../../_adapters/supabase/server'
+    output: |
+      import { createClient } from '@/app/_adapters/supabase/server'
+  - input: |
+      import { createClient } from '../../_adapters/supabase/client'
+    output: |
+      import { createClient } from '@/app/_adapters/supabase/client' 
+
+metadata:
+  priority: high
+  version: 1.0
+</rule>

@@ -6,12 +6,15 @@ import {
   IconClipboardCheck,
   IconClipboardCopy,
   IconSquareKey,
+  IconTrash,
 } from '@tabler/icons-react';
 import {
   ActionIcon,
+  Button,
   Code,
   Group,
   Loader,
+  Modal,
   Stack,
   Table,
   Text,
@@ -19,6 +22,7 @@ import {
   Title,
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
+import { useDisclosure } from '@mantine/hooks';
 import { createClient } from '@/app/_adapters/supabase/client';
 import { InterwebWtfApiKey } from '@/types';
 
@@ -33,8 +37,46 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
   const [renderedKeys, setRenderedKeys] = useState<Array<InterwebWtfApiKey>>(keys);
   const [isGenerating, setIsGenerating] = useState<boolean>(false);
 
+  const [opened, { open, close }] = useDisclosure(false);
+  const [keyToDelete, setKeyToDelete] = useState<string>('');
   const onChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     setKeyName(event.target.value);
+  };
+
+  const onDelete = async (): Promise<void> => {
+    console.log('Deleting key:', keyToDelete);
+
+    try {
+      await fetch('/api/user/key/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ keyId: keyToDelete }),
+      });
+
+      setRenderedKeys((previousKeys) => {
+        return previousKeys.filter((key) => key.id !== keyToDelete);
+      });
+
+      close();
+
+      notifications.show({
+        title: 'API Key Deleted',
+        message: 'API key has been deleted.',
+        color: 'red',
+        icon: <IconTrash />,
+      });
+    } catch (error) {
+      console.error(error);
+
+      notifications.show({
+        title: 'API Key Error',
+        message: 'Could not delete API key.',
+        color: 'red',
+        icon: <IconAlertTriangle />,
+      });
+    }
   };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
@@ -159,9 +201,9 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
   };
 
   const renderKeys = (): React.ReactNode[] => {
-    return renderedKeys.map(({ key, name, isNew = false }) => {
+    return renderedKeys.map(({ key, name, id, isNew = false }) => {
       return (
-        <Table.Tr key={name}>
+        <Table.Tr key={id}>
           <Table.Td>
             <Text lineClamp={1} truncate="end">
               {name}
@@ -171,23 +213,34 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
             <Code>{key}</Code>
           </Table.Td>
           <Table.Td>
-            {isNew && (
-              <ActionIcon
-                onClick={() => {
-                  navigator.clipboard.writeText(key);
+            <Group justify="end">
+              {isNew && (
+                <ActionIcon
+                  variant="transparent"
+                  title="Copy API Key"
+                  onClick={() => {
+                    navigator.clipboard.writeText(key);
 
-                  notifications.show({
-                    title: 'API Key Copied',
-                    message:
-                      'You can now paste it somewhere safe. You will only see this key once.',
-                    color: 'teal',
-                    icon: <IconClipboardCheck />,
-                  });
-                }}
-              >
-                <IconClipboardCopy />
+                    notifications.show({
+                      title: 'API Key Copied',
+                      message:
+                        'You can now paste it somewhere safe. You will only see this key once.',
+                      color: 'teal',
+                      icon: <IconClipboardCheck />,
+                    });
+                  }}
+                >
+                  <IconClipboardCopy />
+                </ActionIcon>
+              )}
+              <ActionIcon variant="transparent" color="red" title="Delete API Key" onClick={() => {
+                console.log('Deleting key:', id);
+                setKeyToDelete(id);
+                open();
+              }}>
+                <IconTrash />
               </ActionIcon>
-            )}
+            </Group>
           </Table.Td>
         </Table.Tr>
       );
@@ -195,9 +248,17 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
   };
 
   return (
-    <Stack w="100%" h="100%">
-      <form onSubmit={onSubmit}>
-        <Group w="100%">
+    <>
+      <Modal opened={opened} onClose={close} title="Delete API Key">
+        <Text>Are you sure you want to delete this API key?</Text>
+        <Group>
+          <Button leftSection={<IconTrash />} color="red" onClick={onDelete}>Delete</Button>
+          <Button onClick={close}>Cancel</Button>
+        </Group>
+      </Modal>
+      <Stack w="100%" h="100%">
+        <form onSubmit={onSubmit}>
+          <Group w="100%">
           <TextInput
             disabled={isGenerating}
             placeholder="API Key Name"
@@ -235,5 +296,6 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
         </Group>
       )}
     </Stack>
+    </>
   );
 }

@@ -13,7 +13,7 @@ export type Database = {
         Row: {
           created_at: string
           deleted: boolean
-          id: number
+          id: string
           name: string | null
           secret_id: string
           user_id: string
@@ -21,7 +21,7 @@ export type Database = {
         Insert: {
           created_at?: string
           deleted?: boolean
-          id?: number
+          id?: string
           name?: string | null
           secret_id?: string
           user_id?: string
@@ -29,7 +29,7 @@ export type Database = {
         Update: {
           created_at?: string
           deleted?: boolean
-          id?: number
+          id?: string
           name?: string | null
           secret_id?: string
           user_id?: string
@@ -404,18 +404,21 @@ export type Database = {
     Functions: {
       generate_api_key: {
         Args: {
-          api_key: string
-          api_key_name: string
-          api_key_description: string
-          user_id: string
-        }
-        Returns: number
-      }
-      get_api_key: {
-        Args: {
-          key_id: string
+          _api_key: string
+          _api_key_name: string
+          _user_id: string
         }
         Returns: string
+      }
+      get_user_api_key: {
+        Args: {
+          _user_id: string
+          _key_id: string
+        }
+        Returns: {
+          name: string
+          key: string
+        }[]
       }
       get_user_api_keys: {
         Args: {
@@ -424,6 +427,14 @@ export type Database = {
         Returns: {
           name: string
           key: string
+        }[]
+      }
+      get_user_by_api_key: {
+        Args: {
+          _key: string
+        }
+        Returns: {
+          userid: string
         }[]
       }
     }

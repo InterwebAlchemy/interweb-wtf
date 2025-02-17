@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
-
+import { InterwebWtfApiKey } from '@/types';
 export interface RequestProps {
   userId: string;
 }
@@ -29,9 +29,10 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const keys = data.map((key: { name: string; key: string }) => {
+    const keys = data.map((key: InterwebWtfApiKey) => {
       return {
-        name: key.name.replace(`${userId}::`, ''),
+        ...key,
+        name: key.name?.replace(`${userId}::`, '') ?? "API Key",
         // obfuscate the key and only show the first and last 4 characters
         key: `${key.key.slice(0, 4)}${'*'.repeat(key.key.length - 8)}${key.key.slice(-4)}`,
       };

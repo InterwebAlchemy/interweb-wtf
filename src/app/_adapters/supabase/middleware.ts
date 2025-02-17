@@ -1,6 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+/**
+ * Check if the API key is valid
+ * @param request - The request object
+ * @returns The response object
+ */
 export async function checkApiKey(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
@@ -13,6 +18,7 @@ export async function checkApiKey(request: NextRequest) {
     });
   }
 
+  // get the API key from the Authorization header
   const apiKey = request.headers.get('authorization')?.replace('Bearer ', '');
 
   if (!apiKey) {
@@ -42,9 +48,10 @@ export async function checkApiKey(request: NextRequest) {
     }
   );
 
+  // check for valid API key
   const { data, error } = await supabase.rpc('get_user_by_api_key', { _key: apiKey });
 
-  if (error || !data) {
+  if (error || !data || data.length === 0) {
     console.error(error);
 
     return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {

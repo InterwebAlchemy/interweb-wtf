@@ -137,12 +137,12 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
           <Table.Td>
             <Link href={wtfInfoLink}>{url.slug}</Link>
           </Table.Td>
-          <Table.Td w="50%">
+          <Table.Td>
             <Text span truncate="end" lineClamp={1} title={url.url}>
               {url.url}
             </Text>
           </Table.Td>
-          <Table.Td w="20%">
+          <Table.Td>
             <Group justify="end">
               <Tooltip label="Copy WTF Link">
                 <ActionIcon
