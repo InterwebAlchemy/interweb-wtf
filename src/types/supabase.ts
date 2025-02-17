@@ -9,6 +9,41 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          deleted: boolean
+          id: number
+          name: string | null
+          secret_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          deleted?: boolean
+          id?: number
+          name?: string | null
+          secret_id?: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          deleted?: boolean
+          id?: number
+          name?: string | null
+          secret_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_keys_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       expanded_urls: {
         Row: {
           expanded_url: string | null
@@ -367,7 +402,30 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      generate_api_key: {
+        Args: {
+          api_key: string
+          api_key_name: string
+          api_key_description: string
+          user_id: string
+        }
+        Returns: number
+      }
+      get_api_key: {
+        Args: {
+          key_id: string
+        }
+        Returns: string
+      }
+      get_user_api_keys: {
+        Args: {
+          _user_id: string
+        }
+        Returns: {
+          name: string
+          key: string
+        }[]
+      }
     }
     Enums: {
       [_ in never]: never

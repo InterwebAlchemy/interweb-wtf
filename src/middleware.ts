@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { updateSession } from '@/app/_adapters/supabase/middleware';
+import { checkApiKey, updateSession } from '@/app/_adapters/supabase/middleware';
 
 export async function middleware(request: NextRequest) {
+  if (request.nextUrl.pathname.startsWith('/cli')) {
+    return await checkApiKey(request);
+  }
+
   if (request.nextUrl.pathname.startsWith('/go')) {
     if (!request.nextUrl.pathname.endsWith('/info')) {
       if (request.cookies.has('skip_info_interstitial')) {
@@ -30,7 +34,6 @@ export const config = {
     /*
      * Match all request paths except for the ones starting with:
      * - is (expanded short links from other providers)
-     * - cli (routes designed to be accessed via curl, etc.)
      * - api (API routes)
      * - login (login page)
      * - request-invite (request invite page)
@@ -40,6 +43,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico, sitemap.xml, robots.txt, llms.txt (metadata files)
      */
-    '/((?!is|cli|api|login|request-invite|about|privacy|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt).*)',
+    '/((?!is|api|login|request-invite|about|privacy|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt).*)',
   ],
 };

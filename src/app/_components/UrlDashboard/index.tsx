@@ -4,18 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IconClipboardCheck, IconExternalLink, IconLinkPlus, IconTrash } from '@tabler/icons-react';
-import {
-  ActionIcon,
-  Box,
-  Center,
-  Code,
-  Group,
-  Kbd,
-  Stack,
-  Table,
-  Text,
-  Tooltip,
-} from '@mantine/core';
+import { ActionIcon, Box, Center, Code, Group, Stack, Table, Text, Tooltip } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { createClient } from '@/app/_adapters/supabase/client';
 import UrlInput from '@/app/_components/UrlInput';
@@ -31,18 +20,6 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
 
   const [redirectSlug, setRedirectSlug] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string>('');
-  // HACK: this is "deprecated", but the navigator.userAgentData.platform isn't widely supported yet
-  // we just want to know if the user is on a Mac
-  const platform =
-    // @ts-expect-error - TS doesn't know about navigator.userAgentData yet
-    typeof navigator?.userAgentData !== 'undefined' &&
-    // @ts-expect-error - TS doesn't know about navigator.userAgentData yet
-    navigator?.userAgentData?.platform !== 'undefined'
-      ? // @ts-expect-error - TS doesn't know about navigator.userAgentData yet
-        navigator.userAgentData.platform
-      : navigator.platform;
-
-  const metaKey = platform === 'MacIntel' || platform === 'macOS' ? '⌘' : 'Ctrl';
 
   const onSubmit = async (url: string): Promise<void> => {
     let actualUrl = url;
@@ -183,9 +160,6 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                             <Stack>
                               <Text>
                                 <Code>{wtfLink.toString()}</Code> copied to clipboard.
-                              </Text>
-                              <Text>
-                                You can use <Kbd>{metaKey}</Kbd>+<Kbd>V</Kbd> to paste the URL.
                               </Text>
                             </Stack>
                           ),

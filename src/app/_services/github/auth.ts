@@ -7,22 +7,17 @@ export function signInWithGithub(): void {
     ? `${process.env.NEXT_PUBLIC_APPLICATION_URL}/auth/callback?next=/dashboard`
     : `https://${process?.env?.NEXT_PUBLIC_VERCEL_URL ?? ''}/auth/callback?next="/dashboard`;
 
-  console.log('redirectTo:', redirectTo);
-
   supabase.auth
     .signInWithOAuth({
       provider: 'github',
       options: {
-        // redirectTo,
+        redirectTo,
       },
     })
-    .then(({ data, error }) => {
+    .then(({ error }) => {
       if (error) {
         console.error('Login Error:', error);
-        return;
       }
-
-      console.log('DATA:', data);
     })
     .catch((error) => {
       console.error('Login Error:', error);

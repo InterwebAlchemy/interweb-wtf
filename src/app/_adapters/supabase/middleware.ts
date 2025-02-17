@@ -1,6 +1,60 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
 
+export async function checkApiKey(request: NextRequest) {
+  let supabaseResponse = NextResponse.next({
+    request,
+  });
+
+  // check for Authorization header
+  if (!request.headers.has('authorization')) {
+    return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
+      status: 401,
+    });
+  }
+
+  const apiKey = request.headers.get('authorization')?.replace('Bearer ', '');
+
+  if (!apiKey) {
+    return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
+      status: 401,
+    });
+  }
+
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll() {
+          return request.cookies.getAll();
+        },
+        setAll(cookiesToSet) {
+          cookiesToSet.forEach(({ name, value }) => request.cookies.set(name, value));
+          supabaseResponse = NextResponse.next({
+            request,
+          });
+          cookiesToSet.forEach(({ name, value, options }) =>
+            supabaseResponse.cookies.set(name, value, options)
+          );
+        },
+      },
+    }
+  );
+
+  const { data, error } = await supabase.rpc('get_user_by_api_key', { _key: apiKey });
+
+  if (error || !data) {
+    console.error(error);
+
+    return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
+      status: 401,
+    });
+  }
+
+  return supabaseResponse;
+}
+
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
