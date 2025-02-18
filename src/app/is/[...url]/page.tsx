@@ -70,7 +70,7 @@ export default async function ExpanderPage({ params, searchParams }: Params) {
   if (!KNOWN_SHORTENERS.includes(url.hostname)) {
     return (
       <Screen>
-        <UnknownShortener url={url} />
+        <UnknownShortener url={url.toString()} />
       </Screen>
     );
   }

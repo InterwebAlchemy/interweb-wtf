@@ -149,7 +149,7 @@ export default async function InspectorPage({ params }: { params: Promise<Params
           <TabsPanel key={tab} value={tab}>
             {tab === 'details' ? (
               <Stack>
-                <UrlScreenshot url={displayUrl} src={imageSrc} />
+                <UrlScreenshot url={displayUrl.toString()} src={imageSrc} />
                 {description && (
                   <Center w="90%" mx="auto" my="md" maw="640">
                     <Blockquote
@@ -183,7 +183,7 @@ export default async function InspectorPage({ params }: { params: Promise<Params
                     </Stack>
                   </Center>
                 )}
-                <UrlParams url={displayUrl} />
+                <UrlParams url={displayUrl.toString()} />
               </Stack>
             ) : (
               <Center w="80%" mx="auto" my="md" pos="relative">
@@ -240,7 +240,7 @@ export default async function InspectorPage({ params }: { params: Promise<Params
           )}
         </Group>
       </Title>
-      <UrlMetadata url={url} />
+      <UrlMetadata url={url.toString()} />
       {renderScreenshotAndQrCode()}
     </Screen>
   );
