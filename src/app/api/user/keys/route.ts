@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
-import { InterwebWtfApiKey } from '@/types';
+
 export interface RequestProps {
   userId: string;
 }
@@ -24,17 +24,19 @@ export async function POST(request: NextRequest) {
     if (error) {
       console.error(error);
 
-      return new NextResponse(JSON.stringify({ message: 'Could not generate API key' }), {
+      return new NextResponse(JSON.stringify({ message: 'Could not get API keys' }), {
         status: 500,
       });
     }
 
-    const keys = data.map((key: InterwebWtfApiKey) => {
+    // TODO: fix the type for the rcp response
+    const keys = data.map((key: Record<string, any>) => {
       return {
-        ...key,
-        name: key.name?.replace(`${userId}::`, '') ?? "API Key",
-        // obfuscate the key and only show the first and last 4 characters
-        key: `${key.key.slice(0, 4)}${'*'.repeat(key.key.length - 8)}${key.key.slice(-4)}`,
+        id: key.id,
+        name: key.name?.replace(`${userId}::`, '') ?? 'API Key',
+        key: key.key,
+        createdAt: key.created_at,
+        isNew: false,
       };
     });
 

@@ -1,5 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
 import { createServerClient } from '@supabase/ssr';
+import { hashIncomingKey } from '@/app/_utils/key';
 
 /**
  * Check if the API key is valid
@@ -15,6 +16,9 @@ export async function checkApiKey(request: NextRequest) {
   if (!request.headers.has('authorization')) {
     return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
       status: 401,
+      headers: {
+        'content-type': 'application/json',
+      },
     });
   }
 
@@ -24,8 +28,13 @@ export async function checkApiKey(request: NextRequest) {
   if (!apiKey) {
     return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
       status: 401,
+      headers: {
+        'content-type': 'application/json',
+      },
     });
   }
+
+  const hashedApiKey = await hashIncomingKey(apiKey);
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -49,17 +58,32 @@ export async function checkApiKey(request: NextRequest) {
   );
 
   // check for valid API key
-  const { data, error } = await supabase.rpc('get_user_by_api_key', { _key: apiKey });
+  const { data, error } = await supabase
+    .rpc('get_user_by_api_key', { _key: hashedApiKey })
+    .single();
 
-  if (error || !data || data.length === 0) {
+  if (error || !data) {
     console.error(error);
 
     return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
       status: 401,
+      headers: {
+        'content-type': 'application/json',
+      },
     });
   }
 
-  return supabaseResponse;
+  // @ts-expect-error - TODO: make return type of this rpc call explicit
+  if (data?.user_id) {
+    return supabaseResponse;
+  }
+
+  return new NextResponse(JSON.stringify({ message: 'Unauthorized' }), {
+    status: 401,
+    headers: {
+      'content-type': 'application/json',
+    },
+  });
 }
 
 export async function updateSession(request: NextRequest) {

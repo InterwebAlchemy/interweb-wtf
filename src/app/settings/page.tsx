@@ -21,23 +21,32 @@ export default async function SettingsPage() {
 
   const apiUrl = new URL('/api/user/keys', process.env.NEXT_PUBLIC_APPLICATION_URL);
 
-  const { keys } = await fetch(apiUrl, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ userId: user?.id }),
-  })
-    .then(async (res) => {
-      if (res.ok) {
-        return await res.json();
-      }
+  let keys = [];
 
-      console.error(res.status, res.statusText);
+  try {
+    keys = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: user?.id }),
     })
-    .catch((error) => {
-      console.error(error);
-    });
+      .then(async (res) => {
+        if (res.ok) {
+          return await res.json();
+        }
+
+        console.error(res.status, res.statusText);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .then(({ keys }) => {
+        return keys;
+      });
+  } catch (error) {
+    console.error(error);
+  }
 
   return (
     <Screen title="Settings" authenticated>

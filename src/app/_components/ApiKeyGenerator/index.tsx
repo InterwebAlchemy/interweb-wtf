@@ -111,7 +111,7 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
             });
           } else {
             try {
-              const { keyId } = await fetch('/api/user/key/generate', {
+              const newKey: InterwebWtfApiKey = await fetch('/api/user/key/generate', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -127,53 +127,37 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
                   console.error(error);
                 });
 
-              if (keyId) {
-                try {
-                  const { key } = await fetch('/api/user/key/get', {
-                    method: 'POST',
-                    headers: {
-                      'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ userId: user?.id, keyId }),
-                  })
-                    .then(async (res) => {
-                      if (res.ok) {
-                        return await res.json();
+              if (newKey) {
+                setRenderedKeys((previousKeys) => {
+                  const updatedKeys = [
+                    ...previousKeys.map((key) => {
+                      // if the user generated multiple keys, we'll need to obfuscate the previously generated keys
+                      if (key.isNew) {
+                        return {
+                          ...key,
+                          key: `${key.key.slice(0, 4)}${'*'.repeat(key.key.length - 8)}${key.key.slice(-4)}`,
+                          isNew: false,
+                        };
                       }
-                    })
-                    .catch((error) => {
-                      console.error(error);
-                    });
 
-                  setRenderedKeys((previousKeys) => {
-                    const newKeys = [
-                      ...previousKeys.map((key) => {
-                        if (key.isNew) {
-                          return {
-                            ...key,
-                            key: `${key.key.slice(0, 4)}${'*'.repeat(key.key.length - 8)}${key.key.slice(-4)}`,
-                            isNew: false,
-                          };
-                        }
-                        return { ...key };
-                      }),
-                    ];
+                      // older keys don't need to be obfuscated
+                      return key;
+                    }),
+                  ];
 
-                    newKeys.unshift({ ...key, isNew: true });
-                    return newKeys;
-                  });
+                  updatedKeys.unshift(newKey);
 
-                  setKeyName('');
+                  return updatedKeys;
+                });
 
-                  notifications.show({
-                    title: 'API Key Generated',
-                    message: 'API key has been generated.',
-                    color: 'teal',
-                    icon: <IconSquareKey />,
-                  });
-                } catch (error) {
-                  console.error(error);
-                }
+                setKeyName('');
+
+                notifications.show({
+                  title: 'API Key Generated',
+                  message: 'API key has been generated.',
+                  color: 'teal',
+                  icon: <IconSquareKey />,
+                });
               } else {
                 notifications.show({
                   title: 'API Key Error',

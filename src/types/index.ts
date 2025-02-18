@@ -6,4 +6,5 @@ export type InterwebWtfApiKey = {
   key: string;
   name?: string;
   isNew?: boolean;
+  createdAt?: string;
 };

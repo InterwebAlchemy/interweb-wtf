@@ -15,6 +15,7 @@ export type Database = {
           deleted: boolean
           id: string
           name: string | null
+          obfuscated_key: string | null
           secret_id: string
           user_id: string
         }
@@ -23,6 +24,7 @@ export type Database = {
           deleted?: boolean
           id?: string
           name?: string | null
+          obfuscated_key?: string | null
           secret_id?: string
           user_id?: string
         }
@@ -31,6 +33,7 @@ export type Database = {
           deleted?: boolean
           id?: string
           name?: string | null
+          obfuscated_key?: string | null
           secret_id?: string
           user_id?: string
         }
@@ -438,6 +441,15 @@ export type Database = {
         Returns: {
           userid: string
         }[]
+      }
+      store_api_key: {
+        Args: {
+          _api_key: string
+          _api_key_name: string
+          _obfuscated_key: string
+          _user_id: string
+        }
+        Returns: string
       }
     }
     Enums: {

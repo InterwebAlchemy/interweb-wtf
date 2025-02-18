@@ -73,11 +73,16 @@ export async function GET(request: NextRequest, { params }: { params: Promise<Re
   if (!data || error) {
     if (!KNOWN_SHORTENERS.includes(shortUrl.hostname)) {
       return new NextResponse(
-        JSON.stringify({
-          message: `Unknown shortener service. Request support for ${shortUrl.hostname}: ${process.env.NEXT_PUBLIC_SHORTENER_REQUEST_URL} `,
-        }),
+        expectsJson
+          ? JSON.stringify({
+              message: `Unknown shortener service. Request support for ${shortUrl.hostname}: ${process.env.NEXT_PUBLIC_SHORTENER_REQUEST_URL} `,
+            })
+          : `Unknown shortener service. Request support for ${shortUrl.hostname}: ${process.env.NEXT_PUBLIC_SHORTENER_REQUEST_URL} `,
         {
           status: 400,
+          headers: {
+            'content-type': expectsJson ? 'application/json' : 'text/plain',
+          },
         }
       );
     }
@@ -135,9 +140,17 @@ export async function GET(request: NextRequest, { params }: { params: Promise<Re
   }
 
   if (!fullUrl) {
-    return new NextResponse(JSON.stringify({ message: 'Could not expand short URL' }), {
-      status: 404,
-    });
+    return new NextResponse(
+      expectsJson
+        ? JSON.stringify({ message: 'Could not expand short URL' })
+        : 'Could not expand short URL',
+      {
+        status: 404,
+        headers: {
+          'content-type': expectsJson ? 'application/json' : 'text/plain',
+        },
+      }
+    );
   }
 
   return new NextResponse(expectsJson ? JSON.stringify({ url: fullUrl }) : fullUrl, {

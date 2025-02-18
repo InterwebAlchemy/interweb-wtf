@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
+import { generateKey, hashKey, obfuscateKey, prefixKey } from '@/app/_utils/key';
 
 export interface RequestProps {
   userId: string;
@@ -31,12 +32,20 @@ export async function POST(request: NextRequest) {
   // check if user ID matches current user
   if (typeof userId !== 'undefined' && userId === user?.id) {
     // generate random string of 32 characters for API key and prefix it
-    const newSecret = `${process.env.API_SECRET_PREFIX}${[...Array(32)].map(() => (~~(Math.random() * 36)).toString(36)).join('')}`;
+    const newSecret = generateKey();
+    const prefixedSecret = prefixKey(newSecret);
+    const obfuscatedSecret = obfuscateKey(prefixedSecret);
+
+    const hashedSecret = await hashKey(newSecret);
+
+    // prefixed with userId to avoid naming collisions in the Supabase vault.secrets table
+    const keyName = `${userId}::${name}`;
 
     // create a new API key and store it in the Vault
-    const { data, error } = await supabase.rpc('generate_api_key', {
-      _api_key: newSecret,
-      _api_key_name: `${userId}::${name}`,
+    const { data, error } = await supabase.rpc('store_api_key', {
+      _api_key: hashedSecret,
+      _api_key_name: keyName,
+      _obfuscated_key: obfuscatedSecret,
       _user_id: userId,
     });
 
@@ -48,6 +57,9 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return new NextResponse(JSON.stringify({ keyId: data }), { status: 200 });
+    return new NextResponse(
+      JSON.stringify({ id: data, key: prefixedSecret, name: keyName, isNew: true }),
+      { status: 200 }
+    );
   }
 }
