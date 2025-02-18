@@ -18,6 +18,7 @@ import {
 } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { createClient } from '@/app/_adapters/supabase/client';
+import CheckForRedirect from '@/app/_components/CheckForRedirect';
 import UrlInput from '@/app/_components/UrlInput';
 import { KNOWN_SHORTENERS } from '@/constants';
 import { Tables } from '@/types/supabase';
@@ -238,6 +239,7 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
 
   return (
     <Stack h="100%">
+      <CheckForRedirect ignoreRedirect />
       <Box w="70%" mx="auto">
         <UrlInput onSubmit={onSubmit} />
       </Box>

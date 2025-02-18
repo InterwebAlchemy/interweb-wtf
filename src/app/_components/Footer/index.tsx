@@ -9,6 +9,9 @@ export default function Footer() {
       <Stack justify="center" align="center" w="100%">
         <InterstitialCheckbox />
         <Group align="center" w="100%" justify="flex-start">
+          <Anchor href="/" component={Link} c="gray" size="sm">
+            Home
+          </Anchor>
           <Anchor href="/docs" component={Link} c="gray" size="sm">
             API
           </Anchor>
