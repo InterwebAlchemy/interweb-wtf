@@ -432,6 +432,7 @@ export type Database = {
           id: string
           name: string
           key: string
+          created_at: string
         }[]
       }
       get_user_by_api_key: {
@@ -439,7 +440,7 @@ export type Database = {
           _key: string
         }
         Returns: {
-          userid: string
+          user_id: string
         }[]
       }
       store_api_key: {

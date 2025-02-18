@@ -56,7 +56,7 @@ export default function Nav() {
       .then(async (response) => {
         const { slug, id } = response;
 
-        await fetch('/api/summarize', {
+        await fetch('/api/internal/summarize', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -128,7 +128,7 @@ export default function Nav() {
               label="Beta"
               radius="sm"
               size="md"
-              color="gray"
+              color="teal"
               position="middle-end"
               offset={-30}
             >

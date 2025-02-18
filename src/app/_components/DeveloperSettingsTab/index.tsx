@@ -1,15 +1,54 @@
 import Link from 'next/link';
-import { Anchor, Box, Stack, Text, Title } from '@mantine/core';
+import { redirect, RedirectType } from 'next/navigation';
+import { Anchor, Container, Stack, Text, Title } from '@mantine/core';
+import { createClient } from '@/app/_adapters/supabase/server';
 import ApiKeyGenerator from '@/app/_components/ApiKeyGenerator';
 import { InterwebWtfApiKey } from '@/types';
 
-export interface DeveloperSettingsTabProps {
-  keys: InterwebWtfApiKey[];
-}
+export default async function DeveloperSettingsTab() {
+  const supabase = await createClient();
 
-export default function DeveloperSettingsTab({ keys = [] }: DeveloperSettingsTabProps) {
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (!user || userError) {
+    console.error(userError);
+    redirect('/login', RedirectType.replace);
+  }
+
+  const apiUrl = new URL('/api/internal/user/keys', process.env.NEXT_PUBLIC_APPLICATION_URL);
+
+  let keys: InterwebWtfApiKey[] = [];
+
+  try {
+    keys = await fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: user?.id }),
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          return await res.json();
+        }
+
+        console.error(res.status, res.statusText);
+      })
+      .catch((error) => {
+        console.error(error);
+      })
+      .then(({ keys }) => {
+        return keys;
+      });
+  } catch (error) {
+    console.error(error);
+  }
+
   return (
-    <Box p="md">
+    <Container p="md">
       <Stack h="100%" w="100%">
         <Title order={2}>Developer Settings</Title>
         <Text>
@@ -21,6 +60,6 @@ export default function DeveloperSettingsTab({ keys = [] }: DeveloperSettingsTab
         </Text>
         <ApiKeyGenerator keys={keys} />
       </Stack>
-    </Box>
+    </Container>
   );
 }

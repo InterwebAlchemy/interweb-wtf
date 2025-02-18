@@ -6,7 +6,7 @@
 
 **COMING SOON**
 
-WTFLinks work just like the shortlinks you're used to except that they don't track you, once they've been created the URL they point to cannot be updated, and you can add `/info` to any WTFLink to see where it's taking you.
+WTF Links work just like the shortlinks you're used to except that they don't track you, once they've been created the URL they point to cannot be updated, and you can add `/info` to any WTF Link to see where it's taking you.
 
 ## Expanded Links
 

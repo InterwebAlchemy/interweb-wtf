@@ -17,7 +17,7 @@ export default function DangerZoneTab() {
       }
 
       try {
-        await fetch('/api/user/delete', {
+        await fetch('/api/internal/user/delete', {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',

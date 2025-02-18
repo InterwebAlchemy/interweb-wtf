@@ -1,17 +1,16 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/app/_adapters/supabase/server';
-import { generateKey, hashKey, obfuscateKey, prefixKey } from '@/app/_utils/key';
 
 export interface RequestProps {
   userId: string;
-  name: string;
+  keyId: string;
 }
 
 export async function POST(request: NextRequest) {
   // get user ID from request
   const requestObj: RequestProps = await request.json();
 
-  const { userId, name } = requestObj;
+  const { userId, keyId } = requestObj;
 
   // get current user session from supabase
   const supabase = await createClient();
@@ -31,22 +30,10 @@ export async function POST(request: NextRequest) {
 
   // check if user ID matches current user
   if (typeof userId !== 'undefined' && userId === user?.id) {
-    // generate random string of 32 characters for API key and prefix it
-    const newSecret = generateKey();
-    const prefixedSecret = prefixKey(newSecret);
-    const obfuscatedSecret = obfuscateKey(prefixedSecret);
-
-    const hashedSecret = await hashKey(newSecret);
-
-    // prefixed with userId to avoid naming collisions in the Supabase vault.secrets table
-    const keyName = `${userId}::${name}`;
-
     // create a new API key and store it in the Vault
-    const { data, error } = await supabase.rpc('store_api_key', {
-      _api_key: hashedSecret,
-      _api_key_name: keyName,
-      _obfuscated_key: obfuscatedSecret,
+    const { data, error } = await supabase.rpc('get_user_api_key', {
       _user_id: userId,
+      _key_id: keyId,
     });
 
     if (error) {
@@ -57,9 +44,14 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    return new NextResponse(
-      JSON.stringify({ id: data, key: prefixedSecret, name: keyName, isNew: true }),
-      { status: 200 }
-    );
+    const key = data[0];
+
+    key.name = key.name.replace(`${userId}::`, '');
+
+    return new NextResponse(JSON.stringify({ key }), { status: 200 });
   }
+
+  return new NextResponse(JSON.stringify({ error: 'Unauthorized' }), {
+    status: 401,
+  });
 }

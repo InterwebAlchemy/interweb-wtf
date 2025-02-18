@@ -32,7 +32,9 @@ export default function Login() {
         window.location.href = '/';
       });
     } else {
-      signInWithGithub();
+      signInWithGithub((next?: string) => {
+        sessionStorage.setItem('interweb_wtf_redirect_url', next ?? '');
+      });
     }
   };
 

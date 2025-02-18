@@ -69,9 +69,19 @@ export default function InterstitialCheckbox() {
         </Popover.Target>
         <Popover.Dropdown>
           <Text size="xs">
-            Disabling this will always redirect you to the WTF Link Inspector (avaialable by
-            appending <Code>/info</Code> to any WTF Link) instead of redirecting you to the URL that
-            a WTF Link is pointing to.
+            {skipInspector ? (
+              <>
+                Disabling this will always redirect you to the WTF Link Inspector (avaialable by
+                appending <Code>/info</Code> to any WTF Link) instead of redirecting you to the URL
+                that a WTF Link is pointing to.
+              </>
+            ) : (
+              <>
+                Enabling this will redirect you to the URL that a WTF Link is pointing to instead of
+                taking you to the WTF Link Inspector (available by appending <Code>/info</Code> to
+                any WTF Link) first.
+              </>
+            )}
           </Text>
         </Popover.Dropdown>
       </Popover>

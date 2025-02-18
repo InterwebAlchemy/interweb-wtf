@@ -7,6 +7,7 @@ export default async function PrivacyPage() {
     <Screen title="Privacy Policy">
       <Center w="100%" h="100%">
         <Stack w="100%" maw={480}>
+          <Title order={2}>User Accounts</Title>
           <Text>
             When you create an account, you grant{' '}
             <Text span inherit c="violet">

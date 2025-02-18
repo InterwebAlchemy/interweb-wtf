@@ -1,7 +1,7 @@
 'use client';
 
 import { useIsClient } from 'usehooks-ts';
-import { Badge, Group, Stack, Text, Title } from '@mantine/core';
+import { Badge, Code, Group, Stack, Text, Title } from '@mantine/core';
 
 export default function CookieInspector() {
   const isClient = useIsClient();
@@ -11,35 +11,66 @@ export default function CookieInspector() {
   }
 
   // get cookies for current domain
-  const cookies = document.cookie.split(';').filter((cookie) => cookie);
+  // make sure `skip_info_interstitial` is first and then sort the rest alphabetically
+  const cookies = document.cookie
+    .split(';')
+    .filter((cookie) => cookie)
+    .sort((a, b) => {
+      if (a.includes('skip_info_interstitial')) {
+        return -1;
+      }
+
+      if (b.includes('skip_info_interstitial')) {
+        return 1;
+      }
+
+      return 0;
+    });
 
   const renderCookies = () => {
-    return cookies.map((cookie) => {
-      const [name, value] = cookie.split('=');
-
+    if (cookies.length === 0) {
       return (
-        <Badge
-          key={name}
-          variant="light"
-          color="gray"
-          leftSection={
-            <Text span inherit fw={700}>
-              {name}:
-            </Text>
-          }
-          radius="sm"
-        >
-          <Text span inherit fw={300} tt="initial">
-            {value}
-          </Text>
-        </Badge>
+        <Text>
+          <Code>
+            No cookies found for {new URL(process.env.NEXT_PUBLIC_APPLICATION_URL!).hostname}
+          </Code>
+        </Text>
       );
-    });
-  };
+    }
 
-  if (cookies.length === 0) {
-    return <></>;
-  }
+    return (
+      <>
+        {cookies.map((cookie) => {
+          const [name, value] = cookie.split('=');
+
+          return (
+            <Badge
+              key={name}
+              variant="light"
+              color="gray"
+              leftSection={
+                <Text span inherit fw={700}>
+                  {name}:
+                </Text>
+              }
+              radius="sm"
+            >
+              <Text span inherit fw={300} tt="initial">
+                {value}
+              </Text>
+            </Badge>
+          );
+        })}
+        <Text size="xs">
+          <Text span inherit fw={700}>
+            Note:
+          </Text>{' '}
+          Any cookies that start with <Code>SB-</Code> are from Supabase and are used for
+          authentication and authorization.
+        </Text>
+      </>
+    );
+  };
 
   return (
     <Stack w="100%">

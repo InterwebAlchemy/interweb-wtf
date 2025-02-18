@@ -24,3 +24,7 @@ a:visited {
 #signout-link:hover {
   text-decoration: underline;
 }
+
+a > code {
+  text-decoration: underline;
+}

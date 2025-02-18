@@ -45,12 +45,22 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
 
   const onDelete = async (): Promise<void> => {
     try {
-      await fetch('/api/user/key/delete', {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      await fetch('/api/internal/user/key/delete', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ keyId: keyToDelete }),
+        body: JSON.stringify({ keyId: keyToDelete, userId: user?.id }),
       });
 
       setRenderedKeys((previousKeys) => {
@@ -111,7 +121,7 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
             });
           } else {
             try {
-              const newKey: InterwebWtfApiKey = await fetch('/api/user/key/generate', {
+              const newKey: InterwebWtfApiKey = await fetch('/api/internal/user/key/generate', {
                 method: 'POST',
                 headers: {
                   'Content-Type': 'application/json',
@@ -183,16 +193,33 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
   };
 
   const renderKeys = (): React.ReactNode[] => {
-    return renderedKeys.map(({ key, name, id, isNew = false }) => {
+    return renderedKeys.map(({ key, name, id, createdAt, isNew = false }) => {
+      // convert createdAt to a human-readable date
+      const createdAtDate = new Date(createdAt ?? '');
+
+      const createdAtHumanReadable = createdAtDate.toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      });
       return (
         <Table.Tr key={id}>
           <Table.Td>
-            <Text lineClamp={1} truncate="end">
+            <Text lineClamp={1} truncate="end" title={name}>
               {name}
             </Text>
           </Table.Td>
           <Table.Td>
-            <Code>{key}</Code>
+            <Text lineClamp={1} truncate="start" title={key} ta="left">
+              <Code>
+                {key.slice(0, 4)}**********{key.slice(-4)}
+              </Code>
+            </Text>
+          </Table.Td>
+          <Table.Td>
+            <Text lineClamp={1} truncate="end" title={createdAtDate.toLocaleString()}>
+              <time dateTime={createdAtDate.toLocaleString()}>{createdAtHumanReadable}</time>
+            </Text>
           </Table.Td>
           <Table.Td>
             <Group justify="end">
@@ -269,14 +296,11 @@ export default function ApiKeyGenerator({ keys = [] }: ApiKeyGeneratorProps): Re
             <Title order={3}>API Keys</Title>
             <Table striped layout="fixed">
               <Table.Thead>
-                <Table.Tr w="30%">
-                  <Table.Th>
-                    <Text>Name</Text>
-                  </Table.Th>
-                  <Table.Th w="60%">
-                    <Text>Key</Text>
-                  </Table.Th>
-                  <Table.Th w="10%" />
+                <Table.Tr>
+                  <Table.Th>Name</Table.Th>
+                  <Table.Th>Key</Table.Th>
+                  <Table.Th>Created</Table.Th>
+                  <Table.Th />
                 </Table.Tr>
               </Table.Thead>
               <Table.Tbody>{renderKeys()}</Table.Tbody>

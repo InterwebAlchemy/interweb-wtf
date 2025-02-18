@@ -10,7 +10,7 @@ export interface ShortLinkInputProps {
 
 export default function ShortLinkInput({ slug, linkId }: ShortLinkInputProps) {
   const onEdit = async (slug: string): Promise<void> => {
-    await fetch('/api/slug', {
+    await fetch('/api/internal/slug', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

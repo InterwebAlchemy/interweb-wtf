@@ -1,11 +1,11 @@
 import { redirect, RedirectType } from 'next/navigation';
 import { Group } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
-import GeneralSettingsTab from '@/app/_components/GeneralSettingsTab';
+import DangerZoneTab from '@/app/_components/DangerZoneTab';
 import Screen from '@/app/_components/Screen';
 import SettingsNav from '@/app/_components/SettingsNav';
 
-export default async function SettingsPage() {
+export default async function DeveloperSettingsPage() {
   const supabase = await createClient();
 
   const {
@@ -19,10 +19,10 @@ export default async function SettingsPage() {
   }
 
   return (
-    <Screen title="Settings" authenticated>
+    <Screen title="Developer Settings">
       <Group w="100%" h="100%">
-        <SettingsNav activeTab="general" />
-        <GeneralSettingsTab />
+        <SettingsNav activeTab="danger" />
+        <DangerZoneTab />
       </Group>
     </Screen>
   );

@@ -4,7 +4,18 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { IconClipboardCheck, IconExternalLink, IconLinkPlus, IconTrash } from '@tabler/icons-react';
-import { ActionIcon, Box, Center, Code, Group, Stack, Table, Text, Tooltip } from '@mantine/core';
+import {
+  ActionIcon,
+  Anchor,
+  Box,
+  Center,
+  Code,
+  Group,
+  Stack,
+  Table,
+  Text,
+  Tooltip,
+} from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import { createClient } from '@/app/_adapters/supabase/client';
 import UrlInput from '@/app/_components/UrlInput';
@@ -74,7 +85,7 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
           const { slug, id } = response;
 
           try {
-            await fetch('/api/summarize', {
+            await fetch('/api/internal/summarize', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
@@ -139,7 +150,9 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
           </Table.Td>
           <Table.Td>
             <Text span truncate="end" lineClamp={1} title={url.url}>
-              {url.url}
+              <Anchor href={url.url} target="_blank" rel="noopener noreferrer">
+                {url.url}
+              </Anchor>
             </Text>
           </Table.Td>
           <Table.Td>
@@ -149,7 +162,6 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                   c="violet"
                   bg="transparent"
                   size="sm"
-                  title="Copy WTF Link"
                   onClick={() => {
                     navigator.clipboard
                       .writeText(wtfLink.toString())
@@ -176,12 +188,11 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                   <IconLinkPlus />
                 </ActionIcon>
               </Tooltip>
-              <Tooltip label="Visit WTF Link">
+              <Tooltip label="Visit URL">
                 <ActionIcon
                   c="gray"
                   bg="transparent"
                   size="sm"
-                  title="Visit WTF Link"
                   onClick={() => {
                     window.open(url.url, '_blank', 'noopener noreferrer');
                   }}
@@ -194,7 +205,6 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
                   c="red"
                   bg="transparent"
                   size="sm"
-                  title="Delete WTF Link"
                   onClick={() => {
                     onDelete(url.id)
                       .then(() => {
@@ -245,12 +255,8 @@ export default function UrlDashboard({ urls }: UrlDashboardProps) {
           <Table striped layout="fixed">
             <Table.Thead>
               <Table.Tr w="20%">
-                <Table.Th>
-                  <Text>Slug</Text>
-                </Table.Th>
-                <Table.Th w="65%">
-                  <Text>URL</Text>
-                </Table.Th>
+                <Table.Th>Slug</Table.Th>
+                <Table.Th w="65%">URL</Table.Th>
                 <Table.Th w="15%" />
               </Table.Tr>
             </Table.Thead>

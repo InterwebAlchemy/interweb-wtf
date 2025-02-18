@@ -26,6 +26,17 @@ export async function POST(request: NextRequest) {
     console.error('GET URL SUMMARY ERROR:', error);
   }
 
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (!user || userError) {
+    return new NextResponse(JSON.stringify({ error: userError?.message }), {
+      status: 401,
+    });
+  }
+
   try {
     const { summary, error } = await summarize(url);
 
