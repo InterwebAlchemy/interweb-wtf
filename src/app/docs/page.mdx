@@ -1,0 +1,26 @@
+export const metadata = {
+  title: 'Documentation',
+  description: 'Documentation for the Interweb.WTF',
+};
+
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Anchor } from '@mantine/core';
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+
+Interweb.WTF is a privacy-focused and user-centric URL shortening service that allows you to shorten URLs into easily shareable links, expand and remove tracking parameters from shortlinks from other URL shortening services, and clean tracking parameters from any URL.
+
+## API Documentation
+
+<Alert icon={<IconInfoCircle />} color="teal">
+  The Interweb.WTF API is currently in beta and subject to change.
+</Alert>
+
+The Interweb.WTF API is a simple API that allows you to interact with the most basic
+features of the Interweb.WTF service.
+
+- [API Documentation](/docs/cli/)
+  - [v0](/docs/cli/v0)
+    - [WTF Link Resolver](/docs/cli/v0/go)
+    - [Shortlink Expander](/docs/cli/v0/is)
+    - [URL Cleaner](/docs/cli/v0/clean)

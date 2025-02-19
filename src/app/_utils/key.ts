@@ -1,10 +1,13 @@
+const DEFAULT_KEY_LENGTH = 36;
+const KEY_LENGTH = parseInt(process.env.WTF_API_KEY_LENGTH ?? '', 10);
+
 /**
  * Generates a random API key
  * @returns The generated API key
  */
 export const generateKey = (): string => {
   // generate random values for key length of WTF_API_KEY_LENGTH using crypto.getRandomValues
-  const randomValues = new Uint8Array(parseInt(process.env.WTF_API_KEY_LENGTH!, 10));
+  const randomValues = new Uint8Array(!Number.isNaN(KEY_LENGTH) ? KEY_LENGTH : DEFAULT_KEY_LENGTH);
 
   // convert the random values to a string
   const key = Array.from(crypto.getRandomValues(randomValues))

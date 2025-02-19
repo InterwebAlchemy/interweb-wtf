@@ -1,0 +1,69 @@
+export const metadata = {
+  title: 'Cleaning URLS',
+  description:
+    'Clean tracking parameters from URLs with the Interweb.WTF API',
+};
+
+import Link from 'next/link';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Anchor } from '@mantine/core';
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+
+## URL Cleaner
+
+Interweb.WTF provides a URL Cleaning service that removes [tracking parameters](https://support.google.com/google-ads/answer/6277564)
+from any URLs. The URL Cleaner only works with full URLs, please use the [Shortlink Expander](/is) to expand and clean shortlinks from other providers.
+
+<Alert icon={<IconInfoCircle />} color="teal">
+  The Interweb.WTF API is currently in beta and subject to change.
+</Alert>
+
+## Cleaning URLs
+
+Interweb.WTF provides several ways to clean URLs:
+
+- visit the [URL Cleaner](/clean) page and pasting in the URL you want to clean
+- using the URL-based cleaning method and appending the URL to the `interweb.wtf/clean/{:shell}`
+- using the [Interweb.WTF CLI](/docs/cli) and the `/clean{:shell}` endpoint
+
+## Endpoint
+
+<CodeBlock lang="shell">{`${API_URL}/clean`}</CodeBlock>
+
+## Authentication
+
+The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+
+```http
+Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789
+```
+
+**Note**: In all of the example requests you should replace `$API_KEY` with an API
+Key you generated in <Anchor component={Link} href={`${BASE_URL}/settings/developer`}>Settings > Developer</Anchor>.
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  --location "${API_URL}/clean/\\
+  https://interwebalchemy.com/posts/building-a-chess-tutor\\
+  ?utm_source=interweb.wtf&utm_campaign=docs"`}</CodeBlock>
+
+### Response Types
+
+By default, the API will return a `text/plain` response containing the cleaned URL:
+
+```text
+https://interwebalchemy.com/posts/building-a-chess-tutor/
+```
+
+You can also add `/json{:shell}` to the endpoint URL to get a JSON response:
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  --location "${API_URL}/clean/\\
+  https://interwebalchemy.com/posts/building-a-chess-tutor/\\
+  /json"`}</CodeBlock>
+
+```json
+{
+  "url": "https://interwebalchemy.com/posts/building-a-chess-tutor/"
+}
+```

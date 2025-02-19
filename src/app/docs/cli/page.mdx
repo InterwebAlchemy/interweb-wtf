@@ -1,0 +1,60 @@
+import Link from 'next/link';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Anchor } from '@mantine/core';
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+
+## Interweb.WTF API
+
+The Interweb.WTF API is a simple API that allows you to interact with the most basic
+features of the Interweb.WTF service.
+
+<Alert icon={<IconInfoCircle />} color="teal">
+  The Interweb.WTF API is currently in beta and subject to change.
+</Alert>
+
+## API URL
+
+<CodeBlock lang="shell">{API_URL}</CodeBlock>
+
+### Endpoints
+
+- [Resolve WTF Links from Interweb.WTF with `/go{:shell}`](/docs/cli/v0/go)
+- [Expand Shortlinks from other providers with `/is{:shell}`](/docs/cli/v0/is)
+- [Clean tracking parameters from URLs with `/clean{:shell}`](/docs/cli/v0/clean)
+
+**Note**: The Interweb.WTF API uses the `/cli{:shell}` pathname for all endpoints
+instead of a more traditional `/api{:shell}` pathname as a reminder that these routes
+are mostly for CLI applications that only expect to be able to send and receive simple
+text rather than fully-featured API responses.
+
+## Authentication
+
+The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+
+```http
+Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789
+```
+
+**Note**: In all of the example requests you should replace `$API_KEY` with an API
+Key you generated in <Anchor component={Link} href={`${BASE_URL}/settings/developer`}>Settings > Developer</Anchor>.
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  --location "${API_URL}/go?\\
+  url=${BASE_URL}/go/patient-recipe"`}</CodeBlock>
+
+### Response Types
+
+By default, the API will return a `text/plain` response:
+
+```text
+https://interwebalchemy.com/posts/building-a-chess-tutor/
+```
+
+You can also add `/json{:shell}` to the endpoint URL to get a JSON response:
+
+```json
+{
+  "url": "https://interwebalchemy.com/posts/building-a-chess-tutor/"
+}
+```

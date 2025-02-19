@@ -28,3 +28,7 @@ a:visited {
 a > code {
   text-decoration: underline;
 }
+
+pre.shiki {
+  padding: 0 5px;
+}

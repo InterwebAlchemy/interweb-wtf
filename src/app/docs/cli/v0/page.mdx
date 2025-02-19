@@ -1,0 +1,26 @@
+import Link from 'next/link';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Anchor } from '@mantine/core';
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+
+## API
+
+The Interweb.WTF API is a simple API that allows you to interact with the most basic
+features of the Interweb.WTF service.
+
+This documentation covers the **{CURRENT_API_VERSION}** version of the Interweb.WTF API.
+
+<Alert icon={<IconInfoCircle />} color="teal">
+  The Interweb.WTF API is currently in beta and subject to change.
+</Alert>
+
+## API URL
+
+<CodeBlock lang="shell">{API_URL}</CodeBlock>
+
+### Endpoints
+
+- [Resolve WTF Links from Interweb.WTF with `/go{:shell}`](/docs/cli/v0/go)
+- [Expand Shortlinks from other providers with `/is{:shell}`](/docs/cli/v0/is)
+- [Clean tracking parameters from URLs with `/clean{:shell}`](/docs/cli/v0/clean)
