@@ -1,6 +1,7 @@
 // refresh after 2 weeks
 export const STORAGE_REFRESH_INTERVAL = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
+// list of trusted domains that we won't need to check for trust or malware
 export const KNOWN_DOMAINS = [
   'reddit.com',
   'wikipedia.org',
@@ -21,15 +22,21 @@ export const KNOWN_DOMAINS = [
   'youtube.com',
 ];
 
-export const KNOWN_SHORTENERS = [
-  'bit.ly',
+// these shorteners have been tested and are known to work correctly
+// with expansion, screenshots, and summarization
+export const FULLY_SUPPORTED_SHORTENERS = ['bit.ly', 'buff.ly', 'youtu.be'];
+
+// these shorteners have been tested and are known to have some issues
+// with expansion, screenshots, or summarization
+export const PARTIALLY_SUPPORTED_SHORTENERS = [
+  // LinkedIn interstitial page shows destination URL, but needs to be clicked to expand
   'lnkd.in',
+];
+
+export const UNTESTED_SHORTENERS = [
   'goo.gl',
-  'youtu.be',
   't.co',
   'ow.ly',
-  'tinyurl.com',
-  'buff.ly',
   'trib.al',
   'is.gd',
   'tiny.cc',
@@ -53,11 +60,21 @@ export const KNOWN_SHORTENERS = [
   'j.mp',
 ];
 
+// list of known URL shorteners that we will support expanding the URL for
+export const KNOWN_SHORTENERS = [
+  ...FULLY_SUPPORTED_SHORTENERS,
+  ...PARTIALLY_SUPPORTED_SHORTENERS,
+  ...UNTESTED_SHORTENERS,
+];
+
 // list out typical URL tracking query param prefixes like `utm_` and `fb_`
 export const KNOWN_TRACKING_PARAM_PREFIXES = ['utm_', 'fb_', 'mc_', 'ref_'];
 
 export const KNOWN_TRACKING_PARAMS = Array.from(
   new Set([
+    // found in the wild: https://docs.cursor.com/context/rules-for-ai?ref=ghuntley.com
+    'ref',
+
     // stolen from: https://firefox.settings.services.mozilla.com/v1/buckets/main/collections/query-stripping/records
     'gclid',
     'dclid',

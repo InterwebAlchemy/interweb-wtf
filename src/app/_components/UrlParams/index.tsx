@@ -6,9 +6,13 @@ import UrlParam from './UrlParam';
 
 export interface UrlParamsProps {
   url: string | URL;
+  title?: string;
 }
 
-export default function UrlParams({ url }: UrlParamsProps): React.ReactElement {
+export default function UrlParams({
+  url,
+  title = 'URL Parameters',
+}: UrlParamsProps): React.ReactElement {
   const urlObj = new URL(url.toString());
 
   const trackers = getTrackingParams(urlObj);
@@ -28,7 +32,7 @@ export default function UrlParams({ url }: UrlParamsProps): React.ReactElement {
   if (urlObj.searchParams.size > 0) {
     return (
       <Stack>
-        <Title order={3}>URL Parameters</Title>
+        <Title order={3}>{title}</Title>
         <Group align="center">{renderParams(urlObj)}</Group>
       </Stack>
     );

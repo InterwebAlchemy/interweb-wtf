@@ -9,10 +9,11 @@ import {
   IconTagOff,
   IconWorldWww,
 } from '@tabler/icons-react';
-import { ActionIcon, Anchor, Center, Group, Stack, Text } from '@mantine/core';
+import { Anchor, Button, Center, Group, Stack, Text } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import CipherText from '@/app/_components/CipherText';
 import UrlInput from '@/app/_components/UrlInput';
+import UrlParams from '@/app/_components/UrlParams';
 import { removeTrackingParams } from '@/app/_utils/url';
 import { KNOWN_SHORTENERS } from '@/constants';
 
@@ -48,15 +49,32 @@ export default function UrlCleaner() {
     }
   };
 
-  const copyCleanUrl = () => {
-    navigator.clipboard.writeText(cleanedUrl);
+  const copyCleanUrl = async (): Promise<void> => {
+    try {
+      await navigator.clipboard.writeText(cleanedUrl);
 
-    notifications.show({
-      title: 'URL Copied',
-      message: 'The URL has been copied to your clipboard',
-      color: 'teal',
-      icon: <IconCopyCheck />,
-    });
+      notifications.show({
+        title: 'URL Copied',
+        message: 'The URL has been copied to your clipboard',
+        color: 'teal',
+        icon: <IconCopyCheck />,
+      });
+    } catch (error) {
+      console.error(error);
+
+      notifications.show({
+        title: 'Failed to copy URL',
+        message: 'Please copy the URL manually',
+        color: 'red',
+        icon: <IconAlertTriangle />,
+      });
+    }
+  };
+
+  const cleanAnotherUrl = async (): Promise<void> => {
+    setOriginalUrl('');
+    setCleanedUrl('');
+    setIsCleaned(false);
   };
 
   useEffect(() => {
@@ -82,36 +100,51 @@ export default function UrlCleaner() {
           />
         )}
 
-        {cleanedUrl && (
-          <Group px="xs" align="center" bd="1px solid #ccc" style={{ borderRadius: '3px' }}>
-            <IconWorldWww color="var(--input-section-color, var(--mantine-color-dimmed))" />
-            <Text span c="violet" size="18px" truncate="end" maw="90%" py="md" title={cleanedUrl}>
-              {cleanedUrl ? (
-                <CipherText
-                  defaultText={originalUrl}
-                  targetText={cleanedUrl}
-                  action="transform"
-                  speed={30}
-                  maxIterations={12}
-                  onFinish={() => {
-                    setIsCleaned(true);
-                  }}
-                />
-              ) : (
-                'Cleaning URL...'
-              )}
-            </Text>
-            <ActionIcon
-              variant="transparent"
-              color="teal"
-              size="sm"
-              onClick={copyCleanUrl}
-              ml="auto"
+        {cleanedUrl &&
+          (isCleaned ? (
+            <Stack>
+              <UrlInput
+                defaultValue={cleanedUrl}
+                submitButton={<IconCopy />}
+                onSubmit={copyCleanUrl}
+                submitTitle="Copy URL"
+                submitVariant="transparent"
+                submitColor="teal"
+                readOnly
+              />
+              <Group mt={40} mb={80}>
+                <Button color="teal" leftSection={<IconTagOff />} onClick={cleanAnotherUrl}>
+                  Clean Another URL
+                </Button>
+              </Group>
+              <UrlParams url={originalUrl} />
+            </Stack>
+          ) : (
+            <Group
+              px="xs"
+              align="center"
+              bd="1px solid #ccc"
+              style={{ borderRadius: '3px' }}
+              preventGrowOverflow
+              wrap="nowrap"
             >
-              <IconCopy />
-            </ActionIcon>
-          </Group>
-        )}
+              <IconWorldWww color="var(--input-section-color, var(--mantine-color-dimmed))" />
+              <Text span c="violet" size="18px" truncate="end" maw="90%" py="md" title={cleanedUrl}>
+                {cleanedUrl ? (
+                  <CipherText
+                    defaultText={originalUrl}
+                    targetText={cleanedUrl}
+                    action="transform"
+                    onFinish={() => {
+                      setIsCleaned(true);
+                    }}
+                  />
+                ) : (
+                  'Cleaning URL...'
+                )}
+              </Text>
+            </Group>
+          ))}
       </Stack>
     </Center>
   );

@@ -7,26 +7,40 @@ import {
   IconWorldQuestion,
   IconWorldWww,
 } from '@tabler/icons-react';
-import { ActionIcon, Group, Loader, Stack, TextInput } from '@mantine/core';
+import {
+  ActionIcon,
+  Group,
+  Loader,
+  Stack,
+  TextInput,
+  type ActionIconVariant,
+  type MantineColor,
+} from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 
 export interface UrlInputProps {
   defaultValue?: string;
   slug?: boolean;
   readOnly?: boolean;
+  disabled?: boolean;
   clearOnSubmit?: boolean;
   placeholder?: string;
   submitButton?: React.ReactNode;
   submitTitle?: string;
+  submitVariant?: ActionIconVariant;
+  submitColor?: MantineColor;
   onSubmit?: (value: string) => Promise<void>;
 }
 
 export default function UrlInput({
   onSubmit,
   submitButton,
+  submitVariant = 'filled',
+  submitColor = 'violet',
   defaultValue = '',
   slug = false,
   readOnly = false,
+  disabled = false,
   clearOnSubmit = false,
   submitTitle = 'Shorten URL',
   placeholder = 'https://example.com/your/long/url',
@@ -132,19 +146,21 @@ export default function UrlInput({
                 <Loader size="sm" c="violet" />
               ) : submitButton ? (
                 <ActionIcon
-                  color="violet"
+                  variant={submitVariant}
+                  color={submitColor}
                   title={submitTitle}
                   type="submit"
-                  disabled={isLoading || readOnly}
+                  disabled={isLoading || disabled}
                 >
                   {submitButton}
                 </ActionIcon>
               ) : !readOnly ? (
                 <ActionIcon
-                  color="violet"
+                  variant={submitVariant}
+                  color={submitColor}
                   title={submitTitle}
                   type="submit"
-                  disabled={isLoading || readOnly}
+                  disabled={isLoading || disabled}
                 >
                   {slug ? <IconEdit /> : <IconWorldQuestion />}
                 </ActionIcon>
@@ -153,8 +169,9 @@ export default function UrlInput({
               )
             }
             value={url}
-            disabled={isLoading || readOnly}
+            disabled={isLoading || disabled}
             onChange={handleChange}
+            readOnly={readOnly}
           />
         </Group>
       </Stack>
