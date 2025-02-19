@@ -13,6 +13,9 @@ export default function Footer() {
             Home
           </Anchor>
           <Anchor href="/docs" component={Link} c="gray" size="sm">
+            Docs
+          </Anchor>
+          <Anchor href="/docs/cli" component={Link} c="gray" size="sm">
             API
           </Anchor>
           <Anchor href="/about" component={Link} c="gray" size="sm">

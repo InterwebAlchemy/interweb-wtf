@@ -1,0 +1,69 @@
+export const metadata = {
+  title: 'Shortlink Expander',
+  description:
+    'Expand shortlinks from other providers with the Interweb.WTF API',
+};
+
+import Link from 'next/link';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Anchor } from '@mantine/core';
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+
+## Shorlink Expander
+
+Interweb.WTF provides a Shortlink Expander that expands and [cleans](/docs/cli/v0/clean) shortlinks from other providers.
+
+<Alert icon={<IconInfoCircle />} color="teal">
+  The Interweb.WTF API is currently in beta and subject to change.
+</Alert>
+
+## Expanding Shortlinks
+
+Interweb.WTF provides several ways to expand shortlinks:
+
+- visit the [Shortlink Expander](/is) page and pasting in the shortlink you want to expand
+- use the URL-based expanding method by appending the URL to the `interweb.wtf/is/{:shell}`
+
+```shell
+interweb.wtf/is/https://bit.ly/1sNZMwL
+```
+
+- use the [Interweb.WTF CLI](/docs/cli) and the `/is{:shell}` endpoint
+
+## Endpoint
+
+<CodeBlock lang="shell">{`${API_URL}/is`}</CodeBlock>
+
+## Authentication
+
+The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+
+```http
+Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789
+```
+
+**Note**: In all of the example requests you should replace `$API_KEY` with an API
+Key you generated in <Anchor component={Link} href={`${BASE_URL}/settings/developer`}>Settings > Developer</Anchor>.
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  --location "${API_URL}/is/https://bit.ly/1sNZMwL"`}</CodeBlock>
+
+### Response Types
+
+By default, the API will return a `text/plain` response containing the expanded URL:
+
+```text
+https://en.wikipedia.org/wiki/Bitly
+```
+
+You can also add `/json{:shell}` to the endpoint URL to get a JSON response:
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  --location "${API_URL}/is/https://bit.ly/1sNZMwL/json"`}</CodeBlock>
+
+```json
+{
+  "url": "https://en.wikipedia.org/wiki/Bitly"
+}
+```

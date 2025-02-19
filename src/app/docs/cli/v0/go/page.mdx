@@ -1,0 +1,65 @@
+export const metadata = {
+  title: 'Resolving WTF Links',
+  description:
+    'Resolve WTF Links from Interweb.WTF with the Interweb.WTF API',
+};
+
+import Link from 'next/link';
+import { IconInfoCircle } from '@tabler/icons-react';
+import { Alert, Anchor } from '@mantine/core';
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+
+## WTF Link Resolver
+
+Interweb.WTF provides a URL Cleaning service that removes [tracking parameters](https://support.google.com/google-ads/answer/6277564)
+from any URLs. The URL Cleaner only works with full URLs, please use the [Shortlink Expander](/is) to expand and clean shortlinks from other providers.
+
+<Alert icon={<IconInfoCircle />} color="teal">
+  The Interweb.WTF API is currently in beta and subject to change.
+</Alert>
+
+## Resolving WTF Links
+
+Interweb.WTF provides several ways to resolve WTF Links:
+
+- visit a WTF Link (_example_: [interweb.wtf/go/patient-recipe](https://interweb.wtf/go/patient-recipe))
+- visit the WTF Link Inspector for a WTF Link by appending `/info{:shell}` to the WTF Link (_example_: [interweb.wtf/go/patient-recipe/info](https://interweb.wtf/go/patient-recipe/info))
+- using the [Interweb.WTF CLI](/docs/cli) and the `/go{:shell}` endpoint
+
+## Endpoint
+
+<CodeBlock lang="shell">{`${API_URL}/go`}</CodeBlock>
+
+## Authentication
+
+The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+
+```http
+Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789
+```
+
+**Note**: In all of the example requests you should replace `$API_KEY` with an API
+Key you generated in <Anchor component={Link} href={`${BASE_URL}/settings/developer`}>Settings > Developer</Anchor>.
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  "${API_URL}/go/patient-recipe"`}</CodeBlock>
+
+### Response Types
+
+By default, the API will return a `text/plain` response containing the URL that the WTF Link redirects to:
+
+```text
+https://interwebalchemy.com/posts/building-a-chess-tutor/
+```
+
+You can also add `/json{:shell}` to the endpoint URL to get a JSON response:
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  "${API_URL}/go/patient-recipe/json"`}</CodeBlock>
+
+```json
+{
+  "url": "https://interwebalchemy.com/posts/building-a-chess-tutor/"
+}
+```

@@ -1,6 +1,12 @@
 // refresh after 2 weeks
 export const STORAGE_REFRESH_INTERVAL = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
+export const BASE_URL = process.env.NEXT_PUBLIC_APPLICATION_URL;
+export const API_PATH = '/cli';
+export const CURRENT_API_VERSION = 'v0';
+
+export const API_URL = new URL(`${API_PATH}/${CURRENT_API_VERSION}`, BASE_URL).toString();
+
 // list of trusted domains that we won't need to check for trust or malware
 export const KNOWN_DOMAINS = [
   'reddit.com',

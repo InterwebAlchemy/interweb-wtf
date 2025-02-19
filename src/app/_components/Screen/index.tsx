@@ -16,7 +16,8 @@ export default async function Screen({
   title,
   titleProps,
   authenticated = false,
-}: React.PropsWithChildren<ScreenProps>) {
+  ...props
+}: React.PropsWithChildren<ScreenProps & React.HTMLAttributes<HTMLDivElement>>) {
   const supabase = await createClient();
 
   if (authenticated) {
@@ -41,6 +42,7 @@ export default async function Screen({
         justify="flex-start"
         align="flex-start"
         mih="100vh"
+        {...props}
       >
         <Stack h="100%" w="100%">
           <Nav />

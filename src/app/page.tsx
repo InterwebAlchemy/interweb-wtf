@@ -4,6 +4,13 @@ import Intro from '@/app/_components/Intro';
 import Screen from '@/app/_components/Screen';
 import { Welcome } from '@/app/_components/Welcome/Welcome';
 
+export const metadata = {
+  title: {
+    absolute:
+      'Interweb.WTF | A privacy-focused, user-centric link shortener for the modern interweb.',
+  },
+};
+
 export default function HomePage() {
   return (
     <Screen>

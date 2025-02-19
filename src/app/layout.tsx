@@ -2,14 +2,18 @@ import '@mantine/core/styles.css';
 import '@mantine/notifications/styles.css';
 import '@mantine/code-highlight/styles.css';
 import '@/app/_styles/global.css';
+import '@/app/_styles/codeblock.css';
 
 import React from 'react';
 import { mantineHtmlProps, MantineProvider } from '@mantine/core';
 import { theme } from '../theme';
 
 export const metadata = {
-  title: 'Interweb.WTF',
-  description: 'A link shortener and expander for the modern interweb.',
+  title: {
+    default: 'Interweb.WTF',
+    template: '%s | Interweb.WTF',
+  },
+  description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
   generator: 'Interweb.WTF',
   applicationName: 'Interweb.WTF',
   referrer: '',
@@ -18,14 +22,14 @@ export const metadata = {
   },
   openGraph: {
     title: 'Interweb.WTF',
-    description: 'A link shortener and expander for the modern interweb.',
+    description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
     url: 'https://interweb.wtf',
     images: ['/favicon.svg'],
   },
   twitter: {
     card: 'summary',
     title: 'Interweb.WTF',
-    description: 'A link shortener and expander for the modern interweb.',
+    description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
     images: ['/favicon.svg'],
   },
 };
