@@ -5,6 +5,11 @@ import DeveloperSettingsTab from '@/app/_components/DeveloperSettingsTab';
 import Screen from '@/app/_components/Screen';
 import SettingsNav from '@/app/_components/SettingsNav';
 
+export const metadata = {
+  title: 'Developer Settings',
+  description: 'Manage your API keys and other developer settings',
+};
+
 export default async function DeveloperSettingsPage() {
   const supabase = await createClient();
 

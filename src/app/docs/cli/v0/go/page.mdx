@@ -1,23 +1,21 @@
 export const metadata = {
   title: 'Resolving WTF Links',
   description:
-    'Resolve WTF Links from Interweb.WTF with the Interweb.WTF API',
+    'Resolve WTF Links from Interweb.WTF with the Interweb.WTF CLI API',
 };
 
 import Link from 'next/link';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert, Anchor } from '@mantine/core';
+import { Anchor } from '@mantine/core';
+import ApiBetaNotice from '@/app/_components/ApiBetaNotice';
 import CodeBlock from '@/app/_components/DocsCodeblock';
-import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+import { API_URL, BASE_URL } from '@/constants';
 
 ## WTF Link Resolver
 
 Interweb.WTF provides a URL Cleaning service that removes [tracking parameters](https://support.google.com/google-ads/answer/6277564)
 from any URLs. The URL Cleaner only works with full URLs, please use the [Shortlink Expander](/is) to expand and clean shortlinks from other providers.
 
-<Alert icon={<IconInfoCircle />} color="teal">
-  The Interweb.WTF API is currently in beta and subject to change.
-</Alert>
+<ApiBetaNotice />
 
 ## Resolving WTF Links
 
@@ -33,7 +31,7 @@ Interweb.WTF provides several ways to resolve WTF Links:
 
 ## Authentication
 
-The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+The Interweb.WTF CLI API uses an Authorization HTTP Header with a Bearer Token.
 
 ```http
 Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789

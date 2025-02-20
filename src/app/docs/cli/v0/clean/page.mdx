@@ -1,14 +1,13 @@
 export const metadata = {
   title: 'Cleaning URLS',
   description:
-    'Clean tracking parameters from URLs with the Interweb.WTF API',
+    'Clean tracking parameters from URLs with the Interweb.WTF CLI API',
 };
 
 import Link from 'next/link';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert, Anchor } from '@mantine/core';
+import { Anchor } from '@mantine/core';
 import CodeBlock from '@/app/_components/DocsCodeblock';
-import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
+import { API_URL, BASE_URL } from '@/constants';
 
 ## URL Cleaner
 
@@ -17,9 +16,7 @@ from any URLs.
 
 **Note**: The URL Cleaner does not work with [shortlinks](/docs/concepts/shortlinks), please use the [Shortlink Expander](/docs/expand) to expand and clean shortlinks from other providers.
 
-<Alert icon={<IconInfoCircle />} color="teal">
-  The Interweb.WTF API is currently in beta and subject to change.
-</Alert>
+<ApiBetaNotice />
 
 ## Cleaning URLs
 
@@ -35,7 +32,7 @@ Interweb.WTF provides several ways to clean URLs:
 
 ## Authentication
 
-The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+The Interweb.WTF CLI API uses an Authorization HTTP Header with a Bearer Token.
 
 ```http
 Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789

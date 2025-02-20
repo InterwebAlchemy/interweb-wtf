@@ -5,6 +5,11 @@ import DangerZoneTab from '@/app/_components/DangerZoneTab';
 import Screen from '@/app/_components/Screen';
 import SettingsNav from '@/app/_components/SettingsNav';
 
+export const metadata = {
+  title: 'Danger Zone',
+  description: 'Manage your account settings',
+};
+
 export default async function DeveloperSettingsPage() {
   const supabase = await createClient();
 
@@ -19,7 +24,7 @@ export default async function DeveloperSettingsPage() {
   }
 
   return (
-    <Screen title="Developer Settings">
+    <Screen title="Danger Zone">
       <Group w="100%" h="100%">
         <SettingsNav activeTab="danger" />
         <DangerZoneTab />

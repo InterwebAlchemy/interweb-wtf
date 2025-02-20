@@ -32,7 +32,7 @@ export async function generateMetadata(
       default: title,
       template: `%s | ${title}`,
     },
-    description: `API Documentation for the Interweb.WTF API (interweb.wtf/cli/${CURRENT_API_VERSION})`,
+    description: `API Documentation for the Interweb.WTF CLI API (interweb.wtf/cli/${CURRENT_API_VERSION})`,
     openGraph: {
       title,
       images: [...previousImages],

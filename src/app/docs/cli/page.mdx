@@ -1,17 +1,20 @@
+export const metadata = {
+  title: 'Interweb.WTF CLI API',
+  description: 'Interweb.WTF CLI API Documentation for the CLI API.',
+};
+
 import Link from 'next/link';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert, Anchor } from '@mantine/core';
+import { Anchor } from '@mantine/core';
+import ApiBetaNotice from '@/app/_components/ApiBetaNotice';
 import CodeBlock from '@/app/_components/DocsCodeblock';
 import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
 
-## Interweb.WTF API
+## Interweb.WTF CLI API
 
-The Interweb.WTF API is a simple API that allows you to interact with the most basic
+The Interweb.WTF CLI API is a simple API that allows you to interact with the most basic
 features of the Interweb.WTF service.
 
-<Alert icon={<IconInfoCircle />} color="teal">
-  The Interweb.WTF API is currently in beta and subject to change.
-</Alert>
+<ApiBetaNotice />
 
 ## API URL
 
@@ -23,14 +26,14 @@ features of the Interweb.WTF service.
 - [Expand Shortlinks from other providers with `/is{:shell}`](/docs/cli/v0/is)
 - [Clean tracking parameters from URLs with `/clean{:shell}`](/docs/cli/v0/clean)
 
-**Note**: The Interweb.WTF API uses the `/cli{:shell}` pathname for all endpoints
+**Note**: The Interweb.WTF CLI API uses the `/cli{:shell}` pathname for all endpoints
 instead of a more traditional `/api{:shell}` pathname as a reminder that these routes
 are mostly for CLI applications that only expect to be able to send and receive simple
 text rather than fully-featured API responses.
 
 ## Authentication
 
-The Interweb.WTF API uses an Authorization HTTP Header with a [Bearer Token](https://swagger.io/docs/specification/v3_0/authentication/bearer-authentication/).
+The Interweb.WTF CLI API uses an Authorization HTTP Header with a [Bearer Token](https://swagger.io/docs/specification/v3_0/authentication/bearer-authentication/).
 
 ```http
 Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789
