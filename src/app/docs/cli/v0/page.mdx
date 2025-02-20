@@ -1,19 +1,27 @@
+export const metadata = {
+  title: 'Interweb.WTF CLI API v0',
+  description:
+    'Interweb.WTF CLI API Documentation for v0 (beta) version of the CLI API.',
+};
+
 import Link from 'next/link';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert, Anchor } from '@mantine/core';
+import {
+  Anchor,
+  API_URL,
+  BASE_URL,
+  CURRENT_API_VERSION,
+} from '@mantine/core';
+import ApiBetaNotice from '@/app/_components/ApiBetaNotice';
 import CodeBlock from '@/app/_components/DocsCodeblock';
-import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
 
 ## API
 
-The Interweb.WTF API is a simple API that allows you to interact with the most basic
+The Interweb.WTF CLI API is a simple API that allows you to interact with the most basic
 features of the Interweb.WTF service.
 
-This documentation covers the **{CURRENT_API_VERSION}** version of the Interweb.WTF API.
+This documentation covers the **{CURRENT_API_VERSION}** version of the Interweb.WTF CLI API.
 
-<Alert icon={<IconInfoCircle />} color="teal">
-  The Interweb.WTF API is currently in beta and subject to change.
-</Alert>
+<ApiBetaNotice />
 
 ## API URL
 

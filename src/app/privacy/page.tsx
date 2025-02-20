@@ -2,6 +2,11 @@ import { Anchor, Center, Code, Stack, Text, Title } from '@mantine/core';
 import CookieInspector from '@/app/_components/CookieInspector';
 import Screen from '@/app/_components/Screen';
 
+export const metadata = {
+  title: 'Privacy Policy',
+  description: 'Interweb.WTF takes your privacy seriously',
+};
+
 export default async function PrivacyPage() {
   return (
     <Screen title="Privacy Policy">

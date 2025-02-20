@@ -5,6 +5,11 @@ import GeneralSettingsTab from '@/app/_components/GeneralSettingsTab';
 import Screen from '@/app/_components/Screen';
 import SettingsNav from '@/app/_components/SettingsNav';
 
+export const metadata = {
+  title: 'Settings',
+  description: 'Manage your account settings',
+};
+
 export default async function SettingsPage() {
   const supabase = await createClient();
 

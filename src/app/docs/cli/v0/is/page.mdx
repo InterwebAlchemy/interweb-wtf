@@ -1,22 +1,20 @@
 export const metadata = {
-  title: 'Shortlink Expander',
+  title: 'Expanding Shortlinks',
   description:
-    'Expand shortlinks from other providers with the Interweb.WTF API',
+    'Expand shortlinks from other providers with the Interweb.WTF CLI API',
 };
 
 import Link from 'next/link';
-import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert, Anchor } from '@mantine/core';
+import { Anchor } from '@mantine/core';
+import ApiBetaNotice from '@/app/_components/ApiBetaNotice';
 import CodeBlock from '@/app/_components/DocsCodeblock';
 import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
 
-## Shorlink Expander
+## Shortlink Expander
 
-Interweb.WTF provides a Shortlink Expander that expands and [cleans](/docs/cli/v0/clean) shortlinks from other providers.
+Interweb.WTF provides a [Shortlink Expander](/docs/expand) that expands and [cleans](/docs/clean) any [shortlinks](/docs/concepts/shortlinks) from other providers.
 
-<Alert icon={<IconInfoCircle />} color="teal">
-  The Interweb.WTF API is currently in beta and subject to change.
-</Alert>
+<ApiBetaNotice />
 
 ## Expanding Shortlinks
 
@@ -29,7 +27,7 @@ Interweb.WTF provides several ways to expand shortlinks:
 interweb.wtf/is/https://bit.ly/1sNZMwL
 ```
 
-- use the [Interweb.WTF CLI](/docs/cli) and the `/is{:shell}` endpoint
+- use the [Interweb.WTF CLI API](/docs/cli) and the `/is{:shell}` endpoint
 
 ## Endpoint
 
@@ -37,7 +35,7 @@ interweb.wtf/is/https://bit.ly/1sNZMwL
 
 ## Authentication
 
-The Interweb.WTF API uses an Authorization HTTP Header with a Bearer Token.
+The Interweb.WTF CLI API uses an Authorization HTTP Header with a Bearer Token.
 
 ```http
 Authorization: Bearer wtf_v0_abcdefghijklmnopqrstuvwxyz0123456789

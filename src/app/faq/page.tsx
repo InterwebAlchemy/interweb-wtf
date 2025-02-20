@@ -8,6 +8,11 @@ import {
 } from '@mantine/core';
 import Screen from '@/app/_components/Screen';
 
+export const metadata = {
+  title: 'Frequently Asked Questions',
+  description: 'Answers to some common questions about Interweb.WTF',
+};
+
 export default function FAQPage() {
   return (
     <Screen title="Frequently Asked Questions">
