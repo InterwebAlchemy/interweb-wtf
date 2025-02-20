@@ -6,13 +6,17 @@ import '@/app/_styles/markdown.css';
 
 import { Flex } from '@mantine/core';
 
-type MetaDataProps = {
-  params: Promise<{ id: string }>;
-  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
-};
-
 export async function generateMetadata(
-  _props: MetaDataProps,
+  /**
+   * HACK: we don't actually care about the props, and the props in the reference docs
+   * were throwing an error in the build.
+   *
+   * > Type error: Layout "src/app/docs/layout.tsx" has an invalid "generateMetadata" export:
+   * > Type "MetadataProps" is not valid.
+   *
+   * Docs: https://nextjs.org/docs/app/api-reference/functions/generate-metadata#generatemetadata-function
+   */
+  _props: unknown,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
   const parentTitle: Metadata['title'] = (await parent).title;
@@ -35,14 +39,7 @@ export async function generateMetadata(
   };
 }
 
-export default async function MDXLayout({
-  children,
-  params,
-}: {
-  children: React.ReactNode;
-  params: Promise<Record<string, string>>;
-}) {
-  console.log(params);
+export default async function MDXLayout({ children }: { children: React.ReactNode }) {
   return (
     <Screen title="Documentation" className="markdown">
       <Flex direction="column" maw="760px">

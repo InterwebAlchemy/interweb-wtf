@@ -9,6 +9,9 @@ export interface ScreenProps {
   title?: React.ReactNode | string;
   titleProps?: TitleProps;
   authenticated?: boolean;
+  // HACK: This is a hack to allow layouts and pages to pass arbitrary props to the Screen component
+  // TODO: Use better types and remove this hack
+  [key: string]: any;
 }
 
 export default async function Screen({

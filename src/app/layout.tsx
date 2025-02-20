@@ -9,6 +9,7 @@ import { mantineHtmlProps, MantineProvider } from '@mantine/core';
 import { theme } from '../theme';
 
 export const metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_APPLICATION_URL!),
   title: {
     default: 'Interweb.WTF',
     template: '%s | Interweb.WTF',
