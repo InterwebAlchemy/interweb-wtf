@@ -220,27 +220,26 @@ export default async function InspectorPage({ params }: { params: Promise<Params
       }
     >
       <Title order={2} lineClamp={3}>
-        <Group align="center">
-          {title}
-          {title && language !== 'unknown' && (
-            <Badge
-              variant="light"
-              color="gray"
-              leftSection={
-                <Text span inherit fw={300}>
-                  Lang:
-                </Text>
-              }
-              radius="sm"
-            >
-              <Text span inherit fw={700} tt="initial">
-                {language}
-              </Text>
-            </Badge>
-          )}
-        </Group>
+        <Group align="center">{title}</Group>
       </Title>
-      <UrlMetadata url={url.toString()} />
+      <UrlMetadata url={url.toString()}>
+        {language !== 'unknown' && (
+          <Badge
+            variant="light"
+            color="gray"
+            leftSection={
+              <Text span inherit fw={300}>
+                Lang:
+              </Text>
+            }
+            radius="sm"
+          >
+            <Text span inherit fw={700} tt="initial">
+              {language}
+            </Text>
+          </Badge>
+        )}
+      </UrlMetadata>
       {renderScreenshotAndQrCode()}
     </Screen>
   );

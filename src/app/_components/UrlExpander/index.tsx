@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation';
 import { IconAlertTriangle, IconCopy, IconEyePlus, IconWorldWww } from '@tabler/icons-react';
 import { useTimeout } from 'usehooks-ts';
 import { CodeHighlight } from '@mantine/code-highlight';
-import { Anchor, Center, Group, Stack, Text, Title } from '@mantine/core';
+import { Anchor, Button, Center, Group, Stack, Text, Title } from '@mantine/core';
 import { notifications } from '@mantine/notifications';
 import CipherText from '@/app/_components/CipherText';
 import UrlInput from '@/app/_components/UrlInput';
@@ -13,7 +13,11 @@ import UrlParams from '@/app/_components/UrlParams';
 import { removeTrackingParams } from '@/app/_utils/url';
 import { KNOWN_SHORTENERS } from '@/constants';
 
-export default function UrlExpander() {
+interface UrlExpanderProps {
+  demoMode?: boolean;
+}
+
+export default function UrlExpander({ demoMode = false }: UrlExpanderProps) {
   const router = useRouter();
 
   const [isExpanded, setIsExpanded] = useState(false);
@@ -102,36 +106,40 @@ export default function UrlExpander() {
 
           if (fullUrl) {
             setResolvedUrl(fullUrl);
+
             setCleanUrl(removeTrackingParams(new URL(fullUrl)).toString());
-            const notificationId = notifications.show({
-              title: 'Expanding shortlink...',
-              message: "We're expanding your shortlink. This may take a little while.",
-              color: 'violet',
-              icon: <IconEyePlus />,
-              withCloseButton: false,
-              loading: true,
-              autoClose: false,
-            });
 
-            setLoadingNotificationId(notificationId);
-
-            fetch(`/api/expand`, {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({
-                url: fullUrl.toString(),
-                userAgent: navigator.userAgent,
-                shortUrl: urlString,
-              }),
-            })
-              .then(async (res) => {
-                return await res.json();
-              })
-              .then(() => {
-                setIsExpanded(true);
+            if (!demoMode) {
+              const notificationId = notifications.show({
+                title: 'Expanding shortlink...',
+                message: "We're expanding your shortlink. This may take a little while.",
+                color: 'violet',
+                icon: <IconEyePlus />,
+                withCloseButton: false,
+                loading: true,
+                autoClose: false,
               });
+
+              setLoadingNotificationId(notificationId);
+
+              fetch(`/api/expand`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                  url: fullUrl.toString(),
+                  userAgent: navigator.userAgent,
+                  shortUrl: urlString,
+                }),
+              })
+                .then(async (res) => {
+                  return await res.json();
+                })
+                .then(() => {
+                  setIsExpanded(true);
+                });
+            }
           }
         }
       } catch (error) {
@@ -204,11 +212,31 @@ export default function UrlExpander() {
                 submitColor="teal"
                 readOnly
               />
-              <Title order={4} mt={40}>
+              <Title order={4} mt={!demoMode ? 40 : 0}>
                 Clean URL
               </Title>
-              <CodeHighlight code={cleanUrl} copyLabel="Copy Clean URL" language="url" mb={80} />
+              <CodeHighlight
+                code={cleanUrl}
+                copyLabel="Copy Clean URL"
+                language="url"
+                mb={!demoMode ? 80 : 0}
+              />
               <UrlParams url={resolvedUrl} />
+              {demoMode && (
+                <Group>
+                  <Button
+                    color="teal"
+                    onClick={() => {
+                      setShortUrl('');
+                      setIsExpanded(false);
+                      setShouldRedirect(false);
+                    }}
+                    leftSection={<IconEyePlus />}
+                  >
+                    Clean Another URL
+                  </Button>
+                </Group>
+              )}
             </Stack>
           ) : (
             <Group

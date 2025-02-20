@@ -1,0 +1,41 @@
+import Link from 'next/link';
+import { Anchor } from '@mantine/core';
+
+import CodeBlock from '@/app/_components/DocsCodeblock';
+import UrlExpander from '@/app/_components/UrlExpander';
+import { API_URL, BASE_URL } from '@/constants';
+
+## Shortlink Expander
+
+The Interweb.WTF Shortlink Expander allows you to expand and [clean](/docs/clean) any [shortlinks](/docs/concepts/shortlinks) from other providers.
+
+To expand a shortlink, you can use the [Shortlink Expander](#shortlink-expander), the [URL Interface](#url-interface), or the [CLI API](/docs/cli).
+
+### Shortlink Expander
+
+The [Shortlink Expander](/is) is a web-based interface that allows you to expand and [clean](/docs/clean) any [shortlinks](/docs/concepts/shortlinks) from other providers.
+
+<UrlExpander demoMode />
+
+Try it out by entering a shortlink like, [https://bit.ly/1sNZMwL](https://bit.ly/1sNZMwL), into the input above.
+
+### URL Interface
+
+The [URL Interface](/docs/interfaces/url) is a concept that allows you to append any URL to `interweb.wtf/clean/` and have the URL cleaned automatically.
+
+#### Example
+
+If you navigate to [interweb.wtf/clean/https://interwebalchemy.com/posts/building-a-chess-tutor?utm_source=interweb.wtf&utm_campaign=docs](https://interweb.wtf/clean/https://interwebalchemy.com/posts/building-a-chess-tutor?utm_source=interweb.wtf&utm_campaign=docs), the URL will be cleaned automatically and you will be presented with `https://interwebalchemy.com/posts/building-a-chess-tutor`.
+
+### CLI API
+
+The [URL Cleaner CLI API](/docs/cli/v0/clean) is an API interface that allows you to remove tracking parameters from any URL by making a `GET` request to the `/clean` endpoint.
+
+#### Example
+
+<CodeBlock lang="shell">{`curl --header "Authorization: Bearer $API_KEY" \\
+  --location "${API_URL}/clean/\\
+  https://interwebalchemy.com/posts/building-a-chess-tutor\\
+  ?utm_source=interweb.wtf&utm_campaign=docs"`}</CodeBlock>
+
+**Note**: Replace `$API_KEY` with an API Key you generated in <Anchor component={Link} href={`${BASE_URL}/settings/developer`}>Settings > Developer</Anchor>.

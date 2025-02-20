@@ -17,7 +17,11 @@ import UrlParams from '@/app/_components/UrlParams';
 import { removeTrackingParams } from '@/app/_utils/url';
 import { KNOWN_SHORTENERS } from '@/constants';
 
-export default function UrlCleaner() {
+interface UrlCleanerProps {
+  demoMode?: boolean;
+}
+
+export default function UrlCleaner({ demoMode = false }: UrlCleanerProps) {
   const [isCleaned, setIsCleaned] = useState(false);
   const [originalUrl, setOriginalUrl] = useState('');
   const [cleanedUrl, setCleanedUrl] = useState('');
@@ -112,7 +116,7 @@ export default function UrlCleaner() {
                 submitColor="teal"
                 readOnly
               />
-              <Group mt={40} mb={80}>
+              <Group mt={!demoMode ? 40 : 0} mb={!demoMode ? 80 : 0}>
                 <Button color="teal" leftSection={<IconTagOff />} onClick={cleanAnotherUrl}>
                   Clean Another URL
                 </Button>

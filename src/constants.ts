@@ -40,8 +40,9 @@ export const PARTIALLY_SUPPORTED_SHORTENERS = [
 ];
 
 export const UNTESTED_SHORTENERS = [
-  'goo.gl',
-  't.co',
+  'w.wiki', // Wikipedia
+  'goo.gl', // Google
+  't.co', // Twitter
   'ow.ly',
   'trib.al',
   'is.gd',

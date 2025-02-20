@@ -1,10 +1,11 @@
 import type { Metadata, ResolvingMetadata } from 'next';
+import DocsNav from '@/app/_components/DocsNav';
 import Screen from '@/app/_components/Screen';
 import { CURRENT_API_VERSION } from '@/constants';
 
 import '@/app/_styles/markdown.css';
 
-import { Flex } from '@mantine/core';
+import { Group, Stack } from '@mantine/core';
 
 export async function generateMetadata(
   /**
@@ -41,10 +42,13 @@ export async function generateMetadata(
 
 export default async function MDXLayout({ children }: { children: React.ReactNode }) {
   return (
-    <Screen title="Documentation" className="markdown">
-      <Flex direction="column" maw="760px">
-        {children}
-      </Flex>
+    <Screen title="Documentation" className="markdown-page">
+      <Group w="100%" h="100%" gap={0}>
+        <DocsNav />
+        <Stack h="100%" w="80%" className="markdown" gap={0}>
+          {children}
+        </Stack>
+      </Group>
     </Screen>
   );
 }

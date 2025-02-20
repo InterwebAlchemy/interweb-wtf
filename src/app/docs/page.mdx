@@ -4,23 +4,31 @@ export const metadata = {
 };
 
 import { IconInfoCircle } from '@tabler/icons-react';
-import { Alert, Anchor } from '@mantine/core';
+import { Alert, Anchor, Text } from '@mantine/core';
 import CodeBlock from '@/app/_components/DocsCodeblock';
 import { API_URL, BASE_URL, CURRENT_API_VERSION } from '@/constants';
 
-Interweb.WTF is a privacy-focused and user-centric URL shortening service that allows you to shorten URLs into easily shareable links, expand and remove tracking parameters from shortlinks from other URL shortening services, and clean tracking parameters from any URL.
+Interweb.WTF is a privacy-focused, user-centric URL shortening service.
 
-## API Documentation
+## Getting Started
 
 <Alert icon={<IconInfoCircle />} color="teal">
-  The Interweb.WTF API is currently in beta and subject to change.
+  <Text>
+    The Interweb.WTF is currently in beta and **invite-only**.
+  </Text>
 </Alert>
 
-The Interweb.WTF API is a simple API that allows you to interact with the most basic
-features of the Interweb.WTF service.
+Once you've been granted access, you can use the Interweb.WTF service, you can:
 
-- [API Documentation](/docs/cli/)
-  - [v0](/docs/cli/v0)
-    - [WTF Link Resolver](/docs/cli/v0/go)
-    - [Shortlink Expander](/docs/cli/v0/is)
-    - [URL Cleaner](/docs/cli/v0/clean)
+- [shorten URLs](/docs/shorten) into easily shareable [WTF Links](/docs/concepts/wtf-links) without any [tracking parameters](/docs/concepts/tracking)
+- [expand shorlinks](/docs/expand) from other services while removing [tracking parameters](/docs/concepts/tracking) from them
+- [clean](/docs/clean) any known [tracking parameters](/docs/concepts/tracking) from any URL
+- [programmatically](/docs/cli) interact with the [Interweb.WTF CLI API](/docs/cli/v0) and manage your [API keys](/settings/developer)
+
+## Interfaces
+
+Part of being user-centric is providing multiple ways of interfacing with the service.
+
+- the [web-based interface](/docs/interfaces/web) for shortening, expanding, and cleaning URLs uses a simple, clean interface with text inputs and buttons
+- the [URL-based interface](/docs/interfaces/url) for shortening, expanding, and cleaning URLs uses your browser's address bar and `interweb.wtf` URLs
+- the [API-based interface](/docs/cli/) for shortening, expanding, and cleaning URLs uses a text-based [API](/docs/cli/v0) and [API Keys](/settings/developer)
