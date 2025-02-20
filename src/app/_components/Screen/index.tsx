@@ -6,7 +6,7 @@ import Footer from '@/app/_components/Footer';
 import Nav from '@/app/_components/Nav';
 
 export interface ScreenProps {
-  title?: string | React.ReactNode;
+  title?: React.ReactNode | string;
   titleProps?: TitleProps;
   authenticated?: boolean;
 }
@@ -17,7 +17,7 @@ export default async function Screen({
   titleProps,
   authenticated = false,
   ...props
-}: React.PropsWithChildren<ScreenProps & React.HTMLAttributes<HTMLDivElement>>) {
+}: React.PropsWithChildren<ScreenProps>) {
   const supabase = await createClient();
 
   if (authenticated) {
