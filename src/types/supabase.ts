@@ -467,6 +467,18 @@ export type Database = {
           user_id: string
         }[]
       }
+      increase_inspections: {
+        Args: {
+          _url_id: number
+        }
+        Returns: undefined
+      }
+      increase_views: {
+        Args: {
+          _url_id: number
+        }
+        Returns: undefined
+      }
       store_api_key: {
         Args: {
           _api_key: string

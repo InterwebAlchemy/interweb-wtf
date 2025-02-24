@@ -32,7 +32,8 @@ export async function generateMetadata({
       images.unshift(data?.publicUrl);
     }
   } catch (_error) {
-    void 0;
+    console.error('Error getting screenshot');
+    console.error(_error);
   }
 
   return {
@@ -72,7 +73,7 @@ export default async function WTFLinkPage({ params }: { params: Promise<RequestP
 
     const { data, error } = await supabase
       .from('short_urls')
-      .select('url')
+      .select('id, url')
       .eq('slug', slug)
       .single();
 
@@ -82,6 +83,17 @@ export default async function WTFLinkPage({ params }: { params: Promise<RequestP
 
     if (!data) {
       notFound();
+    }
+
+    try {
+      const { error } = await supabase.rpc('increase_views', { _url_id: data.id });
+
+      if (error) {
+        console.error(error);
+      }
+    } catch (_error) {
+      console.error('Error increasing views');
+      console.error(_error);
     }
 
     const redirectUrl = data.url;

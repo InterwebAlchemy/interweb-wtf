@@ -39,8 +39,32 @@ export async function generateMetadata({ params }: { params: Promise<Params> }) 
   const shortUrl = new URL(`${process.env.NEXT_PUBLIC_APPLICATION_URL}/${slug}`);
 
   const {
-    data: { id },
+    data: { id, created_by },
   } = await supabase.from('short_urls').select('*').eq('slug', slug).single();
+
+  // check to see if current user is the creator of the short_url
+  const {
+    data: { user },
+    error: userError,
+  } = await supabase.auth.getUser();
+
+  if (userError) {
+    console.error(userError);
+  }
+
+  // If this isn't the URL creator, increment the inspection count
+  if (typeof user === 'undefined' || user === null || user?.id !== created_by) {
+    try {
+      const { error: updateError } = await supabase.rpc('increase_inspections', { _url_id: id });
+
+      if (updateError) {
+        console.error(updateError);
+      }
+    } catch (_error) {
+      console.error('Error increasing inspections');
+      console.error(_error);
+    }
+  }
 
   const {
     data: { screenshot },
