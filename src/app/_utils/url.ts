@@ -15,9 +15,19 @@ export function getTrackingParams(url: URL): Array<Record<string, string>> {
     .filter(([key]) => KNOWN_TRACKING_PARAMS.includes(key))
     .map(([key, value]) => ({ [key]: value }));
 
-  const domainTrackers = queryParams
-    .filter(([key]) => DOMAIN_SPECIFIC_TRACKING_PARAMS[url.hostname]?.includes(key))
-    .map(([key, value]) => ({ [key]: value }));
+  const domainSpecificTrackingParams = Object.keys(DOMAIN_SPECIFIC_TRACKING_PARAMS).find((domain) =>
+    url.hostname.endsWith(domain)
+  );
+
+  let domainTrackers: Array<Record<string, string>> = [];
+
+  if (domainSpecificTrackingParams) {
+    domainTrackers = queryParams
+      .filter(([key]) =>
+        DOMAIN_SPECIFIC_TRACKING_PARAMS[domainSpecificTrackingParams]?.includes(key)
+      )
+      .map(([key, value]) => ({ [key]: value }));
+  }
 
   return [...domainTrackers, ...trackers, ...prefixedTrackers];
 }

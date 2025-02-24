@@ -20,7 +20,8 @@ export default async function DashboardPage() {
     .from('short_urls')
     .select('*')
     .eq('created_by', user?.id)
-    .eq('deleted', false);
+    .eq('deleted', false)
+    .order('created_at', { ascending: false });
 
   if (typeof data !== 'undefined' && data !== null) {
     urls.push(...data);

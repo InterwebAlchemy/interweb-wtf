@@ -347,10 +347,13 @@ export const KNOWN_TRACKING_PARAMS = Array.from(
   ])
 );
 
+const YOUTUBE_TRACKING_PARAMS = ['si', 'feature'];
+const TWITTER_TRACKING_PARAMS = ['ref_src', 'ref_url'];
+
 export const DOMAIN_SPECIFIC_TRACKING_PARAMS: Record<string, string[]> = {
-  'youtube.com': ['si'],
-  'youtu.be': ['si'],
+  'youtube.com': YOUTUBE_TRACKING_PARAMS,
+  'youtu.be': YOUTUBE_TRACKING_PARAMS,
   'instagram.com': ['igshid', 'igsh'],
-  'twitter.com': ['ref_src', 'ref_url'],
-  'x.com': ['ref_src', 'ref_url'],
+  'twitter.com': TWITTER_TRACKING_PARAMS,
+  'x.com': TWITTER_TRACKING_PARAMS,
 };
