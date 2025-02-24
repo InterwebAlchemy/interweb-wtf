@@ -1,11 +1,10 @@
 import Link from 'next/link';
-import { Anchor, Container, Stack, Text, Title } from '@mantine/core';
+import { Anchor, Box, Stack, Text } from '@mantine/core';
 
 export default function GeneralSettingsTab() {
   return (
-    <Container p="md">
+    <Box px="md" w={{ base: '100%', md: '80%' }}>
       <Stack h="100%" w="100%">
-        <Title order={2}>Settings</Title>
         <Text>
           More settings are coming soon, but for now you can use the{' '}
           <Anchor component={Link} href="/settings/developer">
@@ -29,6 +28,6 @@ export default function GeneralSettingsTab() {
           .
         </Text>
       </Stack>
-    </Container>
+    </Box>
   );
 }

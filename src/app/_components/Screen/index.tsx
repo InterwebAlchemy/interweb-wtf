@@ -45,6 +45,7 @@ export default async function Screen({
         justify="flex-start"
         align="flex-start"
         mih="100vh"
+        pos="relative"
         {...props}
       >
         <Stack h="100%" w="100%">

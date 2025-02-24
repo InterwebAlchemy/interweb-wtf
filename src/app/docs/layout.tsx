@@ -1,7 +1,7 @@
 import type { Metadata, ResolvingMetadata } from 'next';
-import DocsNav from '@/app/_components/DocsNav';
 import Screen from '@/app/_components/Screen';
-import { CURRENT_API_VERSION } from '@/constants';
+import SidebarNav from '@/app/_components/SidebarNav';
+import { CURRENT_API_VERSION, DOCS_NAV_ITEMS } from '@/constants';
 
 import '@/app/_styles/markdown.css';
 
@@ -44,7 +44,7 @@ export default async function MDXLayout({ children }: { children: React.ReactNod
   return (
     <Screen title="Documentation" className="markdown-page">
       <Group w="100%" h="100%" gap={0}>
-        <DocsNav />
+        <SidebarNav links={DOCS_NAV_ITEMS} />
         <Stack h="100%" w="80%" className="markdown" gap={0}>
           {children}
         </Stack>

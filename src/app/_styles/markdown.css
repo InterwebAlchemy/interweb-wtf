@@ -1,9 +1,16 @@
 .markdown {
   font-size: 1.125rem;
   line-height: 1.75;
-  padding-left: 2rem;
-  padding-right: 2rem;
-  border-left: 1px solid var(--mantine-color-gray-3);
+  padding-left: 0;
+  padding-right: 0;
+}
+
+@media (min-width: 768px) {
+  .markdown {
+    padding-left: 2rem;
+    padding-right: 2rem;
+    border-left: 1px solid var(--mantine-color-gray-3);
+  }
 }
 
 .markdown :first-child {

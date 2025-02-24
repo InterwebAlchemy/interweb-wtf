@@ -1,3 +1,5 @@
+import type { NavItem } from '@/types';
+
 // refresh after 2 weeks
 export const STORAGE_REFRESH_INTERVAL = new Date(Date.now() - 14 * 24 * 60 * 60 * 1000);
 
@@ -6,6 +8,124 @@ export const API_PATH = '/cli';
 export const CURRENT_API_VERSION = 'v0';
 
 export const API_URL = new URL(`${API_PATH}/${CURRENT_API_VERSION}`, BASE_URL).toString();
+
+export const SETTINGS_NAV_ITEMS: NavItem[] = [
+  {
+    id: 'general',
+    href: '/settings',
+    label: 'Settings',
+  },
+  {
+    id: 'developer',
+    href: '/settings/developer',
+    label: 'Developer',
+  },
+  {
+    id: 'danger',
+    href: '/settings/danger',
+    label: 'Danger Zone',
+  },
+];
+
+export const DOCS_NAV_ITEMS: NavItem[] = [
+  {
+    id: 'overview',
+    href: '/docs',
+    label: 'Overview',
+  },
+  {
+    id: 'shortener',
+    href: '/docs/shorten',
+    label: 'Shorten URLs',
+  },
+  {
+    id: 'cleaner',
+    href: '/docs/clean',
+    label: 'Clean URLs',
+  },
+  {
+    id: 'expander',
+    href: '/docs/expand',
+    label: 'Expand Shorlinks',
+  },
+  {
+    id: 'interfaces',
+    href: '/docs/interfaces',
+    label: 'Interfaces',
+    defaultOpened: true,
+    children: [
+      {
+        id: 'web',
+        href: '/docs/interfaces/web',
+        label: 'Web Interface',
+      },
+      {
+        id: 'url',
+        href: '/docs/interfaces/url',
+        label: 'URL Interface',
+      },
+      {
+        id: 'api',
+        href: '/docs/interfaces/api',
+        label: 'API Interface',
+      },
+    ],
+  },
+  {
+    id: 'concepts',
+    href: '/docs/concepts',
+    label: 'Concepts',
+    defaultOpened: true,
+    children: [
+      {
+        id: 'wtf-links',
+        href: '/docs/concepts/wtf-links',
+        label: 'WTF Links',
+      },
+      {
+        id: 'tracking',
+        href: '/docs/concepts/tracking',
+        label: 'Tracking',
+      },
+      {
+        id: 'shortlinks',
+        href: '/docs/concepts/shortlinks',
+        label: 'Shortlinks',
+      },
+    ],
+  },
+  {
+    id: 'cli',
+    href: '/docs/cli',
+    label: 'Interweb.WTF CLI API',
+    defaultOpened: true,
+    children: [
+      {
+        id: 'v0',
+        href: '/docs/cli/v0',
+        label: 'CLI API v0',
+        defaultOpened: true,
+        children: [
+          {
+            id: 'go',
+            href: '/docs/cli/v0/go',
+            label: 'WTF Link Resolver',
+          },
+          {
+            id: 'is',
+            href: '/docs/cli/v0/is',
+            label: 'Shortlink Expander',
+          },
+          {
+            id: 'clean',
+            href: '/docs/cli/v0/clean',
+            label: 'URL Cleaner',
+          },
+        ],
+      },
+    ],
+  },
+];
 
 // list of trusted domains that we won't need to check for trust or malware
 export const KNOWN_DOMAINS = [

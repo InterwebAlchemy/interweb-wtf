@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect, RedirectType } from 'next/navigation';
-import { Anchor, Container, Stack, Text, Title } from '@mantine/core';
+import { Anchor, Box, Stack, Text } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
 import ApiKeyGenerator from '@/app/_components/ApiKeyGenerator';
 import { InterwebWtfApiKey } from '@/types';
@@ -48,9 +48,8 @@ export default async function DeveloperSettingsTab() {
   }
 
   return (
-    <Container p="md">
+    <Box px="md" w={{ base: '100%', md: '80%' }}>
       <Stack h="100%" w="100%">
-        <Title order={2}>Developer Settings</Title>
         <Text>
           Manage your{' '}
           <Anchor component={Link} href="/docs">
@@ -60,6 +59,6 @@ export default async function DeveloperSettingsTab() {
         </Text>
         <ApiKeyGenerator keys={keys} />
       </Stack>
-    </Container>
+    </Box>
   );
 }

@@ -300,6 +300,30 @@ export type Database = {
           },
         ]
       }
+      url_scan_ids: {
+        Row: {
+          completed: boolean
+          created_at: string
+          id: number
+          scan_id: string | null
+          url: string | null
+        }
+        Insert: {
+          completed?: boolean
+          created_at?: string
+          id?: number
+          scan_id?: string | null
+          url?: string | null
+        }
+        Update: {
+          completed?: boolean
+          created_at?: string
+          id?: number
+          scan_id?: string | null
+          url?: string | null
+        }
+        Relationships: []
+      }
       url_stats: {
         Row: {
           flags: number

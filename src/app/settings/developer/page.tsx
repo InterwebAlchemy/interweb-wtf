@@ -3,7 +3,8 @@ import { Group } from '@mantine/core';
 import { createClient } from '@/app/_adapters/supabase/server';
 import DeveloperSettingsTab from '@/app/_components/DeveloperSettingsTab';
 import Screen from '@/app/_components/Screen';
-import SettingsNav from '@/app/_components/SettingsNav';
+import SidebarNav from '@/app/_components/SidebarNav';
+import { SETTINGS_NAV_ITEMS } from '@/constants';
 
 export const metadata = {
   title: 'Developer Settings',
@@ -25,8 +26,8 @@ export default async function DeveloperSettingsPage() {
 
   return (
     <Screen title="Developer Settings">
-      <Group w="100%" h="100%">
-        <SettingsNav activeTab="developer" />
+      <Group w="100%" h="100%" gap={0} align="flex-start">
+        <SidebarNav activeTab="developer" links={SETTINGS_NAV_ITEMS} />
         <DeveloperSettingsTab />
       </Group>
     </Screen>
