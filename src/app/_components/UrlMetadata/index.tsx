@@ -116,6 +116,9 @@ export default function UrlMetadata({
   };
 
   const renderMetadata = () => {
+    const urlWithoutHash = new URL(url);
+    urlWithoutHash.hash = '';
+
     return (
       <Stack w="100%">
         <Group align="center" w="100%">
@@ -123,14 +126,15 @@ export default function UrlMetadata({
           {renderContentType()}
           {children}
         </Group>
-        {fullUrl?.toString() !== url.toString() && (
+        {fullUrl?.toString() !== urlWithoutHash.toString() && (
           <Alert
             variant="outline"
             color="red"
             title="Redirect Warning"
             icon={<IconAlertTriangle />}
           >
-            The URL was resolved to <Code>{fullUrl}</Code> instead of <Code>{url.toString()}</Code>.
+            The URL was resolved to <Code>{fullUrl}</Code> instead of{' '}
+            <Code>{urlWithoutHash.toString()}</Code>.
           </Alert>
         )}
         {redirected && (
@@ -140,7 +144,7 @@ export default function UrlMetadata({
             title="Redirect Warning"
             icon={<IconAlertTriangle />}
           >
-            The URL was redirected while resolving <Code>{url.toString()}</Code>.
+            The URL was redirected while resolving <Code>{urlWithoutHash.toString()}</Code>.
           </Alert>
         )}
       </Stack>
