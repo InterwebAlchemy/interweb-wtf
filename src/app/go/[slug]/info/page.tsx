@@ -88,6 +88,8 @@ export default async function InspectorPage({ params }: { params: Promise<Params
 
   const shortUrl = new URL(`/go/${slug}`, process.env.NEXT_PUBLIC_APPLICATION_URL);
 
+  const qrCodeUrl = new URL(`/go/${slug}/info`, process.env.NEXT_PUBLIC_APPLICATION_URL);
+
   const {
     data: { id, url },
   } = await supabase.from('short_urls').select('*').eq('slug', slug).single();
@@ -149,6 +151,12 @@ export default async function InspectorPage({ params }: { params: Promise<Params
           <TabsPanel key={tab} value={tab}>
             {tab === 'details' ? (
               <Stack>
+                <Title order={4} mt="20">
+                  WTF Link:{' '}
+                  <Anchor href={shortUrl.toString()} target="_blank" rel="noreferrer">
+                    {`${shortUrl.hostname}${shortUrl.pathname}`}
+                  </Anchor>
+                </Title>
                 <UrlScreenshot url={displayUrl.toString()} src={imageSrc} />
                 {description && (
                   <Center w="90%" mx="auto" my="md" maw="640">
@@ -187,7 +195,7 @@ export default async function InspectorPage({ params }: { params: Promise<Params
               </Stack>
             ) : (
               <Center w="80%" mx="auto" my="md" pos="relative">
-                <QRCode url={shortUrl.toString()} title={title} />
+                <QRCode url={qrCodeUrl.toString()} title={title} />
               </Center>
             )}
           </TabsPanel>
