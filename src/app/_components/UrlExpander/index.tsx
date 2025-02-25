@@ -213,11 +213,11 @@ export default function UrlExpander({ demoMode = false }: UrlExpanderProps) {
                 readOnly
               />
               <Title order={4} mt={!demoMode ? 40 : 0}>
-                Clean URL
+                Expanded URL
               </Title>
               <CodeHighlight
                 code={cleanUrl}
-                copyLabel="Copy Clean URL"
+                copyLabel="Copy Expanded URL"
                 language="url"
                 mb={!demoMode ? 80 : 0}
               />
@@ -233,7 +233,7 @@ export default function UrlExpander({ demoMode = false }: UrlExpanderProps) {
                     }}
                     leftSection={<IconEyePlus />}
                   >
-                    Clean Another URL
+                    Expand Another URL
                   </Button>
                 </Group>
               )}

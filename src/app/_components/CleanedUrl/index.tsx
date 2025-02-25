@@ -26,7 +26,14 @@ export default function CleanedUrl({ cleanedUrl, originalUrl }: CleanedUrlProps)
   };
 
   return (
-    <Group px="xs" w="100%" align="center" bd="1px solid #ccc" style={{ borderRadius: '3px' }}>
+    <Group
+      px="xs"
+      w="100%"
+      align="center"
+      bd="1px solid #ccc"
+      style={{ borderRadius: '3px' }}
+      gap={0}
+    >
       <IconWorldWww color="var(--input-section-color, var(--mantine-color-dimmed))" />
       <Text
         span
@@ -35,6 +42,7 @@ export default function CleanedUrl({ cleanedUrl, originalUrl }: CleanedUrlProps)
         truncate="end"
         maw="90%"
         py="md"
+        pl="xs"
         title={cleanedUrl.toString()}
       >
         {cleanedUrl ? (

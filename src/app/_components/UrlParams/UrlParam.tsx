@@ -10,6 +10,7 @@ export default function UrlParam({ name, value, tracker }: UrlParamProps): React
   const variant = tracker ? 'outline' : 'light';
   const color = tracker ? 'red' : 'gray';
   const title = tracker ? 'This is a known tracking parameter' : 'Not a known tracking parameter.';
+  const textDecoration = tracker ? 'line-through' : 'none';
 
   return (
     <Badge
@@ -23,7 +24,7 @@ export default function UrlParam({ name, value, tracker }: UrlParamProps): React
       radius="sm"
       title={title}
     >
-      <Text span inherit fw={300} tt="initial">
+      <Text span inherit fw={300} td={textDecoration} tt="initial">
         {value}
       </Text>
     </Badge>

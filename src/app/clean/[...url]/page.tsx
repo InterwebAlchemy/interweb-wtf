@@ -1,7 +1,9 @@
 import Link from 'next/link';
-import { Anchor, Center, Flex, Text } from '@mantine/core';
-import CleanedUrl from '@/app/_components/CleanedUrl';
+import { IconWorldWww } from '@tabler/icons-react';
+import { CodeHighlight } from '@mantine/code-highlight';
+import { Anchor, Button, Center, Stack, Text, Title } from '@mantine/core';
 import Screen from '@/app/_components/Screen';
+import UrlParams from '@/app/_components/UrlParams';
 import { removeTrackingParams } from '@/app/_utils/url';
 import { KNOWN_SHORTENERS } from '@/constants';
 
@@ -63,9 +65,31 @@ export default async function ExpanderPage({ params, searchParams }: Params) {
 
   return (
     <Screen title="Link Cleaner">
-      <Flex h="100%" w="100%" maw="640px" justify="center" align="center" mx="auto">
-        <CleanedUrl cleanedUrl={cleanedUrl.toString()} originalUrl={url.toString()} />
-      </Flex>
+      <Stack h="100%" w="100%" maw="640px" justify="center" align="center" mx="auto">
+        <Title order={4} mt={40}>
+          Cleaned URL
+        </Title>
+        <CodeHighlight
+          code={cleanedUrl.toString()}
+          copyLabel="Copy Clean URL"
+          language="url"
+          mb={20}
+        />
+        <Button
+          color="violet"
+          component="a"
+          href={cleanedUrl.toString()}
+          title={`Go to ${cleanedUrl.toString()}`}
+          rel="noreferrer"
+          leftSection={<IconWorldWww size={20} />}
+          style={{ color: 'white' }}
+          tt="uppercase"
+          mb={40}
+        >
+          Visit
+        </Button>
+        <UrlParams url={url.toString()} />
+      </Stack>
     </Screen>
   );
 }
