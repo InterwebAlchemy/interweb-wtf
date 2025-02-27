@@ -14,6 +14,7 @@ export const metadata = {
     default: 'Interweb.WTF',
     template: '%s | Interweb.WTF',
   },
+  authors: [{ name: 'Interweb Alchemy', url: 'https://interwebalchemy.com/' }],
   description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
   generator: 'Interweb.WTF',
   applicationName: 'Interweb.WTF',
@@ -25,13 +26,13 @@ export const metadata = {
     title: 'Interweb.WTF',
     description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
     url: 'https://interweb.wtf',
-    images: ['/assets/wtf-patient-recipe.png', '/favicon.svg'],
+    images: ['/interweb-wtf.png', '/assets/wtf-patient-recipe.png', '/favicon.svg'],
   },
   twitter: {
     card: 'summary',
     title: 'Interweb.WTF',
     description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
-    images: ['/assets/wtf-patient-recipe.png', '/favicon.svg'],
+    images: ['/interweb-wtf.png', '/assets/wtf-patient-recipe.png', '/favicon.svg'],
   },
 };
 
