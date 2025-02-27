@@ -42,10 +42,12 @@ export const config = {
      * - request-invite (request invite page)
      * - about (about page)
      * - privacy (privacy policy page)
+     * - assets (images and other assets)
      * - _next/static (static files)
      * - _next/image (image optimization files)
-     * - favicon.ico, sitemap.xml, robots.txt, llms.txt (metadata files)
+     * - favicon.* (favicon files)
+     * - sitemap.xml, robots.txt, llms.txt (metadata files)
      */
-    '/((?!is|clean|api|docs|faq|login|request-invite|about|privacy|_next/static|_next/image|favicon.ico|sitemap.xml|robots.txt|llms.txt).*)',
+    '/((?!is|clean|api|docs|faq|login|request-invite|about|privacy|assets|_next/static|_next/image|favicon*|android-chrome*|apple-touch-icon*|sitemap.xml|robots.txt|llms.txt).*)',
   ],
 };
