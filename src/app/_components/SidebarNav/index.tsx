@@ -1,5 +1,6 @@
 'use client';
 
+import { Fragment } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import {
@@ -32,16 +33,16 @@ export default function SidebarNav({ activeTab, links }: SidebarNavProps) {
     return items.map((link) => {
       if (link.children) {
         return (
-          <>
+          <Fragment key={link.id}>
             <MenuLabel>{link.label}</MenuLabel>
             {renderMenuLinks(link.children)}
-          </>
+          </Fragment>
         );
       }
 
       return (
         <MenuItem
-          key={link.id}
+          key={link.id ?? link.href}
           leftSection={link.icon}
           component={Link}
           href={link.href}
@@ -58,7 +59,7 @@ export default function SidebarNav({ activeTab, links }: SidebarNavProps) {
     return items.map((item) => {
       return (
         <NavLink
-          key={item.id}
+          key={item.id ?? item.href}
           href={item.href}
           label={item.label}
           component={Link}
@@ -83,7 +84,7 @@ export default function SidebarNav({ activeTab, links }: SidebarNavProps) {
         </Menu>
       </Box>
       <Box visibleFrom="md" w={{ base: '100%', md: '20%' }}>
-        <Stack h="100%" gap={0}>
+        <Stack h="100%" gap={0} align="flex-start">
           {renderNavItems(links)}
         </Stack>
       </Box>

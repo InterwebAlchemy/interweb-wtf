@@ -43,7 +43,7 @@ export async function generateMetadata(
 export default async function MDXLayout({ children }: { children: React.ReactNode }) {
   return (
     <Screen title="Documentation" className="markdown-page">
-      <Group w="100%" h="100%" gap={0}>
+      <Group w="100%" h="100%" gap={0} align="flex-start">
         <SidebarNav links={DOCS_NAV_ITEMS} />
         <Stack h="100%" w="80%" className="markdown" gap={0}>
           {children}
