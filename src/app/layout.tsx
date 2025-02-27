@@ -26,13 +26,13 @@ export const metadata = {
     title: 'Interweb.WTF',
     description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
     url: 'https://interweb.wtf',
-    images: ['/interweb-wtf.png', '/assets/wtf-patient-recipe.png', '/favicon.svg'],
+    images: ['/assets/interweb-wtf.png', '/assets/wtf-patient-recipe.png', '/favicon.svg'],
   },
   twitter: {
     card: 'summary',
     title: 'Interweb.WTF',
     description: 'A privacy-focused, user-centric link shortener for the modern interweb.',
-    images: ['/interweb-wtf.png', '/assets/wtf-patient-recipe.png', '/favicon.svg'],
+    images: ['/assets/interweb-wtf.png', '/assets/wtf-patient-recipe.png', '/favicon.svg'],
   },
 };
 
