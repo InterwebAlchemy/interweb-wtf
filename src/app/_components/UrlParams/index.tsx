@@ -2,30 +2,45 @@
 
 import { Group, Stack, Title } from '@mantine/core';
 import { getTrackingParams } from '@/app/_utils/url';
-import UrlParam from './UrlParam';
+import UrlParam, { type UrlParamProps } from './UrlParam';
 
 export interface UrlParamsProps {
   url: string | URL;
   title?: string;
+  onClick?: (param: { name: string; value?: string }) => void;
 }
 
 export default function UrlParams({
   url,
   title = 'URL Parameters',
+  onClick,
 }: UrlParamsProps): React.ReactElement {
   const urlObj = new URL(url.toString());
 
-  const trackers = getTrackingParams(urlObj);
+  const { knownTrackers, potentialTrackers } = getTrackingParams(urlObj);
 
   const renderParams = (url: URL): React.ReactNode => {
-    return url.searchParams.entries().map(([key, value]) => {
-      let isTrackingParam = false;
+    return [...url.searchParams.entries()].map(([key, value]) => {
+      let isTrackingParam;
 
-      if (trackers.find((tracker) => tracker[key])) {
-        isTrackingParam = true;
+      // Check if this is a known or potential tracking parameter
+      if (knownTrackers.includes(key)) {
+        isTrackingParam = 'known';
       }
 
-      return <UrlParam key={key} name={key} value={value} tracker={isTrackingParam} />;
+      if (potentialTrackers.includes(key)) {
+        isTrackingParam = 'potential';
+      }
+
+      return (
+        <UrlParam
+          key={key}
+          name={key}
+          value={value}
+          tracker={isTrackingParam as UrlParamProps['tracker']}
+          onClick={onClick}
+        />
+      );
     });
   };
 

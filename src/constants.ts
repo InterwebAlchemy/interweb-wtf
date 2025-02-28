@@ -357,3 +357,9 @@ export const DOMAIN_SPECIFIC_TRACKING_PARAMS: Record<string, string[]> = {
   'twitter.com': TWITTER_TRACKING_PARAMS,
   'x.com': TWITTER_TRACKING_PARAMS,
 };
+
+export const POTENTIAL_TRACKING_PARAMS = [];
+
+export const DOMAIN_SPECIFIC_POTENTIAL_TRACKING_PARAMS: Record<string, string[]> = {
+  'linkedin.com': ['rcm', 'lipi'],
+};

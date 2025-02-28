@@ -81,6 +81,22 @@ export default function UrlCleaner({ demoMode = false }: UrlCleanerProps) {
     setIsCleaned(false);
   };
 
+  const onTagClick = (param: { name: string; value?: string }): void => {
+    const urlObject = new URL(cleanedUrl);
+
+    if (urlObject.searchParams.has(param.name)) {
+      console.log('removing', param.name);
+
+      urlObject.searchParams.delete(param.name);
+    } else {
+      console.log('adding', param.name, param.value);
+
+      urlObject.searchParams.set(param.name, param?.value || '');
+    }
+
+    setCleanedUrl(urlObject.toString());
+  };
+
   useEffect(() => {
     if (isCleaned) {
       notifications.show({
@@ -108,7 +124,7 @@ export default function UrlCleaner({ demoMode = false }: UrlCleanerProps) {
           (isCleaned ? (
             <Stack>
               <UrlInput
-                defaultValue={cleanedUrl}
+                value={cleanedUrl.toString()}
                 submitButton={<IconCopy />}
                 onSubmit={copyCleanUrl}
                 submitTitle="Copy URL"
@@ -121,7 +137,7 @@ export default function UrlCleaner({ demoMode = false }: UrlCleanerProps) {
                   Clean Another URL
                 </Button>
               </Group>
-              <UrlParams url={originalUrl} />
+              <UrlParams url={originalUrl} onClick={onTagClick} />
             </Stack>
           ) : (
             <Group

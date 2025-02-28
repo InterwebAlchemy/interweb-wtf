@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   IconEdit,
   IconExclamationCircle,
@@ -20,6 +20,7 @@ import { notifications } from '@mantine/notifications';
 
 export interface UrlInputProps {
   defaultValue?: string;
+  value?: string;
   slug?: boolean;
   readOnly?: boolean;
   disabled?: boolean;
@@ -38,6 +39,7 @@ export default function UrlInput({
   submitVariant = 'filled',
   submitColor = 'violet',
   defaultValue = '',
+  value,
   slug = false,
   readOnly = false,
   disabled = false,
@@ -126,6 +128,12 @@ export default function UrlInput({
         setIsLoading(false);
       });
   };
+
+  useEffect(() => {
+    if (value) {
+      setUrl(value);
+    }
+  }, [value]);
 
   return (
     <form id="url-shortener" onSubmit={handleSubmit} style={{ width: '100%' }}>
